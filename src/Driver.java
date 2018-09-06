@@ -19,12 +19,14 @@ public class Driver {
 	 */
 	public static void main(String[] args) {
 		// TODO Fill in
-		Path path = Paths.get("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/hello.txt");
-		try (BufferedReader br = Files.newBufferedReader(path)) {
-			System.out.println(br.readLine());
-		} catch (IOException e) {
-			System.out.println("file doesnt exist");
-		}
+		FileRead fr = new FileRead();
+		fr.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/hello.txt");
+
+//		try (BufferedReader br = Files.newBufferedReader(path)) {
+//			System.out.println(br.readLine());
+//		} catch (IOException e) {
+//			System.out.println("file doesnt exist");
+//		}
 		
 		System.out.println(Arrays.toString(args));
 	}
