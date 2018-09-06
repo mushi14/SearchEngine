@@ -21,8 +21,10 @@ public class FileRead {
 		ArrayList<String> temp = new ArrayList<String>();
 		try { 
 			BufferedReader br = Files.newBufferedReader(p);
-			while (br.readLine() != null) {
-				temp.add(br.readLine());
+			String line = br.readLine();
+			while (line != null) {
+				temp.add(line);
+				line = br.readLine();
 			}
 		} catch (FileNotFoundException e) {
 			System.err.println("file couldn't be found");
