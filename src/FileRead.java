@@ -17,6 +17,7 @@ public class FileRead {
 	
 	/* Method for reading the line */
 	public ArrayList<String> read(Path p) {
+		
 		ArrayList<String> temp = new ArrayList<String>();
 		try { 
 			BufferedReader br = Files.newBufferedReader(p);
@@ -30,6 +31,7 @@ public class FileRead {
 			System.err.println("unable to read");
             e.printStackTrace();
 		}
+		
 		return temp;
 	}
 	
