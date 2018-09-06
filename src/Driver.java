@@ -27,8 +27,8 @@ public class Driver {
 		FileRead file_read = new FileRead();
 
 		Path p = file_read.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/hello.txt");
-		ArrayList<String> words = file_read.read(p);
 		
+		ArrayList<String> words = file_read.read(p);
 		for (int i = 0; i < words.size(); i++) {
 			System.out.println(words.get(i));
 		}
