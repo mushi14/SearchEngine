@@ -3,7 +3,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * TODO Fill in your own comments!
@@ -19,16 +22,18 @@ public class Driver {
 	 */
 	public static void main(String[] args) {
 		// TODO Fill in
-		FileRead fr = new FileRead();
-		fr.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/hello.txt");
-
-//		try (BufferedReader br = Files.newBufferedReader(path)) {
-//			System.out.println(br.readLine());
-//		} catch (IOException e) {
-//			System.out.println("file doesnt exist");
-//		}
+		HashMap<String, HashMap<String, HashSet<Integer>>> index = new HashMap<String, HashMap<String, HashSet<Integer>>>();
 		
-		System.out.println(Arrays.toString(args));
+		FileRead file_read = new FileRead();
+
+		Path p = file_read.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/hello.txt");
+		System.out.println(p);
+		ArrayList<String> words = file_read.read(p);
+		
+		for (int i = 0; i < words.size(); i++) {
+			System.out.println(words.get(i));
+		}
+//		System.out.println(Arrays.toString(args));
 	}
 
 }

@@ -1,5 +1,10 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class FileRead {
 	
@@ -10,7 +15,27 @@ public class FileRead {
 	}
 	
 	
-	public 
+	/* Method for reading the line */
+	public ArrayList<String> read(Path p) {
+		ArrayList<String> temp = new ArrayList<String>();
+		try { 
+			BufferedReader br = Files.newBufferedReader(p);
+			while (br.readLine() != null) {
+				temp.add(br.readLine());
+			}
+		} catch (FileNotFoundException e) {
+			System.err.println("file couldn't be found");
+            e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("unable to read");
+            e.printStackTrace();
+		}
+		return temp;
+	}
+	
+	
+	
+	
 	/* Method for checking to see if the argument is a flag */
 //	public static boolean isFlag(String arg) {
 //		try {
