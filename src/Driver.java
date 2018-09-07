@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,17 +20,15 @@ public class Driver {
 	 * @return 0 if everything went well
 	 */
 	public static void main(String[] args) {
-		// TODO Fill in
+		// TODO Fill in		
 		HashMap<String, HashMap<String, HashSet<Integer>>> index = new HashMap<String, HashMap<String, HashSet<Integer>>>();
 		
 		FileRead file_read = new FileRead();
 
 		Path p = file_read.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/hello.txt");
 		
-		ArrayList<String> words = file_read.read(p);
-		for (int i = 0; i < words.size(); i++) {
-			System.out.println(words.get(i));
-		}
+		file_read.read(p, index);
+		
 		
 //		System.out.println(Arrays.toString(args));
 	}

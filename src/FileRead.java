@@ -5,8 +5,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class FileRead {
+		
+	Parsing p = new Parsing();
 	
 	/* Method for getting the path */
 	public Path getPath(String p) {
@@ -16,14 +20,28 @@ public class FileRead {
 	
 	
 	/* Method for reading the line */
-	public ArrayList<String> read(Path p) {
-		
-		ArrayList<String> temp = new ArrayList<String>();
+	public HashMap<String, HashMap<String, HashSet<Integer>>> read(Path p, HashMap<String, HashMap<String, HashSet<Integer>>> index) {
+				
 		try { 
 			BufferedReader br = Files.newBufferedReader(p);
 			String line = br.readLine();
 			while (line != null) {
-				temp.add(line);
+				int count = 1;
+				String words[] = line.split(" ");
+				for (int i = 0; i < words.length; i++) {
+					if (index.containsKey(words[i])) {
+						if (index.get(words[i]).containsKey(p.toString())) {
+							index.get(words[i]).get(p.toString()).add(count);
+						} else {
+							index.get(words[i]).put(p.toString(), new HashSet<Integer>());
+							index.get(words[i]).get(p.toString()).add(count);
+						}
+					} else {
+						index.put(words[i], new HashMap<String, HashSet<Integer>>());
+						index.get(words[i]).put(p.toString(), new HashSet<Integer>());
+						index.get(words[i]).get(p.toString()).add(count);
+					}
+				}
 				line = br.readLine();
 			}
 		} catch (FileNotFoundException e) {
@@ -34,7 +52,7 @@ public class FileRead {
             e.printStackTrace();
 		}
 		
-		return temp;
+		return index;
 	}
 	
 	
