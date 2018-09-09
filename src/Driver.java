@@ -24,13 +24,31 @@ public class Driver {
 		var index = new HashMap<String, HashMap<String, HashSet<Integer>>>();
 		
 		FileRead file_read = new FileRead();
-
-		Path p = file_read.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/position.teXt");
+		ArgumentMap am = new ArgumentMap();
+		
+		Path p = file_read.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/symbols.txt");
+		
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].isEmpty()) {
+				System.out.println("No arguments passed");
+			} else {
+				
+			}
+ 		}
 		
 		file_read.read(p, index);
 		
-//		System.out.println(index);
-		
+//		for (String key : index.keySet()) {
+//			System.out.print(key + "     ");
+//			for (String key2 : index.get(key).keySet()) {
+//				System.out.print("[");
+//				for (int num : index.get(key).get(key2)) {
+//				System.out.print(num + ",");
+//				}
+//				System.out.print("]");
+//			}
+//			System.out.println();
+//		}
 		
 //		System.out.println(Arrays.toString(args));
 	}
