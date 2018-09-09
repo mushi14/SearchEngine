@@ -21,13 +21,15 @@ public class Driver {
 	 */
 	public static void main(String[] args) {
 		// TODO Fill in		
-		HashMap<String, HashMap<String, HashSet<Integer>>> index = new HashMap<String, HashMap<String, HashSet<Integer>>>();
+		var index = new HashMap<String, HashMap<String, HashSet<Integer>>>();
 		
 		FileRead file_read = new FileRead();
 
-		Path p = file_read.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/hello.txt");
+		Path p = file_read.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/position.teXt");
 		
 		file_read.read(p, index);
+		
+//		System.out.println(index);
 		
 		
 //		System.out.println(Arrays.toString(args));

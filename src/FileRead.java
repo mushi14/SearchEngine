@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -20,15 +21,15 @@ public class FileRead {
 	
 	
 	/* Method for reading the line */
-	public HashMap<String, HashMap<String, HashSet<Integer>>> read(Path p, HashMap<String, HashMap<String, HashSet<Integer>>> index) {
-				
+	public void read(Path p, HashMap<String, HashMap<String, HashSet<Integer>>> index) {		
 		try { 
 			BufferedReader br = Files.newBufferedReader(p);
 			String line = br.readLine();
 			while (line != null) {
 				int count = 1;
-				String words[] = line.split(" ");
+				String[] words = line.split("[^\\w']+");
 				for (int i = 0; i < words.length; i++) {
+					System.out.println(words[i]);
 					if (index.containsKey(words[i])) {
 						if (index.get(words[i]).containsKey(p.toString())) {
 							index.get(words[i]).get(p.toString()).add(count);
@@ -41,6 +42,7 @@ public class FileRead {
 						index.get(words[i]).put(p.toString(), new HashSet<Integer>());
 						index.get(words[i]).get(p.toString()).add(count);
 					}
+					count++;
 				}
 				line = br.readLine();
 			}
@@ -51,9 +53,8 @@ public class FileRead {
 			System.err.println("unable to read");
             e.printStackTrace();
 		}
-		
-		return index;
 	}
+}
 	
 	
 	
@@ -93,4 +94,3 @@ public class FileRead {
 //		}
 //	}
 
-}
