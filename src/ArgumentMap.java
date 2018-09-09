@@ -1,10 +1,18 @@
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class ArgumentMap {
 
-	public void parse(String[] args) {
-		
-	}
+	FileRead fr = new FileRead();
 	
+	
+	public void parse(String[] args) {
+		for (int i = 0; i < args.length; i++) {
+			if (isFlag(args[i])) {
+				/* Do something */
+			}
+		}
+	}
 	
 	
 	public static boolean isFlag(String arg) {
@@ -12,6 +20,7 @@ public class ArgumentMap {
 			arg = arg.trim();
 			if (arg == "-path") {
 				/* Do something */
+				aPath(arg);
 				return true;
 			} else if (arg == "-index") {
 				/* Do something */
@@ -24,6 +33,21 @@ public class ArgumentMap {
 		}
 	}
 	
+	
+	public static void aPath(String arg) {
+		Path path = FileRead.getPath(arg);
+		if (Files.isDirectory(path)) {
+			
+		}
+		else if (Files.isRegularFile(path)) {
+			
+		}
+	}
+	
+	
+	public void optionalPath(String arg) {
+		
+	}
 	
 	
 }

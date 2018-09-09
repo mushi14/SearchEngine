@@ -12,7 +12,7 @@ import java.util.HashSet;
 public class FileRead {
 			
 	/* Method for getting the path */
-	public Path getPath(String p) {
+	public static Path getPath(String p) {
 		Path path = Paths.get(p);	
 		return path;
 	}
