@@ -1,4 +1,6 @@
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -6,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * TODO Fill in your own comments!
@@ -20,21 +24,14 @@ public class Driver {
 	 * @return 0 if everything went well
 	 */
 	public static void main(String[] args) {
-		// TODO Fill in		
-		var index = new HashMap<String, HashMap<String, HashSet<Integer>>>();
+		// TODO Fill in				
+		Path path = FileRead.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple");
+
+		String file = "/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/symbols.txt";
 		
-		FileRead file_read = new FileRead();
-		ArgumentMap am = new ArgumentMap();
+
 		
-		Path path = file_read.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/symbols.txt");
-		
-//		for (int i = 0; i < args.length; i++) {
-//			if (args[i].isEmpty()) {
-//				System.out.println("No arguments passed");
-//			} else {
-//				
-//			}
-// 		}
+
 //		
 //		file_read.read(p, index);
 //		
