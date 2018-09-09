@@ -6,10 +6,16 @@ public class ArgumentMap {
 	FileRead fr = new FileRead();
 	
 	
-	public void parse(String[] args) {
+	public static void parse(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
 				/* Do something */
+				if (args[i] == "-path") {
+					aPath(args[i+1]);
+					i++;
+				} else if (args[i] == "-index") {
+					optionalPath(args[i+1]);
+				}
 			}
 		}
 	}
@@ -19,13 +25,25 @@ public class ArgumentMap {
 		try {
 			arg = arg.trim();
 			if (arg == "-path") {
-				/* Do something */
-				aPath(arg);
 				return true;
 			} else if (arg == "-index") {
-				/* Do something */
 				return true;
 			} else {
+				return false;
+			}
+		} catch (NullPointerException e) {
+			return false;
+		}
+	}
+	
+	
+	public static boolean isPath(String arg) {
+		try {
+			arg = arg.trim();
+			if (arg != "-path" && arg != "-index") {
+				return true;
+			} else {
+				
 				return false;
 			}
 		} catch (NullPointerException e) {
@@ -45,7 +63,7 @@ public class ArgumentMap {
 	}
 	
 	
-	public void optionalPath(String arg) {
+	public static void optionalPath(String arg) {
 		
 	}
 	

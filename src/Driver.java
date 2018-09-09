@@ -26,18 +26,18 @@ public class Driver {
 		FileRead file_read = new FileRead();
 		ArgumentMap am = new ArgumentMap();
 		
-		Path p = file_read.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/symbols.txt");
+		Path path = file_read.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/symbols.txt");
 		
-		for (int i = 0; i < args.length; i++) {
-			if (args[i].isEmpty()) {
-				System.out.println("No arguments passed");
-			} else {
-				
-			}
- 		}
-		
-		file_read.read(p, index);
-		
+//		for (int i = 0; i < args.length; i++) {
+//			if (args[i].isEmpty()) {
+//				System.out.println("No arguments passed");
+//			} else {
+//				
+//			}
+// 		}
+//		
+//		file_read.read(p, index);
+//		
 //		for (String key : index.keySet()) {
 //			System.out.print(key + "     ");
 //			for (String key2 : index.get(key).keySet()) {
