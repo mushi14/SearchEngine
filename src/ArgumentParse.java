@@ -8,19 +8,21 @@ import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ArgumentMap {
+public class ArgumentParse {
 
-	private static HashMap<String, HashMap<String, HashSet<Integer>>> index = new HashMap<String, HashMap<String, HashSet<Integer>>>();
+	public static HashMap<String, HashMap<String, HashSet<Integer>>> index = new HashMap<String, HashMap<String, HashSet<Integer>>>();
 
 	
 	public static void parse(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
-				/* Do something */
 				if (args[i] == "-path") {
-					aPath(args[i+1]);
-					i++;
+					if (isValidPath(args[i+1])) {
+						aPath(args[i+1]);
+						i++;
+					}
 				} else if (args[i] == "-index") {
+					/* Do something */
 					optionalPath(args[i+1]);
 				}
 			}
@@ -44,15 +46,14 @@ public class ArgumentMap {
 	}
 	
 	
-	/* This method is not right */
-	public static boolean isPath(String arg) {
+	public static boolean isValidPath(String arg) {
+		Path path = Paths.get(arg);
 		try {
-			arg = arg.trim();
-			/* Do something */
-			if (arg != "-path" && arg != "-index") {
+			if (Files.isDirectory(path)) {
+				return true;
+			} else if (Files.isRegularFile(path)){
 				return true;
 			} else {
-				/* Do something */
 				return false;
 			}
 		} catch (NullPointerException e) {
@@ -80,13 +81,13 @@ public class ArgumentMap {
 					FileRead.read(path, index);
 				}
 			}
-		}
-		else if (Files.isRegularFile(path)) {
+		} else if (Files.isRegularFile(path)) {
 			FileRead.read(path, index);
 		}
 	}
 	
 	
+	/* Do something */
 	public static void optionalPath(String arg) {
 		
 	}
@@ -102,5 +103,4 @@ public class ArgumentMap {
 			return false;
 		}
 	}
-	
 }

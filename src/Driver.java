@@ -25,9 +25,9 @@ public class Driver {
 	 */
 	public static void main(String[] args) {
 		// TODO Fill in				
-		Path path = FileRead.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple");
+//		Path path = FileRead.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple");
 
-		String file = "/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/symbols.txt";
+//		String file = "/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/words.tExT";
 		
 
 		
