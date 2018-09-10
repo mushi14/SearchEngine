@@ -62,6 +62,17 @@ public class ArgumentParse {
 	}
 	
 	
+	public static boolean isTextFile(String file) {
+		file = file.toLowerCase();
+		if (file.substring(file.length() - 4, file.length()).equals(".txt")) {
+			return true;
+		} else if (file.substring(file.length() - 5, file.length()).equals(".text")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public static void aPath(String arg) {
 		Path path = FileRead.getPath(arg);
 		if (Files.isDirectory(path)) {
@@ -90,17 +101,5 @@ public class ArgumentParse {
 	/* Do something */
 	public static void optionalPath(String arg) {
 		
-	}
-	
-	
-	public static boolean isTextFile(String file) {
-		file = file.toLowerCase();
-		if (file.substring(file.length() - 4, file.length()).equals(".txt")) {
-			return true;
-		} else if (file.substring(file.length() - 5, file.length()).equals(".text")) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 }
