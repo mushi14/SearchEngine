@@ -10,12 +10,10 @@ import java.util.stream.Stream;
 
 public class ArgumentParse {
 	
-	public static HashMap<String, HashMap<String, HashSet<Integer>>> parse(String[] args, HashMap<String, 
-			HashMap<String, HashSet<Integer>>> index) {
+	public static void parse(String[] args, HashMap<String, HashMap<String, HashSet<Integer>>> index) {
 		for (int i = 0; i < args.length; i++) {
-			System.out.println(args[i]);
 			if (isFlag(args[i])) {
-				if (args[i] == "-path") {
+				if (args[i].equals("-path")) {
 					try {
 						if (!args[i+1].isEmpty()) {
 							Path path = Paths.get(args[i+1]);
@@ -27,12 +25,12 @@ public class ArgumentParse {
 					} catch (NullPointerException e) {
 						e.printStackTrace();
 					}
-				} else if (args[i] == "-index") {
+				} else if (args[i].equals("-index")) {
 					try {
 						if (!args[i+1].isEmpty()) {
 							Path path = Paths.get(args[i+1]);
 							if (Files.isRegularFile(path)) {
-								/* Do something */
+								/* Fix this method */
 								optionalPath(path, index);
 								i++;
 							} else {
@@ -47,7 +45,6 @@ public class ArgumentParse {
 				}
 			}
 		}
-		return index;
 	}
 	
 	
@@ -57,9 +54,9 @@ public class ArgumentParse {
 		} else {
 			try {
 				arg = arg.trim();
-				if (arg == "-path") {
+				if (arg.equals("-path")) {
 					return true;
-				} else if (arg == "-index") {
+				} else if (arg.equals("-index")) {
 					return true;
 				} else {
 					return false;

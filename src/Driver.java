@@ -27,23 +27,15 @@ public class Driver {
 		// TODO Fill in			
 		HashMap<String, HashMap<String, HashSet<Integer>>> index = new HashMap<String, HashMap<String, HashSet<Integer>>>();
 
-		System.out.println(ArgumentParse.parse(args, index));
+		ArgumentParse.parse(args, index);
 		
-		
-//		Path path = FileRead.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/symbols.txt");
-
-//		FileRead.read(path, index);
 //		System.out.println(index.keySet());
-
 		
-
-//		
-//		file_read.read(p, index);
-//		
+		
 //		for (String key : index.keySet()) {
 //			System.out.print(key + "     ");
 //			for (String key2 : index.get(key).keySet()) {
-//				System.out.print("[");
+//				System.out.print(key2 + "      " + "[");
 //				for (int num : index.get(key).get(key2)) {
 //				System.out.print(num + ",");
 //				}
@@ -51,7 +43,7 @@ public class Driver {
 //			}
 //			System.out.println();
 //		}
-		
+//		
 	}
 
 }

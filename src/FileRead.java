@@ -49,10 +49,8 @@ public class FileRead {
 				line = br.readLine();
 			}
 		} catch (FileNotFoundException e) {
-			System.err.println("file couldn't be found");
             e.printStackTrace();
 		} catch (IOException e) {
-			System.err.println("unable to read");
             e.printStackTrace();
 		}
 	}
