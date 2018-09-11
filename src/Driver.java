@@ -24,11 +24,16 @@ public class Driver {
 	 * @return 0 if everything went well
 	 */
 	public static void main(String[] args) {
-		// TODO Fill in				
-//		Path path = FileRead.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple");
+		// TODO Fill in			
+		HashMap<String, HashMap<String, HashSet<Integer>>> index = new HashMap<String, HashMap<String, HashSet<Integer>>>();
 
-//		String file = "/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/words.tExT";
+		System.out.println(ArgumentParse.parse(args, index));
 		
+		
+//		Path path = FileRead.getPath("/Users/mushahidhassan/Desktop/CS 212/ProjectTests/project-tests/text/simple/symbols.txt");
+
+//		FileRead.read(path, index);
+//		System.out.println(index.keySet());
 
 		
 
@@ -47,7 +52,6 @@ public class Driver {
 //			System.out.println();
 //		}
 		
-//		System.out.println(Arrays.toString(args));
 	}
 
 }

@@ -9,58 +9,67 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ArgumentParse {
-
-	public static HashMap<String, HashMap<String, HashSet<Integer>>> index = new HashMap<String, HashMap<String, HashSet<Integer>>>();
-
 	
-	public static void parse(String[] args) {
+	public static HashMap<String, HashMap<String, HashSet<Integer>>> parse(String[] args, HashMap<String, 
+			HashMap<String, HashSet<Integer>>> index) {
 		for (int i = 0; i < args.length; i++) {
+			System.out.println(args[i]);
 			if (isFlag(args[i])) {
 				if (args[i] == "-path") {
-					if (isValidPath(args[i+1])) {
-						aPath(args[i+1]);
-						i++;
+					try {
+						if (!args[i+1].isEmpty()) {
+							Path path = Paths.get(args[i+1]);
+							if (Files.isDirectory(path) || Files.isRegularFile(path)) {
+								aPath(path, index);
+								i++;
+							}
+						}
+					} catch (NullPointerException e) {
+						e.printStackTrace();
 					}
 				} else if (args[i] == "-index") {
-					/* Do something */
-					optionalPath(args[i+1]);
+					try {
+						if (!args[i+1].isEmpty()) {
+							Path path = Paths.get(args[i+1]);
+							if (Files.isRegularFile(path)) {
+								/* Do something */
+								optionalPath(path, index);
+								i++;
+							} else {
+								path = Paths.get("/Users/mushahidhassan/Desktop/CS 212/Project1/project-mushi14/index.json.rtf");
+								optionalPath(path, index);
+							}
+						}
+					} catch (NullPointerException e) {
+						Path path = Paths.get("/Users/mushahidhassan/Desktop/CS 212/Project1/project-mushi14/index.json.rtf");
+						optionalPath(path, index);
+					}
 				}
 			}
 		}
+		return index;
 	}
 	
 	
 	public static boolean isFlag(String arg) {
-		try {
-			arg = arg.trim();
-			if (arg == "-path") {
-				return true;
-			} else if (arg == "-index") {
-				return true;
-			} else {
+		if (arg.isEmpty()) { 
+			return false;
+		} else {
+			try {
+				arg = arg.trim();
+				if (arg == "-path") {
+					return true;
+				} else if (arg == "-index") {
+					return true;
+				} else {
+					return false;
+				}
+			} catch (NullPointerException e) {
 				return false;
 			}
-		} catch (NullPointerException e) {
-			return false;
 		}
 	}
-	
-	
-	public static boolean isValidPath(String arg) {
-		Path path = Paths.get(arg);
-		try {
-			if (Files.isDirectory(path)) {
-				return true;
-			} else if (Files.isRegularFile(path)){
-				return true;
-			} else {
-				return false;
-			}
-		} catch (NullPointerException e) {
-			return false;
-		}
-	}
-	
+
 	
 	public static boolean isTextFile(String file) {
 		file = file.toLowerCase();
@@ -73,8 +82,8 @@ public class ArgumentParse {
 		}
 	}
 	
-	public static void aPath(String arg) {
-		Path path = FileRead.getPath(arg);
+	
+	public static void aPath(Path path, HashMap<String, HashMap<String, HashSet<Integer>>> index) {
 		if (Files.isDirectory(path)) {
 			ArrayList<String> files = new ArrayList<String>();
 			try (Stream<Path> filePathStream = Files.walk(Paths.get(path.toString()))) {
@@ -88,8 +97,11 @@ public class ArgumentParse {
 			}
 
 			for (String file : files) {
+				path = Paths.get(file);
 				if (isTextFile(file)) {
 					FileRead.read(path, index);
+				} else if (Files.isDirectory(path)) {
+					aPath(path, index);
 				}
 			}
 		} else if (Files.isRegularFile(path)) {
@@ -99,7 +111,17 @@ public class ArgumentParse {
 	
 	
 	/* Do something */
-	public static void optionalPath(String arg) {
-		
+	public static void optionalPath(Path path, HashMap<String, HashMap<String, HashSet<Integer>>> index) {
+
 	}
 }
+
+
+
+
+
+
+
+
+
+

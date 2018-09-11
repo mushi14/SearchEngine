@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
+
 public class FileRead {
 			
 	/* Method for getting the path */
@@ -25,7 +26,7 @@ public class FileRead {
 			BufferedReader br = Files.newBufferedReader(p);
 			String line = br.readLine();
 			while (line != null) {
-				String[] words = line.split("[^\\w']+");
+				String[] words = line.split("[^A-Za-z]");
 				for (int i = 0; i < words.length; i++) {
 					if (!words[i].isEmpty()) {
 						if (index.containsKey(words[i])) {
