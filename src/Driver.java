@@ -1,15 +1,9 @@
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.TreeMap;
 
 /**
  * TODO Fill in your own comments!
@@ -22,11 +16,12 @@ public class Driver {
 	 *
 	 * @param args the command-line arguments to parse
 	 * @return 0 if everything went well
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// TODO Fill in			
-		HashMap<String, HashMap<String, HashSet<Integer>>> index = new HashMap<String, HashMap<String, HashSet<Integer>>>();
-
+		TreeMap<String, WordIndex> index = new TreeMap<String, WordIndex>();
+		
 		ArgumentParse.parse(args, index);
 		
 //		System.out.println(index.keySet());
@@ -43,7 +38,7 @@ public class Driver {
 //			}
 //			System.out.println();
 //		}
-//		
+		
 	}
 
 }

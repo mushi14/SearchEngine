@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.TreeMap;
 
 
 public class FileRead {
@@ -20,7 +18,7 @@ public class FileRead {
 	
 	
 	/* Method for reading the line */
-	public static void read(Path p, HashMap<String, HashMap<String, HashSet<Integer>>> index) {
+	public static void read(Path p, TreeMap<String, WordIndex> index) throws IOException {
 		int count = 1;
 		try { 
 			BufferedReader br = Files.newBufferedReader(p);
@@ -30,7 +28,7 @@ public class FileRead {
 				for (int i = 0; i < words.length; i++) {
 					if (!words[i].isEmpty()) {
 						if (index.containsKey(words[i])) {
-							if (index.get(words[i]).containsKey(p.toString())) {
+							if (index.get(words[i]).contains(p.toString())) {
 								index.get(words[i]).get(p.toString()).add(count);
 								count++;
 							} else {
@@ -39,7 +37,7 @@ public class FileRead {
 								count++;
 							}
 						} else {
-							index.put(words[i], new HashMap<String, HashSet<Integer>>());
+							index.put(words[i], new WordIndex());
 							index.get(words[i]).put(p.toString(), new HashSet<Integer>());
 							index.get(words[i]).get(p.toString()).add(count);
 							count++;
@@ -49,8 +47,6 @@ public class FileRead {
 				line = br.readLine();
 			}
 		} catch (FileNotFoundException e) {
-            e.printStackTrace();
-		} catch (IOException e) {
             e.printStackTrace();
 		}
 	}

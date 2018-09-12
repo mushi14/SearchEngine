@@ -3,14 +3,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.stream.Collectors;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 
 public class ArgumentParse {
 	
-	public static void parse(String[] args, HashMap<String, HashMap<String, HashSet<Integer>>> index) {
+	public static void parse(String[] args, TreeMap<String, WordIndex> index) throws IOException{
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
 				if (args[i].equals("-path")) {
@@ -80,7 +78,7 @@ public class ArgumentParse {
 	}
 	
 	
-	public static void aPath(Path path, HashMap<String, HashMap<String, HashSet<Integer>>> index) {
+	public static void aPath(Path path, TreeMap<String, WordIndex> index) throws IOException {
 		if (Files.isDirectory(path)) {
 			ArrayList<String> files = new ArrayList<String>();
 			try (Stream<Path> filePathStream = Files.walk(Paths.get(path.toString()))) {
@@ -108,17 +106,7 @@ public class ArgumentParse {
 	
 	
 	/* Do something */
-	public static void optionalPath(Path path, HashMap<String, HashMap<String, HashSet<Integer>>> index) {
+	public static void optionalPath(Path path, TreeMap<String, WordIndex> index) {
 
 	}
 }
-
-
-
-
-
-
-
-
-
-
