@@ -24,7 +24,7 @@ public class Driver {
 		
 		ArgumentParse.parse(args, index);
 		
-//		System.out.println(index.keySet());
+		System.out.println(index.keySet());
 		
 		
 //		for (String key : index.keySet()) {
