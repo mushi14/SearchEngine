@@ -168,23 +168,23 @@ public class TreeJSONWriter {
 		writer.write("}" + System.lineSeparator());
 	}
 
-	
-	public static void main(String[] args) {
-		
-		var test = new TreeMap<String, WordIndex>();
-		
-		test.put("capybara", new WordIndex());
-		test.get("capybara").put("input/mammals.txt", new HashSet());
-		test.get("capybara").get("input/mammals.txt").add(11);
-		
-		test.put("platypus", new WordIndex());
-		test.get("platypus").put("input/mammals.txt", new HashSet());
-		test.get("platypus").get("input/mammals.txt").add(3);
-		test.get("platypus").get("input/mammals.txt").add(8);
-		
-		test.get("platypus").put("input/dangerous/venomous.txt", new HashSet());
-		test.get("platypus").get("input/dangerous/venomous.txt").add(2);
-
-		System.out.println(asInvertedIndex(test));
-	}
+//	
+//	public static void main(String[] args) {
+//		
+//		var test = new TreeMap<String, WordIndex>();
+//		
+//		test.put("capybara", new WordIndex());
+//		test.get("capybara").put("input/mammals.txt", new HashSet());
+//		test.get("capybara").get("input/mammals.txt").add(11);
+//		
+//		test.put("platypus", new WordIndex());
+//		test.get("platypus").put("input/mammals.txt", new HashSet());
+//		test.get("platypus").get("input/mammals.txt").add(8);
+//		test.get("platypus").get("input/mammals.txt").add(3);
+//		
+//		test.get("platypus").put("input/dangerous/venomous.txt", new HashSet());
+//		test.get("platypus").get("input/dangerous/venomous.txt").add(2);
+//
+//		System.out.println(asInvertedIndex(test));
+//	}
 }

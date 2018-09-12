@@ -1,4 +1,6 @@
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,7 +30,6 @@ public class ArgumentParse {
 						if (!args[i+1].isEmpty()) {
 							Path path = Paths.get(args[i+1]);
 							if (Files.isRegularFile(path)) {
-								/* Fix this method */
 								optionalPath(path, index);
 								i++;
 							} else {
@@ -105,8 +106,8 @@ public class ArgumentParse {
 	}
 	
 	
-	/* Do something */
-	public static void optionalPath(Path path, TreeMap<String, WordIndex> index) {
-
+	public static void optionalPath(Path path, TreeMap<String, WordIndex> index) throws IOException {
+		BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8);
+		TreeJSONWriter.asInvertedIndex(index, writer, 0);
 	}
 }
