@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
+
 public class ArgumentParse {
 	
 	public static void parse(String[] args, TreeMap<String, WordIndex> index) throws IOException{

@@ -168,7 +168,7 @@ public class TreeJSONWriter {
 		writer.write("}" + System.lineSeparator());
 	}
 
-//	
+	
 //	public static void main(String[] args) {
 //		
 //		var test = new TreeMap<String, WordIndex>();
