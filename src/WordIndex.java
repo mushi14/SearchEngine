@@ -128,9 +128,7 @@ public class WordIndex {
 		return list;
 	}
 
-	/**
-	 * Returns a string representation of this index.
-	 */
+
 	@Override
 	public String toString() {
 		return this.pathsMap.toString();
