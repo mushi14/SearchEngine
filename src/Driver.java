@@ -15,7 +15,6 @@ public class Driver {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
-		// TODO Fill in			
 		TreeMap<String, WordIndex> index = new TreeMap<String, WordIndex>();
 		ArgumentParse.parse(args, index);
 	}
