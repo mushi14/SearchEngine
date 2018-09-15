@@ -5,10 +5,8 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.TreeMap;
 
 public class TreeJSONWriter {
 
@@ -27,7 +25,7 @@ public class TreeJSONWriter {
 	}
 
 	
-	public static String asPositionArray(HashSet<Integer> elements) {
+	public static String asPositionArray(TreeSet<Integer> elements) {
 		try {
 			StringWriter writer = new StringWriter();
 			asPositionArray(elements, writer, 0);
@@ -39,7 +37,7 @@ public class TreeJSONWriter {
 	}
 
 	
-	public static void asPositionArray(HashSet<Integer> elements, Path path) throws IOException {
+	public static void asPositionArray(TreeSet<Integer> elements, Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path,
 				StandardCharsets.UTF_8)) {
 			asPositionArray(elements, writer, 0);
@@ -47,7 +45,7 @@ public class TreeJSONWriter {
 	}
 
 	
-	public static void asPositionArray(HashSet<Integer> elements, Writer writer, int level) throws IOException {
+	public static void asPositionArray(TreeSet<Integer> elements, Writer writer, int level) throws IOException {
 
 		writer.write('[' + System.lineSeparator());
 		

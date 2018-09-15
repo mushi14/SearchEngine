@@ -1,10 +1,5 @@
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,7 +8,7 @@ import java.util.stream.Stream;
 
 public class ArgumentParse {
 	
-	public static void parse(String[] args, TreeMap<String, WordIndex> index) throws IOException {
+	public static void parse(String[] args, TreeMap<String, WordIndex> index) throws IOException {		
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
 				if (args[i].equals("-path")) {
@@ -22,32 +17,30 @@ public class ArgumentParse {
 							Path path = Paths.get(args[i+1]);
 							if (Files.isDirectory(path) || Files.isRegularFile(path)) {
 								aPath(path, index);
-								i++;
 							}
 						} 
 					} catch (NullPointerException e) {
 						e.printStackTrace();
 					}
+					i++;
 				} else if (args[i].equals("-index")) {
 					try {
 						if ((i + 1) < args.length) {
-							if (!args[i+1].isEmpty()) {
+							if (!isFlag(args[i + 1])) {
 								Path path = Paths.get(args[i+1]);
-								if (Files.isRegularFile(path)) {
-									optionalPath(path, index);
-									i++;
-								} else {
-									path = Paths.get("/Users/mushahidhassan/Desktop/CS212/Project1/project-mushi14/index.json");
-									optionalPath(path, index);
-								}
+								TreeJSONWriter.asInvertedIndex(index, path);
+							} else {
+								TreeJSONWriter.asInvertedIndex(index, 
+										Paths.get("/Users/mushahidhassan/Desktop/CS212/ProjectTests/project-tests/out/index.json"));
 							}
 						} else {
-							Path path = Paths.get("/Users/mushahidhassan/Desktop/CS212/Project1/project-mushi14/index.json");
-							optionalPath(path, index);
+							TreeJSONWriter.asInvertedIndex(index, 
+									Paths.get("/Users/mushahidhassan/Desktop/CS212/ProjectTests/project-tests/out/index.json"));
 						}
+						i++;
 					} catch (NullPointerException e) {
-						Path path = Paths.get("/Users/mushahidhassan/Desktop/CS212/Project1/project-mushi14/index.json");
-						optionalPath(path, index);
+						TreeJSONWriter.asInvertedIndex(index, 
+								Paths.get("/Users/mushahidhassan/Desktop/CS212/ProjectTests/project-tests/out/index.json"));
 					}
 				}
 			}
@@ -111,13 +104,5 @@ public class ArgumentParse {
 		} else if (Files.isRegularFile(path)) {
 			TextFileStemmer.stemFile(path, index);
 		}
-	}
-	
-	
-	public static void optionalPath(Path path, TreeMap<String, WordIndex> index) throws IOException {
-		StringWriter writer = new StringWriter();
-		TreeJSONWriter.asInvertedIndex(index);
-		TreeJSONWriter.asInvertedIndex(index, path);
-		TreeJSONWriter.asInvertedIndex(index, writer, 0);
-	}
+	}	
 }

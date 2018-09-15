@@ -1,28 +1,27 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 
 public class WordIndex {
 
 
-	private HashMap<String, HashSet<Integer>> pathsMap;
+	private TreeMap<String, TreeSet<Integer>> pathsMap;
 
 	
 	public WordIndex() {
-		this.pathsMap = new HashMap<>();
+		this.pathsMap = new TreeMap<>();
 	}
-
 	
-	public HashSet<Integer> get(String path) {
+	
+	public TreeSet<Integer> get(String path) {
 		return pathsMap.get(path);
 	}
 	
 	
-	public void put(String path, HashSet<Integer> val) {
+	public void put(String path, TreeSet<Integer> val) {
 		pathsMap.put(path, val);
 	}
 	
@@ -41,7 +40,7 @@ public class WordIndex {
 				return true;
 			}
 		} else {
-			pathsMap.put(path, new HashSet<Integer>());
+			pathsMap.put(path, new TreeSet<Integer>());
 			pathsMap.get(path).add(position);
 			return true;
 		}
@@ -64,7 +63,7 @@ public class WordIndex {
 					change = true;
 				}
 			} else {
-				pathsMap.put(path[i], new HashSet<Integer>());
+				pathsMap.put(path[i], new TreeSet<Integer>());
 				pathsMap.get(path[i]).add(start + i);
 				change = true;
 			}
