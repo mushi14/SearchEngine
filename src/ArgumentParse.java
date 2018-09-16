@@ -100,7 +100,6 @@ public class ArgumentParse {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 			for (String file : files) {
 				path = Paths.get(file);
 				if (isTextFile(file)) {
