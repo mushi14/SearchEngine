@@ -13,11 +13,9 @@ public class ArgumentParse {
 			if (isFlag(args[i])) {
 				if (args[i].equals("-path")) {
 					try {
-						if ((i + 1) < args.length) {
+						if ((i + 1) < args.length && isValidPath(args[i + 1])) {
 							Path path = Paths.get(args[i+1]);
-							if (Files.isDirectory(path) || Files.isRegularFile(path)) {
-								aPath(path, index);
-							}
+							aPath(path, index);
 						} 
 					} catch (NullPointerException e) {
 						e.printStackTrace();
@@ -31,17 +29,17 @@ public class ArgumentParse {
 								TreeJSONWriter.asInvertedIndex(index, path);
 							} else {
 								TreeJSONWriter.asInvertedIndex(index, 
-										Paths.get("/Users/mushahidhassan/Desktop/CS212/ProjectTests/project-tests/out/index.json"));
+										Paths.get("index.json"));
 							}
 						} else {
 							TreeJSONWriter.asInvertedIndex(index, 
-									Paths.get("/Users/mushahidhassan/Desktop/CS212/ProjectTests/project-tests/out/index.json"));
+									Paths.get("index.json"));
 						}
-						i++;
 					} catch (NullPointerException e) {
 						TreeJSONWriter.asInvertedIndex(index, 
-								Paths.get("/Users/mushahidhassan/Desktop/CS212/ProjectTests/project-tests/out/index.json"));
+								Paths.get("index.json"));
 					}
+					i++;
 				}
 			}
 		}
@@ -65,6 +63,16 @@ public class ArgumentParse {
 				return false;
 			}
 		}
+	}
+	
+	
+	public static boolean isValidPath(String p) {
+		Path path = Paths.get(p);
+		if (Files.isDirectory(path) || Files.isRegularFile(path)) {
+			return true;
+		} else {
+			return false;
+		}	
 	}
 
 	
