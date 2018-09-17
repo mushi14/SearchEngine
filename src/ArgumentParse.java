@@ -1,4 +1,7 @@
 import java.io.IOException;
+import java.nio.file.DirectoryIteratorException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -87,24 +90,22 @@ public class ArgumentParse {
 	
 	public static void aPath(Path path, TreeMap<String, WordIndex> index) throws IOException {
 		if (Files.isDirectory(path)) {
-			ArrayList<String> files = new ArrayList<String>();
-			try (Stream<Path> filePathStream = Files.walk(Paths.get(path.toString()))) {
-			    filePathStream.forEach(filePath -> {
-			        if (Files.isRegularFile(filePath)) {
-			        	files.add(filePath.toString());
+			try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
+			    for (Path file: filePathStream) {
+			        if (Files.isRegularFile(file)) {
+						path = Paths.get(file.toString());
+						if (isTextFile(file.toString())) {
+							TextFileStemmer.stemFile(path, index);
+						}
+			        } else if (Files.isDirectory(file)) {
+						path = Paths.get(file.toString());
+			        	aPath(path, index);
 			        }
-			    });
-			} catch (IOException e) {
+			    }
+			} catch (NullPointerException e) {
 				e.printStackTrace();
 			}
-			for (String file : files) {
-				path = Paths.get(file);
-				if (isTextFile(file)) {
-					TextFileStemmer.stemFile(path, index);
-				} else if (Files.isDirectory(path)) {
-					aPath(path, index);
-				}
-			}
+
 		} else if (Files.isRegularFile(path)) {
 			TextFileStemmer.stemFile(path, index);
 		}
