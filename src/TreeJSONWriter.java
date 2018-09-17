@@ -10,21 +10,40 @@ import java.util.TreeMap;
 
 public class TreeJSONWriter {
 
-	
+	/**
+	 * Writes several tab <code>\t</code> symbols using the provided
+	 * {@link Writer}.
+	 *
+	 * @param times  the number of times to write the tab symbol
+	 * @param writer the writer to use
+	 * @throws IOException if the writer encounters any issues
+	 */
 	public static void indent(int times, Writer writer) throws IOException {
 		for (int i = 0; i < times; i++) {
 			writer.write('\t');
 		}
 	}
 
-	
+	/**
+	 * Writes the element surrounded by quotes using the provided {@link Writer}.
+	 *
+	 * @param element the element to quote
+	 * @param writer  the writer to use
+	 * @throws IOException if the writer encounters any issues
+	 */
 	public static void quote(String element, Writer writer) throws IOException {
 		writer.write('"');
 		writer.write(element);
 		writer.write('"');
 	}
 
-	
+	/**
+	 * Returns the set of elements formatted as a pretty JSON array of numbers.
+	 *
+	 * @param elements the elements to convert to JSON
+	 * @return {@link String} containing the elements in pretty JSON format
+	 *
+	 */
 	public static String asPositionArray(TreeSet<Integer> elements) {
 		try {
 			StringWriter writer = new StringWriter();
@@ -36,7 +55,14 @@ public class TreeJSONWriter {
 		}
 	}
 
-	
+	/**
+	 * Writes the set of elements formatted as a pretty JSON array of numbers to
+	 * the specified file.
+	 *
+	 * @param elements the elements to convert to JSON
+	 * @param path     the path to the file write to output
+	 * @throws IOException if the writer encounters any issues
+	 */
 	public static void asPositionArray(TreeSet<Integer> elements, Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path,
 				StandardCharsets.UTF_8)) {
@@ -44,7 +70,22 @@ public class TreeJSONWriter {
 		}
 	}
 
-	
+	/**
+	 * Writes the set of elements formatted as a pretty JSON array of numbers
+	 * using the provided {@link Writer} and indentation level.
+	 *
+	 * @param elements the elements to convert to JSON
+	 * @param writer   the writer to use
+	 * @param level    the initial indentation level
+	 * @throws IOException if the writer encounters any issues
+	 *
+	 * @see Writer#write(String)
+	 * @see Writer#append(CharSequence)
+	 *
+	 * @see System#lineSeparator()
+	 *
+	 * @see #indent(int, Writer)
+	 */
 	public static void asPositionArray(TreeSet<Integer> elements, Writer writer, int level) throws IOException {
 
 		writer.write('[' + System.lineSeparator());
@@ -67,7 +108,13 @@ public class TreeJSONWriter {
 		writer.write(']');
 	}
 
-	
+	/**
+	 * Returns the map of elements formatted as a pretty JSON object.
+	 *
+	 * @param elements the elements to convert to JSON
+	 * @return {@link String} containing the elements in pretty JSON format
+	 *
+	 */
 	public static String asWordIndex(WordIndex elements) {
 		try {
 			StringWriter writer = new StringWriter();
@@ -79,7 +126,15 @@ public class TreeJSONWriter {
 		}
 	}
 
-	
+	/**
+	 * Writes the map of elements formatted as a pretty JSON object to
+	 * the specified file.
+	 *
+	 * @param elements the elements to convert to JSON
+	 * @param path     the path to the file write to output
+	 * @throws IOException if the writer encounters any issues
+	 *
+	 */
 	public static void asWordIndex(WordIndex elements,
 			Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path,
@@ -88,7 +143,23 @@ public class TreeJSONWriter {
 		}
 	}
 
-	
+	/**
+	 * Writes the map of elements as a pretty JSON object using the provided
+	 * {@link Writer} and indentation level.
+	 *
+	 * @param elements the elements to convert to JSON
+	 * @param writer   the writer to use
+	 * @param level    the initial indentation level
+	 * @throws IOException if the writer encounters any issues
+	 *
+	 * @see Writer#write(String)
+	 * @see Writer#append(CharSequence)
+	 *
+	 * @see System#lineSeparator()
+	 *
+	 * @see #indent(int, Writer)
+	 * @see #quote(String, Writer)
+	 */
 	public static void asWordIndex(WordIndex elements,
 			Writer writer, int level) throws IOException {
 
@@ -117,7 +188,13 @@ public class TreeJSONWriter {
 		writer.write("}");
 	}
 	
-	
+	/**
+	 * Returns the map of String keys and WordIndex values formatted as a pretty JSON object.
+	 *
+	 * @param elements the elements to convert to JSON
+	 * @return {@link String} containing the elements in pretty JSON format
+	 *
+	 */
 	public static String asInvertedIndex(TreeMap<String, WordIndex> elements) {
 		try {
 			StringWriter writer = new StringWriter();
@@ -129,7 +206,15 @@ public class TreeJSONWriter {
 		}
 	}
 
-	
+	/**
+	 * Writes the map of String keys and WordIndex values formatted as a pretty JSON object to
+	 * the specified file.
+	 *
+	 * @param elements the elements to convert to JSON
+	 * @param path     the path to the file write to output
+	 * @throws IOException if the writer encounters any issues
+	 *
+	 */
 	public static void asInvertedIndex(TreeMap<String, WordIndex> elements,
 			Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path,
@@ -138,7 +223,23 @@ public class TreeJSONWriter {
 		}
 	}
 	
-	
+	/**
+	 * Writes the map of String keys and WordIndex values as a pretty JSON object using the provided
+	 * {@link Writer} and indentation level.
+	 *
+	 * @param elements the elements to convert to JSON
+	 * @param writer   the writer to use
+	 * @param level    the initial indentation level
+	 * @throws IOException if the writer encounters any issues
+	 *
+	 * @see Writer#write(String)
+	 * @see Writer#append(CharSequence)
+	 *
+	 * @see System#lineSeparator()
+	 *
+	 * @see #indent(int, Writer)
+	 * @see #quote(String, Writer)
+	 */
 	public static void asInvertedIndex(TreeMap<String, WordIndex> elements,
 			Writer writer, int level) throws IOException {
 		

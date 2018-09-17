@@ -7,6 +7,14 @@ import java.util.TreeMap;
 
 public class ArgumentParse {
 	
+	/** Parses the command line arguments and makes any necessary changes to 
+	 * inverted index accordingly. 
+	 * 
+	 * @param args array of command line arguments
+	 * @param index inverted index that contains stemmed words, their files, and their positions
+	 * @throws IOException if unable to read to write to file 
+	 * 
+	 */
 	public static void parse(String[] args, TreeMap<String, WordIndex> index) throws IOException {		
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
@@ -41,7 +49,12 @@ public class ArgumentParse {
 		}
 	}
 	
-	
+	/** Checks to see if argument passed is a valid flag or not 
+	 * 
+	 * @param arg argument from the command line
+	 * @return true if the argument is -path or -index
+	 * 
+	 */
 	public static boolean isFlag(String arg) {
 		if (arg.isEmpty()) { 
 			return false;
@@ -61,7 +74,12 @@ public class ArgumentParse {
 		}
 	}
 	
-	
+	/** Checks to see if the path provided is a valid path 
+	 * 
+	 * @param p path being checked
+	 * @return true if path is a valid file or a directory
+	 * 
+	 */
 	public static boolean isValidPath(String p) {
 		Path path = Paths.get(p);
 		if (Files.isDirectory(path) || Files.isRegularFile(path)) {
@@ -71,7 +89,12 @@ public class ArgumentParse {
 		}	
 	}
 
-	
+	/** Checks to see if the file is a text file
+	 * 
+	 * @param file takes in a file to check if is a text file
+	 * @return true if the given file ends in ".txt" or ".text"
+	 * 
+	 */
 	public static boolean isTextFile(String file) {
 		file = file.toLowerCase();
 		if (file.substring(file.length() - 4, file.length()).equals(".txt")) {
@@ -83,7 +106,15 @@ public class ArgumentParse {
 		}
 	}
 	
-	
+	/** Checks to see if the path provided is a text file or a directory. If a valid text
+	 * file, then writes to the file. If a directory, then goes through the directory 
+	 * to find its text files or directories. 
+	 * 
+	 * @param path path that is being checked 
+	 * @param index inverted index that contains the stemmed words, their files, and their positions
+	 * @throws IOException if unable to read to write to file 
+	 * 
+	 */
 	public static void aPath(Path path, TreeMap<String, WordIndex> index) throws IOException {
 		if (Files.isDirectory(path)) {
 			try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
