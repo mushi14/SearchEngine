@@ -13,7 +13,7 @@ public class ArgumentParse {
 			if (isFlag(args[i])) {
 				if (args[i].equals("-path")) {
 					try {
-						if ((i + 1) < args.length && isValidPath(args[i + 1])) {
+						if ((i + 1) < args.length && isValidPath(args[i+1])) {
 							Path path = Paths.get(args[i+1]);
 							aPath(path, index);
 						} 
@@ -25,15 +25,12 @@ public class ArgumentParse {
 					try {
 						if ((i + 1) < args.length) {
 							if (!isFlag(args[i + 1])) {
-								Path path = Paths.get(args[i+1]);
-								TreeJSONWriter.asInvertedIndex(index, path);
+								TreeJSONWriter.asInvertedIndex(index, Paths.get(args[i+1]));
 							} else {
-								TreeJSONWriter.asInvertedIndex(index, 
-										Paths.get("index.json"));
+								TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
 							}
 						} else {
-							TreeJSONWriter.asInvertedIndex(index, 
-									Paths.get("index.json"));
+							TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
 						}
 					} catch (NullPointerException e) {
 						TreeJSONWriter.asInvertedIndex(index, 
