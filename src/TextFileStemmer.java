@@ -73,7 +73,7 @@ public class TextFileStemmer {
 		return split(clean(text));
 	}
 	
-	
+	// TODO Javadoc
 	public static List<String> stemLine(String line) {
 		// This is provided for you.
 		return stemLine(line, new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH));
@@ -91,6 +91,7 @@ public class TextFileStemmer {
 	 */
 	public static List<String> stemLine(String line, Stemmer stemmer) {
 		String[] words = parse(line);
+		// TODO Rename stemmed_words to stemmedWords
 		List<String> stemmed_words = new ArrayList<>();
 		for (String word : words) {
 			stemmed_words.add(stemmer.stem(word).toString());
