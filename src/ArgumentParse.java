@@ -5,7 +5,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.TreeMap;
 
+// TODO Better class name
+// TODO Rename to "ArgumentParser" think of class names as job titles
 public class ArgumentParse {
+	
+	/*
+	 * TODO
+	 * Anything project-specific should stay in Driver
+	 * (includes looking for specific flag/values from the user)
+	 * 
+	 * All other code should be generalized
+	 */
 	
 	/** Parses the command line arguments and makes any necessary changes to 
 	 * inverted index accordingly. 
@@ -15,7 +25,7 @@ public class ArgumentParse {
 	 * @throws IOException if unable to read to write to file 
 	 * 
 	 */
-	public static void parse(String[] args, TreeMap<String, WordIndex> index) throws IOException {		
+	public static void parse(String[] args, TreeMap<String, WordIndex> index) throws IOException {
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
 				if (args[i].equals("-path")) {
@@ -25,7 +35,8 @@ public class ArgumentParse {
 							aPath(path, index);
 						} 
 					} catch (NullPointerException e) {
-						e.printStackTrace();
+						e.printStackTrace(); // TODO No stack trace
+						// TODO Try to eliminate what causes this exception
 					}
 					i++;
 				} else if (args[i].equals("-index")) {
@@ -82,11 +93,12 @@ public class ArgumentParse {
 	 */
 	public static boolean isValidPath(String p) {
 		Path path = Paths.get(p);
+		// TODO return (Files.isDirectory(path) || Files.isRegularFile(path));
 		if (Files.isDirectory(path) || Files.isRegularFile(path)) {
 			return true;
 		} else {
 			return false;
-		}	
+		}
 	}
 
 	/** Checks to see if the file is a text file
@@ -97,6 +109,7 @@ public class ArgumentParse {
 	 */
 	public static boolean isTextFile(String file) {
 		file = file.toLowerCase();
+		// TODO return file.endsWith(".txt") || file.endsWith(".text");
 		if (file.substring(file.length() - 4, file.length()).equals(".txt")) {
 			return true;
 		} else if (file.substring(file.length() - 5, file.length()).equals(".text")) {
@@ -106,6 +119,9 @@ public class ArgumentParse {
 		}
 	}
 	
+	// TODO Mix of tabs and spaces
+	// TODO Choose one (I prefer tabs)
+	// TODO Configure Eclipse to fix indentation on save
 	/** Checks to see if the path provided is a text file or a directory. If a valid text
 	 * file, then writes to the file. If a directory, then goes through the directory 
 	 * to find its text files or directories. 
@@ -130,6 +146,7 @@ public class ArgumentParse {
 			        }
 			    }
 			} catch (NullPointerException e) {
+				// TODO sysout.println(There was an issue parsing file: + path);
 				e.printStackTrace();
 			}
 
