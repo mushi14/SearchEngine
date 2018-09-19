@@ -109,19 +109,10 @@ public class ArgumentParse {
 	 */
 	public static boolean isTextFile(String file) {
 		file = file.toLowerCase();
-		// TODO return file.endsWith(".txt") || file.endsWith(".text");
-		if (file.substring(file.length() - 4, file.length()).equals(".txt")) {
-			return true;
-		} else if (file.substring(file.length() - 5, file.length()).equals(".text")) {
-			return true;
-		} else {
-			return false;
-		}
+		return file.endsWith(".txt") || file.endsWith(".text");
 	}
 	
-	// TODO Mix of tabs and spaces
-	// TODO Choose one (I prefer tabs)
-	// TODO Configure Eclipse to fix indentation on save
+
 	/** Checks to see if the path provided is a text file or a directory. If a valid text
 	 * file, then writes to the file. If a directory, then goes through the directory 
 	 * to find its text files or directories. 
@@ -134,17 +125,17 @@ public class ArgumentParse {
 	public static void aPath(Path path, TreeMap<String, WordIndex> index) throws IOException {
 		if (Files.isDirectory(path)) {
 			try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
-			    for (Path file: filePathStream) {
-			        if (Files.isRegularFile(file)) {
+				for (Path file: filePathStream) {
+					if (Files.isRegularFile(file)) {
 						path = Paths.get(file.toString());
 						if (isTextFile(file.toString())) {
 							TextFileStemmer.stemFile(path, index);
 						}
-			        } else if (Files.isDirectory(file)) {
+					} else if (Files.isDirectory(file)) {
 						path = Paths.get(file.toString());
-			        	aPath(path, index);
-			        }
-			    }
+						aPath(path, index);
+					}
+				}
 			} catch (NullPointerException e) {
 				// TODO sysout.println(There was an issue parsing file: + path);
 				e.printStackTrace();
