@@ -39,12 +39,22 @@ public class Driver {
 						ArgumentParser.isPath(args[i], Paths.get(args[i + 1]), index);
 					} 
 				} catch (NullPointerException | IOException e) {
-//					e.printStackTrace();
 					System.out.println("There was an issue finding the direcotry or file: " + args[i + 1]);
 				}
 				i++;
 			} else if (args[i].equals("-index")) {
-				
+				try {
+					if ((i + 1) < args.length && ArgumentParser.isValidPath(args[i + 1])) {
+						TreeJSONWriter.asInvertedIndex(index, Paths.get(args[i+1]));
+					} else {
+						TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+					}
+				} catch (NullPointerException | IOException e) {
+					TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+					System.out.println("There was an issue finding the direcotry or file: " + args[i + 1] + " the "
+							+ "inverted index will be written to default file: index.json.");
+				}
+				i++;
 			}
 		}
 //		TreeMap<String, WordIndex> index = new TreeMap<String, WordIndex>();

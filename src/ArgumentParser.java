@@ -30,12 +30,6 @@ public class ArgumentParser {
 		}
 	}
 	
-	
-	public static void isIndex(String arg, Path path, TreeMap<String, WordIndex> index) throws IOException {
-		if (isFlag(arg)) {
-			
-		}
-	}
 //	public static void parse(String[] args, TreeMap<String, WordIndex> index) throws IOException {
 //		for (int i = 0; i < args.length; i++) {
 //			if (isFlag(args[i])) {
@@ -144,7 +138,6 @@ public class ArgumentParser {
 				}
 			} catch (NullPointerException e) {
 				System.out.println("There was an issue fiding the directory: " + path);
-//				e.printStackTrace();
 			}
 
 		} else if (Files.isRegularFile(path)) {
