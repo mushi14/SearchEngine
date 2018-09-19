@@ -33,7 +33,7 @@ public class Driver {
 		 */
 		
 		TreeMap<String, WordIndex> index = new TreeMap<String, WordIndex>();
-		ArgumentParse.parse(args, index);
+		ArgumentParser.parse(args, index);
 	}
 
 }

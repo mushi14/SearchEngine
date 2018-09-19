@@ -73,9 +73,18 @@ public class TextFileStemmer {
 		return split(clean(text));
 	}
 	
-	// TODO Javadoc
+	/**
+	 * Returns a list of cleaned and stemmed words parsed from the provided line.
+	 * Uses the English {@link SnowballStemmer.ALGORITHM} for stemming.
+	 *
+	 * @param line the line of words to clean, split, and stem
+	 * @return list of cleaned and stemmed words
+	 *
+	 * @see SnowballStemmer
+	 * @see SnowballStemmer.ALGORITHM#ENGLISH
+	 * @see #stemLine(String, Stemmer)
+	 */
 	public static List<String> stemLine(String line) {
-		// This is provided for you.
 		return stemLine(line, new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH));
 	}
 
@@ -91,12 +100,11 @@ public class TextFileStemmer {
 	 */
 	public static List<String> stemLine(String line, Stemmer stemmer) {
 		String[] words = parse(line);
-		// TODO Rename stemmed_words to stemmedWords
-		List<String> stemmed_words = new ArrayList<>();
+		List<String> stemmedWords = new ArrayList<>();
 		for (String word : words) {
-			stemmed_words.add(stemmer.stem(word).toString());
+			stemmedWords.add(stemmer.stem(word).toString());
 		}
-		return stemmed_words;
+		return stemmedWords;
 	}
 
 	/**

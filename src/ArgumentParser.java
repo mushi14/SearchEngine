@@ -5,9 +5,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.TreeMap;
 
-// TODO Better class name
-// TODO Rename to "ArgumentParser" think of class names as job titles
-public class ArgumentParse {
+// think of class names as job titles
+public class ArgumentParser {
 	
 	/*
 	 * TODO
@@ -93,12 +92,7 @@ public class ArgumentParse {
 	 */
 	public static boolean isValidPath(String p) {
 		Path path = Paths.get(p);
-		// TODO return (Files.isDirectory(path) || Files.isRegularFile(path));
-		if (Files.isDirectory(path) || Files.isRegularFile(path)) {
-			return true;
-		} else {
-			return false;
-		}
+		return Files.isDirectory(path) || Files.isRegularFile(path);
 	}
 
 	/** Checks to see if the file is a text file
@@ -137,8 +131,8 @@ public class ArgumentParse {
 					}
 				}
 			} catch (NullPointerException e) {
-				// TODO sysout.println(There was an issue parsing file: + path);
-				e.printStackTrace();
+				System.out.println("There was an issue fiding the directory: " + path);
+//				e.printStackTrace();
 			}
 
 		} else if (Files.isRegularFile(path)) {
