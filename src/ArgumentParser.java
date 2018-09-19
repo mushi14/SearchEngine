@@ -24,40 +24,52 @@ public class ArgumentParser {
 	 * @throws IOException if unable to read to write to file 
 	 * 
 	 */
-	public static void parse(String[] args, TreeMap<String, WordIndex> index) throws IOException {
-		for (int i = 0; i < args.length; i++) {
-			if (isFlag(args[i])) {
-				if (args[i].equals("-path")) {
-					try {
-						if ((i + 1) < args.length && isValidPath(args[i+1])) {
-							Path path = Paths.get(args[i+1]);
-							aPath(path, index);
-						} 
-					} catch (NullPointerException e) {
-						e.printStackTrace(); // TODO No stack trace
-						// TODO Try to eliminate what causes this exception
-					}
-					i++;
-				} else if (args[i].equals("-index")) {
-					try {
-						if ((i + 1) < args.length) {
-							if (!isFlag(args[i + 1])) {
-								TreeJSONWriter.asInvertedIndex(index, Paths.get(args[i+1]));
-							} else {
-								TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-							}
-						} else {
-							TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-						}
-					} catch (NullPointerException e) {
-						TreeJSONWriter.asInvertedIndex(index, 
-								Paths.get("index.json"));
-					}
-					i++;
-				}
-			}
+	public static void isPath(String arg, Path path, TreeMap<String, WordIndex> index) throws IOException {
+		if (isFlag(arg)) {
+			filesInPath(path, index);
 		}
 	}
+	
+	
+	public static void isIndex(String arg, Path path, TreeMap<String, WordIndex> index) throws IOException {
+		if (isFlag(arg)) {
+			
+		}
+	}
+//	public static void parse(String[] args, TreeMap<String, WordIndex> index) throws IOException {
+//		for (int i = 0; i < args.length; i++) {
+//			if (isFlag(args[i])) {
+//				if (args[i].equals("-path")) {
+//					try {
+//						if ((i + 1) < args.length && isValidPath(args[i+1])) {
+//							Path path = Paths.get(args[i+1]);
+//							aPath(path, index);
+//						} 
+//					} catch (NullPointerException e) {
+//						e.printStackTrace(); // TODO No stack trace
+//						// TODO Try to eliminate what causes this exception
+//					}
+//					i++;
+//				} else if (args[i].equals("-index")) {
+//					try {
+//						if ((i + 1) < args.length) {
+//							if (!isFlag(args[i + 1])) {
+//								TreeJSONWriter.asInvertedIndex(index, Paths.get(args[i+1]));
+//							} else {
+//								TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+//							}
+//						} else {
+//							TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+//						}
+//					} catch (NullPointerException e) {
+//						TreeJSONWriter.asInvertedIndex(index, 
+//								Paths.get("index.json"));
+//					}
+//					i++;
+//				}
+//			}
+//		}
+//	}
 	
 	/** Checks to see if argument passed is a valid flag or not 
 	 * 
@@ -116,7 +128,7 @@ public class ArgumentParser {
 	 * @throws IOException if unable to read to write to file 
 	 * 
 	 */
-	public static void aPath(Path path, TreeMap<String, WordIndex> index) throws IOException {
+	public static void filesInPath(Path path, TreeMap<String, WordIndex> index) throws IOException {
 		if (Files.isDirectory(path)) {
 			try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
 				for (Path file: filePathStream) {
@@ -127,7 +139,7 @@ public class ArgumentParser {
 						}
 					} else if (Files.isDirectory(file)) {
 						path = Paths.get(file.toString());
-						aPath(path, index);
+						filesInPath(path, index);
 					}
 				}
 			} catch (NullPointerException e) {

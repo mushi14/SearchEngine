@@ -1,8 +1,6 @@
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.TreeMap;
-
-// TODO Remove any warnings
-// TODO Configure Eclipse to do this for you ("Organize Imports")
 
 public class Driver {
 
@@ -33,7 +31,23 @@ public class Driver {
 		 */
 		
 		TreeMap<String, WordIndex> index = new TreeMap<String, WordIndex>();
-		ArgumentParser.parse(args, index);
+		
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("-path")) {
+				try {
+					if ((i + 1) < args.length && ArgumentParser.isValidPath(args[i + 1])) {
+						ArgumentParser.isPath(args[i], Paths.get(args[i + 1]), index);
+					} 
+				} catch (NullPointerException | IOException e) {
+//					e.printStackTrace();
+					System.out.println("There was an issue finding the direcotry or file: " + args[i + 1]);
+				}
+				i++;
+			} else if (args[i].equals("-index")) {
+				
+			}
+		}
+//		TreeMap<String, WordIndex> index = new TreeMap<String, WordIndex>();
+//		ArgumentParser.parse(args, index);
 	}
-
 }
