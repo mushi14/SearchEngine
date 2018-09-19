@@ -7,15 +7,6 @@ import java.util.TreeMap;
 
 // think of class names as job titles
 public class ArgumentParser {
-	
-	/*
-	 * TODO
-	 * Anything project-specific should stay in Driver
-	 * (includes looking for specific flag/values from the user)
-	 * 
-	 * All other code should be generalized
-	 */
-	
 	/** Parses the command line arguments and makes any necessary changes to 
 	 * inverted index accordingly. 
 	 * 
@@ -29,41 +20,6 @@ public class ArgumentParser {
 			filesInPath(path, index);
 		}
 	}
-	
-//	public static void parse(String[] args, TreeMap<String, WordIndex> index) throws IOException {
-//		for (int i = 0; i < args.length; i++) {
-//			if (isFlag(args[i])) {
-//				if (args[i].equals("-path")) {
-//					try {
-//						if ((i + 1) < args.length && isValidPath(args[i+1])) {
-//							Path path = Paths.get(args[i+1]);
-//							aPath(path, index);
-//						} 
-//					} catch (NullPointerException e) {
-//						e.printStackTrace(); // TODO No stack trace
-//						// TODO Try to eliminate what causes this exception
-//					}
-//					i++;
-//				} else if (args[i].equals("-index")) {
-//					try {
-//						if ((i + 1) < args.length) {
-//							if (!isFlag(args[i + 1])) {
-//								TreeJSONWriter.asInvertedIndex(index, Paths.get(args[i+1]));
-//							} else {
-//								TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-//							}
-//						} else {
-//							TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-//						}
-//					} catch (NullPointerException e) {
-//						TreeJSONWriter.asInvertedIndex(index, 
-//								Paths.get("index.json"));
-//					}
-//					i++;
-//				}
-//			}
-//		}
-//	}
 	
 	/** Checks to see if argument passed is a valid flag or not 
 	 * 

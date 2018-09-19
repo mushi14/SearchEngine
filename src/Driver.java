@@ -20,16 +20,6 @@ public class Driver {
 		// TODO But, try to have the same kind of methods as WordIndex
 		// TODO TreeMap<String, WordIndex> --> TreeMap<String, TreeMap<String, TreeSet<Integer>>>
 		
-		/*
-		 * TODO
-		 * 
-		 * if (have the -path flag)
-		 * 		trigger building your inverted index
-		 * 
-		 * if (have the -index flag)
-		 * 		trigger write your index
-		 */
-		
 		TreeMap<String, WordIndex> index = new TreeMap<String, WordIndex>();
 		
 		for (int i = 0; i < args.length; i++) {
@@ -44,20 +34,20 @@ public class Driver {
 				i++;
 			} else if (args[i].equals("-index")) {
 				try {
-					if ((i + 1) < args.length && ArgumentParser.isValidPath(args[i + 1])) {
-						TreeJSONWriter.asInvertedIndex(index, Paths.get(args[i+1]));
+					if ((i + 1) < args.length) {
+						if (!ArgumentParser.isFlag(args[i + 1])) {
+							TreeJSONWriter.asInvertedIndex(index, Paths.get(args[i+1]));
+						} else {
+							TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+						}
 					} else {
 						TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
 					}
-				} catch (NullPointerException | IOException e) {
+				} catch (NullPointerException e) {
 					TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-					System.out.println("There was an issue finding the direcotry or file: " + args[i + 1] + " the "
-							+ "inverted index will be written to default file: index.json.");
 				}
 				i++;
 			}
 		}
-//		TreeMap<String, WordIndex> index = new TreeMap<String, WordIndex>();
-//		ArgumentParser.parse(args, index);
 	}
 }
