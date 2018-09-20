@@ -1,9 +1,6 @@
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.TreeMap;
-import java.util.TreeSet;
-
-// TODO Remove any warnings
-// TODO Configure Eclipse to do this for you ("Organize Imports")
 
 public class Driver {
 
@@ -17,24 +14,44 @@ public class Driver {
 	 * @return 0 if everything went well
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		// TODO Create an inverted index data structure class
 		// TODO Include a triple nested data structure and don't use WordIndex directly
 		// TODO But, try to have the same kind of methods as WordIndex
 		// TODO TreeMap<String, WordIndex> --> TreeMap<String, TreeMap<String, TreeSet<Integer>>>
 		
-		/*
-		 * TODO
-		 * 
-		 * if (have the -path flag)
-		 * 		trigger building your inverted index
-		 * 
-		 * if (have the -index flag)
-		 * 		trigger write your index
-		 */
-		
 		TreeMap<String, WordIndex> index = new TreeMap<String, WordIndex>();
-		ArgumentParse.parse(args, index);
+		
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("-path")) {
+				try {
+					if ((i + 1) < args.length && ArgumentParser.isValidPath(args[i + 1])) {
+						ArgumentParser.isPath(args[i], Paths.get(args[i + 1]), index);
+					} 
+				} catch (NullPointerException | IOException e) {
+					System.out.println("There was an issue finding the direcotry or file: " + args[i + 1]);
+				}
+				i++;
+			} else if (args[i].equals("-index")) {
+				try {
+					if ((i + 1) < args.length) {
+						if (!ArgumentParser.isFlag(args[i + 1])) {
+							TreeJSONWriter.asInvertedIndex(index, Paths.get(args[i+1]));
+						} else {
+							TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+						}
+					} else {
+						TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+					}
+				} catch (NullPointerException | IOException e) {
+					try {
+						TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+					} catch (IOException e1) {
+						System.out.println("There was an issue finding the direcotry or file: " + args[i + 1]);
+					}
+				}
+				i++;
+			}
+		}
 	}
-
 }

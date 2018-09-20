@@ -5,18 +5,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.TreeMap;
 
-// TODO Better class name
-// TODO Rename to "ArgumentParser" think of class names as job titles
-public class ArgumentParse {
-	
-	/*
-	 * TODO
-	 * Anything project-specific should stay in Driver
-	 * (includes looking for specific flag/values from the user)
-	 * 
-	 * All other code should be generalized
-	 */
-	
+// think of class names as job titles
+public class ArgumentParser {
 	/** Parses the command line arguments and makes any necessary changes to 
 	 * inverted index accordingly. 
 	 * 
@@ -25,38 +15,9 @@ public class ArgumentParse {
 	 * @throws IOException if unable to read to write to file 
 	 * 
 	 */
-	public static void parse(String[] args, TreeMap<String, WordIndex> index) throws IOException {
-		for (int i = 0; i < args.length; i++) {
-			if (isFlag(args[i])) {
-				if (args[i].equals("-path")) {
-					try {
-						if ((i + 1) < args.length && isValidPath(args[i+1])) {
-							Path path = Paths.get(args[i+1]);
-							aPath(path, index);
-						} 
-					} catch (NullPointerException e) {
-						e.printStackTrace(); // TODO No stack trace
-						// TODO Try to eliminate what causes this exception
-					}
-					i++;
-				} else if (args[i].equals("-index")) {
-					try {
-						if ((i + 1) < args.length) {
-							if (!isFlag(args[i + 1])) {
-								TreeJSONWriter.asInvertedIndex(index, Paths.get(args[i+1]));
-							} else {
-								TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-							}
-						} else {
-							TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-						}
-					} catch (NullPointerException e) {
-						TreeJSONWriter.asInvertedIndex(index, 
-								Paths.get("index.json"));
-					}
-					i++;
-				}
-			}
+	public static void isPath(String arg, Path path, TreeMap<String, WordIndex> index) throws IOException {
+		if (isFlag(arg)) {
+			filesInPath(path, index);
 		}
 	}
 	
@@ -93,12 +54,7 @@ public class ArgumentParse {
 	 */
 	public static boolean isValidPath(String p) {
 		Path path = Paths.get(p);
-		// TODO return (Files.isDirectory(path) || Files.isRegularFile(path));
-		if (Files.isDirectory(path) || Files.isRegularFile(path)) {
-			return true;
-		} else {
-			return false;
-		}
+		return Files.isDirectory(path) || Files.isRegularFile(path);
 	}
 
 	/** Checks to see if the file is a text file
@@ -109,19 +65,10 @@ public class ArgumentParse {
 	 */
 	public static boolean isTextFile(String file) {
 		file = file.toLowerCase();
-		// TODO return file.endsWith(".txt") || file.endsWith(".text");
-		if (file.substring(file.length() - 4, file.length()).equals(".txt")) {
-			return true;
-		} else if (file.substring(file.length() - 5, file.length()).equals(".text")) {
-			return true;
-		} else {
-			return false;
-		}
+		return file.endsWith(".txt") || file.endsWith(".text");
 	}
 	
-	// TODO Mix of tabs and spaces
-	// TODO Choose one (I prefer tabs)
-	// TODO Configure Eclipse to fix indentation on save
+
 	/** Checks to see if the path provided is a text file or a directory. If a valid text
 	 * file, then writes to the file. If a directory, then goes through the directory 
 	 * to find its text files or directories. 
@@ -131,23 +78,22 @@ public class ArgumentParse {
 	 * @throws IOException if unable to read to write to file 
 	 * 
 	 */
-	public static void aPath(Path path, TreeMap<String, WordIndex> index) throws IOException {
+	public static void filesInPath(Path path, TreeMap<String, WordIndex> index) throws IOException {
 		if (Files.isDirectory(path)) {
 			try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
-			    for (Path file: filePathStream) {
-			        if (Files.isRegularFile(file)) {
+				for (Path file: filePathStream) {
+					if (Files.isRegularFile(file)) {
 						path = Paths.get(file.toString());
 						if (isTextFile(file.toString())) {
 							TextFileStemmer.stemFile(path, index);
 						}
-			        } else if (Files.isDirectory(file)) {
+					} else if (Files.isDirectory(file)) {
 						path = Paths.get(file.toString());
-			        	aPath(path, index);
-			        }
-			    }
+						filesInPath(path, index);
+					}
+				}
 			} catch (NullPointerException e) {
-				// TODO sysout.println(There was an issue parsing file: + path);
-				e.printStackTrace();
+				System.out.println("There was an issue fiding the directory: " + path);
 			}
 
 		} else if (Files.isRegularFile(path)) {
