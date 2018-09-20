@@ -14,7 +14,7 @@ public class Driver {
 	 * @return 0 if everything went well
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		// TODO Create an inverted index data structure class
 		// TODO Include a triple nested data structure and don't use WordIndex directly
 		// TODO But, try to have the same kind of methods as WordIndex
@@ -43,8 +43,12 @@ public class Driver {
 					} else {
 						TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
 					}
-				} catch (NullPointerException e) {
-					TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+				} catch (NullPointerException | IOException e) {
+					try {
+						TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+					} catch (IOException e1) {
+						System.out.println("There was an issue finding the direcotry or file: " + args[i + 1]);
+					}
 				}
 				i++;
 			}
