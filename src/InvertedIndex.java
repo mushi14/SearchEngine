@@ -19,7 +19,7 @@ public class InvertedIndex {
 		this.index = new TreeMap<>();
 	}
 	
-	/** Gets the TreeMap of keys paths and values positions associated with the path
+	/** Gets the TreeMap of keys paths and values positions associated with the word
 	 * 
 	 * @param word word inside of the file
 	 * @return TreeMap containing path and positions of word 

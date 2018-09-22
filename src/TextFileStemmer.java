@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -124,18 +125,18 @@ public class TextFileStemmer {
 			while(line != null) {
 				for (String word : stemLine(line)) {
 					if (index.containsWord(word)) {
-						if (index.get(word).contains(path.toString())) {
-							index.get(word).get(path.toString()).add(count);
+						if (index.containsPath(word ,path.toString())) {
+							index.get(word, path.toString()).add(count);
 							count++;
 						} else {
-							index.get(word).put(path.toString(), new TreeSet<Integer>());
-							index.get(word).get(path.toString()).add(count);
+							index.put(word, path.toString(), new TreeSet<Integer>());
+							index.get(word, path.toString()).add(count);
 							count++;
 						}
 					} else {
-						index.put(word, new WordIndex());
-						index.get(word).put(path.toString(), new TreeSet<Integer>());
-						index.get(word).get(path.toString()).add(count);
+						index.put(word, new TreeMap<String, TreeSet<Integer>>());
+						index.put(word, path.toString(), new TreeSet<Integer>());
+						index.get(word, path.toString()).add(count);
 						count++;
 					}
 				}
