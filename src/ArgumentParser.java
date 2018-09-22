@@ -6,10 +6,12 @@ import java.nio.file.Paths;
 
 // think of class names as job titles
 public class ArgumentParser {
-	/** Parses the command line arguments and makes any necessary changes to 
-	 * inverted index accordingly. 
+	/** Checks if the argument passed is a flag, if it is, then calls filesInPath which lists, parses, and reads
+	 * all the files to index if path is a directory, if a regular file, then just parses, reads and adds to index.
 	 * 
-	 * @param args array of command line arguments
+	 * 
+	 * @param arg argument to check if valid
+	 * @param path path of the file/directory
 	 * @param index inverted index that contains stemmed words, their files, and their positions
 	 * @throws IOException if unable to read to write to file 
 	 * 
@@ -19,6 +21,25 @@ public class ArgumentParser {
 			filesInPath(path, index);
 		}
 	}
+	
+	/** Checks if the argument passed is a flag, if it is, then calls the TreeJSONWriter and writes the index
+	 * in JSONWriter format the path given (if path is valid), if invalid path, then writes in JSONWriter format
+	 * to "index.json" .
+	 * 
+	 * 
+	 * @param args array of command line arguments
+	 * @param index inverted index that contains stemmed words, their files, and their positions
+	 * @throws IOException if unable to read to write to file 
+	 * 
+	 */
+	public static void isIndex(String arg, Path path, InvertedIndex index) throws IOException {
+		if (!isFlag(path.toString())) {
+			TreeJSONWriter.asInvertedIndex(index, path);
+		} else {
+			TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+		}
+	}
+	
 	
 	/** Checks to see if argument passed is a valid flag or not 
 	 * 
