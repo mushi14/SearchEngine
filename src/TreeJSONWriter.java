@@ -5,8 +5,8 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.TreeSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class TreeJSONWriter {
 
@@ -115,10 +115,10 @@ public class TreeJSONWriter {
 	 * @return {@link String} containing the elements in pretty JSON format
 	 *
 	 */
-	public static String asWordIndex(WordIndex elements) {
+	public static String asPathIndex(TreeMap<String, TreeSet<Integer>> elements) {
 		try {
 			StringWriter writer = new StringWriter();
-			asWordIndex(elements, writer, 0);
+			asPathIndex(elements, writer, 0);
 			return writer.toString();
 		}
 		catch (IOException e) {
@@ -135,11 +135,11 @@ public class TreeJSONWriter {
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 */
-	public static void asWordIndex(WordIndex elements,
+	public static void asPathIndex(TreeMap<String, TreeSet<Integer>> elements,
 			Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path,
 				StandardCharsets.UTF_8)) {
-			asWordIndex(elements, writer, 0);
+			asPathIndex(elements, writer, 0);
 		}
 	}
 
@@ -160,7 +160,7 @@ public class TreeJSONWriter {
 	 * @see #indent(int, Writer)
 	 * @see #quote(String, Writer)
 	 */
-	public static void asWordIndex(WordIndex elements,
+	public static void asPathIndex(TreeMap<String, TreeSet<Integer>> elements,
 			Writer writer, int level) throws IOException {
 
 		writer.write("{" + System.lineSeparator());
@@ -195,7 +195,7 @@ public class TreeJSONWriter {
 	 * @return {@link String} containing the elements in pretty JSON format
 	 *
 	 */
-	public static String asInvertedIndex(TreeMap<String, WordIndex> elements) {
+	public static String asInvertedIndex(InvertedIndex elements) {
 		try {
 			StringWriter writer = new StringWriter();
 			asInvertedIndex(elements, writer, 0);
@@ -215,7 +215,7 @@ public class TreeJSONWriter {
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 */
-	public static void asInvertedIndex(TreeMap<String, WordIndex> elements,
+	public static void asInvertedIndex(InvertedIndex elements,
 			Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path,
 				StandardCharsets.UTF_8)) {
@@ -240,27 +240,27 @@ public class TreeJSONWriter {
 	 * @see #indent(int, Writer)
 	 * @see #quote(String, Writer)
 	 */
-	public static void asInvertedIndex(TreeMap<String, WordIndex> elements,
+	public static void asInvertedIndex(InvertedIndex elements,
 			Writer writer, int level) throws IOException {
 		
 		writer.write("{" + System.lineSeparator());
 		
-		int size = elements.size();
+		int size = elements.words();
 		int count = 0;
 		
-		for (String key : elements.keySet()) {
+		for (String key : elements.wordsKeySet()) {
 			count++;
 			if (count != size) {
 				indent(level + 1, writer);
 				quote(key, writer);
 				writer.write(": ");
-				asWordIndex(elements.get(key), writer, level + 1);
+				asPathIndex(elements.get(key), writer, level + 1);
 				writer.write("," + System.lineSeparator());
 			} else {
 				indent(level + 1, writer);
 				quote(key, writer);
 				writer.write(": ");
-				asWordIndex(elements.get(key), writer, level + 1);
+				asPathIndex(elements.get(key), writer, level + 1);
 				writer.write(System.lineSeparator());
 			}
 		}
