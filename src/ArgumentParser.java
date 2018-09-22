@@ -3,7 +3,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.TreeMap;
 
 // think of class names as job titles
 public class ArgumentParser {
@@ -15,7 +14,7 @@ public class ArgumentParser {
 	 * @throws IOException if unable to read to write to file 
 	 * 
 	 */
-	public static void isPath(String arg, Path path, TreeMap<String, WordIndex> index) throws IOException {
+	public static void isPath(String arg, Path path, InvertedIndex index) throws IOException {
 		if (isFlag(arg)) {
 			filesInPath(path, index);
 		}
@@ -78,7 +77,7 @@ public class ArgumentParser {
 	 * @throws IOException if unable to read to write to file 
 	 * 
 	 */
-	public static void filesInPath(Path path, TreeMap<String, WordIndex> index) throws IOException {
+	public static void filesInPath(Path path, InvertedIndex index) throws IOException {
 		if (Files.isDirectory(path)) {
 			try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
 				for (Path file: filePathStream) {

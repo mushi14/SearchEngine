@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.TreeMap;
 
 public class Driver {
 
@@ -20,7 +19,7 @@ public class Driver {
 		// TODO But, try to have the same kind of methods as WordIndex
 		// TODO TreeMap<String, WordIndex> --> TreeMap<String, TreeMap<String, TreeSet<Integer>>>
 		
-		TreeMap<String, WordIndex> index = new TreeMap<String, WordIndex>();
+		InvertedIndex index = new InvertedIndex();
 		
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("-path")) {

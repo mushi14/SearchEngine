@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -118,13 +117,13 @@ public class TextFileStemmer {
 	 * @see #stemLine(String)
 	 * @see TextParser#parse(String)
 	 */
-	public static void stemFile(Path path, TreeMap<String, WordIndex> index) throws IOException {
+	public static void stemFile(Path path, InvertedIndex index) throws IOException {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			int count = 1;
 			String line = br.readLine();
 			while(line != null) {
 				for (String word : stemLine(line)) {
-					if (index.containsKey(word)) {
+					if (index.containsWord(word)) {
 						if (index.get(word).contains(path.toString())) {
 							index.get(word).get(path.toString()).add(count);
 							count++;
