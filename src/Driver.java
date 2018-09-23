@@ -39,7 +39,11 @@ public class Driver {
 					}
 					i++;
 				} else if (args[i].equals("-exact")) {
-					
+					if ((i + 1) < args.length) {
+
+					} else {
+						
+					}
 				} else if (args[i].equals("results")) {
 					
 				} else if (args[i].equals("locations")) {
