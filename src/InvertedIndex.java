@@ -40,7 +40,7 @@ public class InvertedIndex {
 		return index.get(word).get(path);
 	}
 	
-	/** Adds key, value pair to the map
+	/** Adds key word, value path pair to the map
 	 * 
 	 * @param word word inside of the file as key
 	 * @param val TreeMap as values
@@ -50,7 +50,7 @@ public class InvertedIndex {
 		index.put(word, val);
 	}
 	
-	/** Adds key, value pair to the map
+	/** Adds key path, value position pair to the map
 	 * 
 	 * @param word word inside of the file
 	 * @param path path to the file as key
@@ -106,7 +106,7 @@ public class InvertedIndex {
 	 * @return integer size of the number of paths associated with word in the map
 	 * 
 	 */
-	public int words(String word) {
+	public int paths(String word) {
 		return index.get(word).size();
 	}
 
@@ -117,7 +117,7 @@ public class InvertedIndex {
 	 * @return integer size of the number of paths associated with word in the map
 	 * 
 	 */
-	public int words(String word, String path) {
+	public int positions(String word, String path) {
 		return index.get(word).get(path).size();
 	}
 	

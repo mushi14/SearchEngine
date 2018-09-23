@@ -40,6 +40,13 @@ public class ArgumentParser {
 		}
 	}
 	
+	public static void isSearch(String arg, Path path, InvertedIndex index) throws IOException {
+		if (!isFlag(path.toString())) {
+			
+		}
+	}
+	
+	
 	
 	/** Checks to see if argument passed is a valid flag or not 
 	 * 
@@ -53,9 +60,8 @@ public class ArgumentParser {
 		} else {
 			try {
 				arg = arg.trim();
-				if (arg.equals("-path")) {
-					return true;
-				} else if (arg.equals("-index")) {
+				if (arg.equals("-path") || arg.equals("-index") || arg.equals("-search") || arg.equals("exact") ||
+						arg.equals("results") || arg.equals("results")) {
 					return true;
 				} else {
 					return false;
