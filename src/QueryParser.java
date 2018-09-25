@@ -1,16 +1,14 @@
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+
 public class QueryParser {
 
-//	public static void parse(Path path, InvertedIndex index) throws IOException {
-//		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-//			String line = br.readLine();
-//			while(line != null) {
-//				line = line.toLowerCase();
-//				Set<String> words = new TreeSet<String>(TextFileStemmer.stemLine(line));
-//				
-//			}
-//		} catch (NullPointerException e) {
-//			System.out.println("There was an issue finding the file: " + path);
-//
-//		}
-//	}
+	public static List<String> queryFiles(Path path) throws IOException {
+		return ArgumentParser.filesInPath(path);
+	}
+	
+	public static void queryParse(Path path, InvertedIndex index) throws IOException {
+		ArgumentParser.addStemmedWords(queryFiles(path), index); 
+	}
 }

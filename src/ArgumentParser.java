@@ -50,8 +50,12 @@ public class ArgumentParser {
 	 * @throws IOException
 	 */
 	public static void isSearch(String arg, Path path, InvertedIndex index) throws IOException {
-		if (!isFlag(path.toString())) {
-			
+		try {
+			if (!isFlag(path.toString())) {
+				QueryParser.queryFiles(path);
+			}	
+		} catch (NullPointerException e) {
+			System.out.println("There was an issue finding query file: " + path);
 		}
 	}
 	
