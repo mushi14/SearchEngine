@@ -3,6 +3,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 // think of class names as job titles
 public class ArgumentParser {
@@ -18,7 +20,7 @@ public class ArgumentParser {
 	 */
 	public static void isPath(String arg, Path path, InvertedIndex index) throws IOException {
 		if (isFlag(arg)) {
-			filesInPath(path, index);
+			addStemmedWords(filesInPath(path), index);
 		}
 	}
 	
@@ -40,13 +42,18 @@ public class ArgumentParser {
 		}
 	}
 	
+	/** TODO
+	 * 
+	 * @param arg
+	 * @param path
+	 * @param index
+	 * @throws IOException
+	 */
 	public static void isSearch(String arg, Path path, InvertedIndex index) throws IOException {
 		if (!isFlag(path.toString())) {
 			
 		}
 	}
-	
-	
 	
 	/** Checks to see if argument passed is a valid flag or not 
 	 * 
@@ -104,26 +111,38 @@ public class ArgumentParser {
 	 * @throws IOException if unable to read to write to file 
 	 * 
 	 */
-	public static void filesInPath(Path path, InvertedIndex index) throws IOException {
+	public static List<String> filesInPath(Path path) throws IOException {
+		List<String> files = new ArrayList<String>();
 		if (Files.isDirectory(path)) {
 			try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
 				for (Path file: filePathStream) {
 					if (Files.isRegularFile(file)) {
-						path = Paths.get(file.toString());
 						if (isTextFile(file.toString())) {
-							TextFileStemmer.stemFile(path, index);
+							files.add(file.toString());
 						}
 					} else if (Files.isDirectory(file)) {
 						path = Paths.get(file.toString());
-						filesInPath(path, index);
+						for (String fileInDir : filesInPath(path)) {
+							files.add(fileInDir);
+						}
 					}
 				}
 			} catch (NullPointerException e) {
 				System.out.println("There was an issue fiding the directory: " + path);
 			}
-
 		} else if (Files.isRegularFile(path)) {
-			TextFileStemmer.stemFile(path, index);
+			files.add(path.toString());
 		}
-	}	
+		return files;
+	}
+	
+	/** 
+	 * @throws IOException 
+	 *
+	 */
+	public static void addStemmedWords(List<String> files, InvertedIndex index) throws IOException {
+		for (String file : files) {
+			TextFileStemmer.stemFile(Paths.get(file), index);
+		}
+	}
 }
