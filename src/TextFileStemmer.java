@@ -143,7 +143,7 @@ public class TextFileStemmer {
 				line = br.readLine();
 			}
 		} catch (NullPointerException e) {
-			e.printStackTrace();
+			System.out.println("There was an issue fiding the text file: " + path);
 		}
 	}
 }

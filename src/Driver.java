@@ -18,7 +18,7 @@ public class Driver {
 			if (args[i].equals("-path")) {
 				try {
 					if ((i + 1) < args.length && ArgumentParser.isValidPath(args[i + 1])) {
-						ArgumentParser.isPath(args[i], Paths.get(args[i + 1]), index);
+						ArgumentParser.filesInPath(Paths.get(args[i + 1]), index);
 					} 
 				} catch (NullPointerException | IOException e) {
 					System.out.println("There was an issue finding the direcotry or file: " + args[i + 1]);

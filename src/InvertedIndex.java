@@ -142,25 +142,6 @@ public class InvertedIndex {
 		return index.get(word).containsKey(path);
 	}
 
-//	/** Checks to see if a position exists in the path key
-//	 * 
-//	 * @param path path to the file
-//	 * @param position position to look for
-//	 * @return true if the position is present in the value set of the path
-//	 * 
-//	 */
-//	public boolean contains(String path, int position) {
-//		if (pathsMap.containsKey(path)) {
-//			if (pathsMap.get(path).contains(position)) {
-//				return true;
-//			} else {
-//				return false;
-//			}
-//		} else {
-//			return false;
-//		}
-//	}
-//
 	/** Prints in the map
 	 * 
 	 */
