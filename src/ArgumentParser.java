@@ -17,39 +17,14 @@ public class ArgumentParser {
 	 * @throws IOException if unable to read to write to file 
 	 * 
 	 */
-	public static void isIndex(String arg, Path path, InvertedIndex index) throws IOException {
-		if (!isFlag(path.toString())) {
-			TreeJSONWriter.asInvertedIndex(index, path);
-		} else {
-			TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-		}
-	}
+//	public static void isIndex(String arg, Path path, InvertedIndex index) throws IOException {
+//		if (!isFlag(path.toString())) {
+//			TreeJSONWriter.asInvertedIndex(index, path);
+//		} else {
+//			TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+//		}
+//	}
 	
-	
-	/** Checks to see if argument passed is a valid flag or not 
-	 * 
-	 * @param arg argument from the command line
-	 * @return true if the argument is -path or -index
-	 * 
-	 */
-	public static boolean isFlag(String arg) {
-		if (arg.isEmpty()) { 
-			return false;
-		} else {
-			try {
-				arg = arg.trim();
-				if (arg.equals("-path")) {
-					return true;
-				} else if (arg.equals("-index")) {
-					return true;
-				} else {
-					return false;
-				}
-			} catch (NullPointerException e) {
-				return false;
-			}
-		}
-	}
 	
 	// TODO Create a class specific to building an index from text files
 	// TODO Also include in this builder class TextFileStemmer.stemFile(Path path, InvertedIndex index)
@@ -65,16 +40,6 @@ public class ArgumentParser {
 		return Files.isDirectory(path) || Files.isRegularFile(path);
 	}
 
-	/** Checks to see if the file is a text file
-	 * 
-	 * @param file takes in a file to check if is a text file
-	 * @return true if the given file ends in ".txt" or ".text"
-	 * 
-	 */
-	public static boolean isTextFile(String file) {
-		file = file.toLowerCase();
-		return file.endsWith(".txt") || file.endsWith(".text");
-	}
 
 	/** Checks to see if the path provided is a text file or a directory. If a valid text
 	 * file, then writes to the file. If a directory, then goes through the directory 
@@ -106,4 +71,25 @@ public class ArgumentParser {
 			TextFileStemmer.stemFile(path, index);
 		}
 	}	
+	
+	/** Checks to see if the file is a text file
+	 * 
+	 * @param file takes in a file to check if is a text file
+	 * @return true if the given file ends in ".txt" or ".text"
+	 * 
+	 */
+	public static boolean isTextFile(String file) {
+		file = file.toLowerCase();
+		return file.endsWith(".txt") || file.endsWith(".text");
+	}
+//	
+//	/** Checks to see if the path provided is a valid path 
+//	 * 
+//	 * @param p path being checked
+//	 * @return true if path is a valid file or a directory
+//	 * 
+//	 */
+//	public static boolean isValidPath(String p) {
+//		return Files.isDirectory(Paths.get(p)) || Files.isRegularFile(Paths.get(p));
+//	}
 }

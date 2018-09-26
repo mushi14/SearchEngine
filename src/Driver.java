@@ -14,32 +14,25 @@ public class Driver {
 	public static void main(String[] args) {
 		InvertedIndex index = new InvertedIndex();
 		
-		// TODO No looping
-		for (int i = 0; i < args.length; i++) {
-			if (args[i].equals("-path")) {
-				try {
-					if ((i + 1) < args.length && ArgumentParser.isValidPath(args[i + 1])) {
-						ArgumentParser.filesInPath(Paths.get(args[i + 1]), index);
-					} 
-				} catch (NullPointerException | IOException e) {
-					System.out.println("There was an issue finding the direcotry or file: " + args[i + 1]);
+		ArgumentMap argMap = new ArgumentMap(args);
+		try {
+			if (argMap.hasFlag("-path")) {
+				if (argMap.flagPath("-path")) {
+					ArgumentParser.filesInPath(Paths.get(argMap.getPath("-path")), index);
 				}
-				i++;
-			} else if (args[i].equals("-index")) {
-				try {
-					if ((i + 1) < args.length) {
-						ArgumentParser.isIndex(args[i], Paths.get(args[i + 1]), index);
-					} else {
-						TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-					}
-				} catch (NullPointerException | IOException e) {
-					try {
-						TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-					} catch (IOException e1) {
-						System.out.println("There was an issue finding the direcotry or file: " + args[i + 1]);
-					}
+			}
+			if (argMap.hasFlag("-index")) {
+				if (argMap.flagPath("-index")) {
+					TreeJSONWriter.asInvertedIndex(index, Paths.get(argMap.getPath("-index")));
+				} else {
+					TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
 				}
-				i++;
+			}
+		} catch (IOException | NullPointerException e) {
+			try {
+				TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+			} catch (IOException e1) {
+				System.out.println("There was an issue finding the direcotry or file: ");
 			}
 		}
 	}
@@ -59,4 +52,45 @@ public class Driver {
 		etc.
 	}
 	*/
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+//	InvertedIndex index = new InvertedIndex();
+//	
+//	// TODO No looping
+//	for (int i = 0; i < args.length; i++) {
+//		if (args[i].equals("-path")) {
+//			try {
+//				if ((i + 1) < args.length && ArgumentParser.isValidPath(args[i + 1])) {
+//					ArgumentParser.filesInPath(Paths.get(args[i + 1]), index);
+//				} 
+//			} catch (NullPointerException | IOException e) {
+//				System.out.println("There was an issue finding the direcotry or file: " + args[i + 1]);
+//			}
+//			i++;
+//		} else if (args[i].equals("-index")) {
+//			try {
+//				if ((i + 1) < args.length) {
+//					ArgumentParser.isIndex(args[i], Paths.get(args[i + 1]), index);
+//				} else {
+//					TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+//				}
+//			} catch (NullPointerException | IOException e) {
+//				try {
+//					TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+//				} catch (IOException e1) {
+//					System.out.println("There was an issue finding the direcotry or file: " + args[i + 1]);
+//				}
+//			}
+//			i++;
+//		}
+//	}
 }
