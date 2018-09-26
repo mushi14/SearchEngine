@@ -18,7 +18,7 @@ public class Driver {
 		try {
 			if (argMap.hasFlag("-path")) {
 				if (argMap.flagPath("-path")) {
-					ArgumentParser.filesInPath(Paths.get(argMap.getPath("-path")), index);
+					TextFileStemmer.filesInPath(Paths.get(argMap.getPath("-path")), index);
 				}
 			}
 			if (argMap.hasFlag("-index")) {
@@ -29,11 +29,7 @@ public class Driver {
 				}
 			}
 		} catch (IOException | NullPointerException e) {
-			try {
-				TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-			} catch (IOException e1) {
 				System.out.println("There was an issue finding the direcotry or file: ");
-			}
 		}
 	}
 	

@@ -1,8 +1,10 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,48 @@ public class TextFileStemmer {
 
 	public static final Pattern SPLIT_REGEX = Pattern.compile("(?U)\\p{Space}+");
 	public static final Pattern CLEAN_REGEX = Pattern.compile("(?U)[^\\p{Alpha}\\p{Space}]+");
+	
+	/** Checks to see if the file is a text file
+	 * 
+	 * @param file takes in a file to check if is a text file
+	 * @return true if the given file ends in ".txt" or ".text"
+	 * 
+	 */
+	public static boolean isTextFile(String file) {
+		file = file.toLowerCase();
+		return file.endsWith(".txt") || file.endsWith(".text");
+	}
+	
+	/** Checks to see if the path provided is a text file or a directory. If a valid text
+	 * file, then writes to the file. If a directory, then goes through the directory 
+	 * to find its text files or directories. 
+	 * 
+	 * @param path path that is being checked 
+	 * @param index inverted index that contains the stemmed words, their files, and their positions
+	 * @throws IOException if unable to read to write to file 
+	 * 
+	 */
+	public static void filesInPath(Path path, InvertedIndex index) throws IOException {
+		if (Files.isDirectory(path)) {
+			try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
+				for (Path file: filePathStream) {
+					if (Files.isRegularFile(file)) {
+						path = Paths.get(file.toString());
+						if (isTextFile(file.toString())) {
+							TextFileStemmer.stemFile(path, index);
+						}
+					} else if (Files.isDirectory(file)) {
+						path = Paths.get(file.toString());
+						filesInPath(path, index);
+					}
+				}
+			} catch (NullPointerException e) {
+				System.out.println("There was an issue fiding the directory: " + path);
+			}
+		} else if (Files.isRegularFile(path)) {
+			TextFileStemmer.stemFile(path, index);
+		}
+	}	
 
 	/**
 	 * Returns a list of cleaned and stemmed words parsed from the provided line.
