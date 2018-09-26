@@ -1,14 +1,17 @@
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.TreeSet;
 
 public class QueryParser {
+	
+	static TreeSet<String> queries = new TreeSet<String>();
 
-	public static List<String> queryFiles(Path path) throws IOException {
-		return ArgumentParser.filesInPath(path);
+	public static void parse(Path path) throws IOException {
+		TextFileStemmer.stemQueryFile(path, queries);
 	}
 	
-	public static void queryParse(Path path, InvertedIndex index) throws IOException {
-		ArgumentParser.addStemmedWords(queryFiles(path), index); 
+	public static TreeSet<String> getQueries() {
+		return queries;
 	}
+	
 }

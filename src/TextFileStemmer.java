@@ -146,4 +146,18 @@ public class TextFileStemmer {
 			System.out.println("There was an issue finding the directory or file: " + path);
 		}
 	}
+	
+	public static void stemQueryFile(Path path, TreeSet<String> queries) throws IOException {
+		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+			String line = br.readLine();
+			while(line != null) {
+				for (String word : stemLine(line)) {
+					queries.add(word);
+				}
+				line = br.readLine();
+			}
+		} catch (NullPointerException e) {
+			System.out.println("There was an issue finding the query file: " + path);
+		}
+	}
 }

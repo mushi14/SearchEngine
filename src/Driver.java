@@ -11,9 +11,9 @@ public class Driver {
 	 * @return 0 if everything went well
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) {		
+	public static void main(String[] args) throws IOException {		
 		InvertedIndex index = new InvertedIndex();
-		
+				
 		for (int i = 0; i < args.length; i++) {
 			try {
 				if (args[i].equals("-path")) {
@@ -35,7 +35,7 @@ public class Driver {
 					i++;
 				} else if (args[i].equals("-search")) {
 					if ((i + 1) < args.length) {
-						ArgumentParser.isSearch(args[i], Paths.get(args[i + 1]), index);
+						ArgumentParser.isSearch(args[i], Paths.get(args[i + 1]));
 					}
 					i++;
 				} else if (args[i].equals("-exact")) {

@@ -33,11 +33,13 @@ public class ArgumentParser {
 	 * @param index
 	 * @throws IOException
 	 */
-	public static void isSearch(String arg, Path path, InvertedIndex index) throws IOException {
+	public static void isSearch(String arg, Path path) throws IOException {
 		try {
 			if (!isFlag(path.toString())) {
-				QueryParser.queryFiles(path);
-			}	
+				for (String file : filesInPath(path)) {
+					QueryParser.parse(Paths.get(file));
+				}
+			} 
 		} catch (NullPointerException e) {
 			System.out.println("There was an issue finding query file: " + path);
 		}
