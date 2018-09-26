@@ -4,6 +4,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+// TODO Restore the general ArgumentParser class from your homework
+
 public class ArgumentParser {
 	/** Checks if the argument passed is a flag, if it is, then calls the TreeJSONWriter and writes the index
 	 * in JSONWriter format the path given (if path is valid), if invalid path, then writes in JSONWriter format
@@ -48,6 +50,9 @@ public class ArgumentParser {
 			}
 		}
 	}
+	
+	// TODO Create a class specific to building an index from text files
+	// TODO Also include in this builder class TextFileStemmer.stemFile(Path path, InvertedIndex index)
 	
 	/** Checks to see if the path provided is a valid path 
 	 * 

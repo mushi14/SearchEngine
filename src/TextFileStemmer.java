@@ -122,8 +122,17 @@ public class TextFileStemmer {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			int count = 1;
 			String line = br.readLine();
+			// TODO Create a stemmer here instead of a new one per line
+			
 			while(line != null) {
+				/* TODO
+				for (String word : parse(line)) {
+					word = stemmer.stem(word).toString();
+					index.add(word, )
+				}
+				*/
 				for (String word : stemLine(line)) {
+					// TODO This logic will get replaced by an index.add(...)
 					if (index.containsWord(word)) {
 						if (index.containsPath(word ,path.toString())) {
 							index.get(word, path.toString()).add(count);

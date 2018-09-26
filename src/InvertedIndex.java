@@ -2,14 +2,17 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+// TODO Slight formatting fix to Javadoc comments
+
 /** Data structure to store file paths and the word positions.
  * 
  */
 public class InvertedIndex {
 
-	/** Stores a mapping of files to the positions the words were found in the file.
-	 * 
+	/** 
+	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
+	// TODO Use the final word here!
 	private TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 
 	/** Initializes the index.
@@ -19,6 +22,7 @@ public class InvertedIndex {
 		this.index = new TreeMap<>();
 	}
 	
+	// TODO Most of these get methods are breaking encapsulation
 	/** Gets the TreeMap of keys paths and values positions associated with the word
 	 * 
 	 * @param word word inside of the file
@@ -61,6 +65,17 @@ public class InvertedIndex {
 		index.get(word).put(path, val);
 	}
 	
+	/*
+	 * TODO 
+	 * 
+	public void add(String word, String location, int position) {
+		safely add this to your index initializing what you need
+	}
+	
+	public void addAll(String[] words, String location)
+	public void addAll(String[] words, String location, int position)
+	*/
+	
 	/** Shows all the words in the map
 	 * 
 	 * @return Returns a set view of all the paths
@@ -100,6 +115,10 @@ public class InvertedIndex {
 		return index.size();
 	}
 	
+	
+	// TODO Refactor name from "words" to "locations"
+	// TODO If the word doesn't exist, should return 0, but here there is a NullPointerException instead
+	// TODO Make similar fixes to avoid null pointers for all remaining methods
 	/** Number of paths associated with the word in the the map
 	 * 
 	 * @param word word inside of the file
