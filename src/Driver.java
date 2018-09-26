@@ -18,7 +18,7 @@ public class Driver {
 			try {
 				if (args[i].equals("-path")) {
 					if ((i + 1) < args.length && ArgumentParser.isValidPath(args[i + 1])) {
-						ArgumentParser.isPath(args[i], Paths.get(args[i + 1]), index);
+						ArgumentParser.addStemmedWords(ArgumentParser.filesInPath(Paths.get(args[i + 1])), index);
 					} 
 					i++;
 				} else if (args[i].equals("-index")) {

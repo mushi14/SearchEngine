@@ -8,22 +8,6 @@ import java.util.List;
 
 // think of class names as job titles
 public class ArgumentParser {
-	/** Checks if the argument passed is a flag, if it is, then calls filesInPath which lists, parses, and reads
-	 * all the files to index if path is a directory, if a regular file, then just parses, reads and adds to index.
-	 * 
-	 * 
-	 * @param arg argument to check if valid
-	 * @param path path of the file/directory
-	 * @param index inverted index that contains stemmed words, their files, and their positions
-	 * @throws IOException if unable to read to write to file 
-	 * 
-	 */
-	public static void isPath(String arg, Path path, InvertedIndex index) throws IOException {
-		if (isFlag(arg)) {
-			addStemmedWords(filesInPath(path), index);
-		}
-	}
-	
 	/** Checks if the argument passed is a flag, if it is, then calls the TreeJSONWriter and writes the index
 	 * in JSONWriter format the path given (if path is valid), if invalid path, then writes in JSONWriter format
 	 * to "index.json" .
