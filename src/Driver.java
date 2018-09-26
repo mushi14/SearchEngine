@@ -11,9 +11,10 @@ public class Driver {
 	 * @return 0 if everything went well
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) {		
+	public static void main(String[] args) {
 		InvertedIndex index = new InvertedIndex();
 		
+		// TODO No looping
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("-path")) {
 				try {
@@ -42,4 +43,20 @@ public class Driver {
 			}
 		}
 	}
+	
+	/* TODO
+	ArgumentParser map = new ArgumentParser(args);
+	InvertedIndex index = new InvertedIndex();
+	if (map.hasFlag("-path")) {
+		try {
+			ArgumentParser.filesInPath(map.getPath("-path"), index); 
+		} catch (NullPointerException | IOException e) {
+			System.out.println("There was an issue finding the direcotry or file: " + args[i + 1]);
+		}
+	}
+	
+	if (map.hasFlag("-index")) {
+		etc.
+	}
+	*/
 }
