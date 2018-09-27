@@ -66,17 +66,23 @@ public class InvertedIndex {
 //		index.get(word).put(path, val);
 //	}
 	
-	public void addPosition(String word, String path, int position) {
-		index.get(word).get(path).add(position);
-	}
-	
 	public void addWord(String word, String path, int position) {
 		TreeMap<String, TreeSet<Integer>> value = new TreeMap<>();
 		value.put(path, new TreeSet<Integer>());
 		value.get(path).add(position);
 		index.put(word, value);
 	}
-		
+	
+	public void addPath(String word, String path, int position) {
+		TreeSet<Integer> value = new TreeSet<>();
+		value.add(position);
+		index.get(word).put(path, value);
+	}
+	
+	public void addPosition(String word, String path, int position) {
+		index.get(word).get(path).add(position);
+	}
+	
 	/*
 	 * TODO 
 	 * 

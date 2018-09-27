@@ -8,8 +8,6 @@ import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import opennlp.tools.stemmer.Stemmer;
@@ -179,17 +177,14 @@ public class TextFileStemmer {
 					// TODO This logic will get replaced by an index.add(...)
 					if (index.containsWord(word)) {
 						if (index.containsPath(word ,path.toString())) {
-							index.get(word, path.toString()).add(count);
+							index.addPosition(word, path.toString(), count);
 							count++;
 						} else {
-							index.put(word, path.toString(), new TreeSet<Integer>());
-							index.get(word, path.toString()).add(count);
+							index.addPath(word, path.toString(), count);
 							count++;
 						}
 					} else {
-						index.put(word, new TreeMap<String, TreeSet<Integer>>());
-						index.put(word, path.toString(), new TreeSet<Integer>());
-						index.get(word, path.toString()).add(count);
+						index.addWord(word, path.toString(), count);
 						count++;
 					}
 				}
