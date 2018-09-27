@@ -2,8 +2,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-// TODO Slight formatting fix to Javadoc comments
-
 /** 
  * Data structure to store file paths and the word positions.
  */
@@ -47,27 +45,38 @@ public class InvertedIndex {
 		return tempIndex.get(word).get(path);
 	}
 	
-	/**
-	 * Adds key, value pair to the map
-	 * 
-	 * @param word word inside of the file as key
-	 * @param val TreeMap as values
-	 */
-	public void put(String word, TreeMap<String, TreeSet<Integer>> val) {
-		index.put(word, val);
+//	/**
+//	 * Adds key, value pair to the map
+//	 * 
+//	 * @param word word inside of the file as key
+//	 * @param val TreeMap as values
+//	 */
+//	public void put(String word, TreeMap<String, TreeSet<Integer>> val) {
+//		index.put(word, val);
+//	}
+//	
+//	/** 
+//	 * Adds key, value pair to the map
+//	 * 
+//	 * @param word word inside of the file
+//	 * @param path path to the file as key
+//	 * @param val TreeSet as values
+//	 */
+//	public void put(String word, String path, TreeSet<Integer> val) {
+//		index.get(word).put(path, val);
+//	}
+	
+	public void addPosition(String word, String path, int position) {
+		index.get(word).get(path).add(position);
 	}
 	
-	/** 
-	 * Adds key, value pair to the map
-	 * 
-	 * @param word word inside of the file
-	 * @param path path to the file as key
-	 * @param val TreeSet as values
-	 */
-	public void put(String word, String path, TreeSet<Integer> val) {
-		index.get(word).put(path, val);
+	public void addWord(String word, String path, int position) {
+		TreeMap<String, TreeSet<Integer>> value = new TreeMap<>();
+		value.put(path, new TreeSet<Integer>());
+		value.get(path).add(position);
+		index.put(word, value);
 	}
-	
+		
 	/*
 	 * TODO 
 	 * 
