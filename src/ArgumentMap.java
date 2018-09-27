@@ -48,11 +48,11 @@ public class ArgumentMap {
 		}
 	}
 
-	/** Checks to see if argument passed is a valid flag or not 
+	/** 
+	 * Checks to see if argument passed is a valid flag or not 
 	 * 
 	 * @param arg argument from the command line
 	 * @return true if the argument is -path or -index
-	 * 
 	 */
 	public static boolean isFlag(String arg) {
 		if (arg.isEmpty()) { 
@@ -112,15 +112,4 @@ public class ArgumentMap {
 	public String getPath(String flag) {
 		return argMap.get(flag);
 	}
-
-	/**
-	 * Returns the value to which the specified flag is mapped as a
-	 * {@link String}, or the default value if there is no mapping for the flag.
-	 *
-	 * @param flag         the flag whose associated value is to be returned
-	 * @param defaultValue the default value to return if there is no mapping for
-	 *                     the flag
-	 * @return the value to which the specified flag is mapped, or the default
-	 *         value if there is no mapping for the flag
-	 */
 }

@@ -4,62 +4,65 @@ import java.util.TreeSet;
 
 // TODO Slight formatting fix to Javadoc comments
 
-/** Data structure to store file paths and the word positions.
- * 
+/** 
+ * Data structure to store file paths and the word positions.
  */
 public class InvertedIndex {
 
 	/** 
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
-	// TODO Use the final word here!
-	private TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	private TreeMap<String, TreeMap<String, TreeSet<Integer>>> tempIndex = new TreeMap<>();
 
-	/** Initializes the index.
-	 * 
+
+	/**
+	 *  Initializes the index.
 	 */
 	public InvertedIndex() {
 		this.index = new TreeMap<>();
 	}
 	
-	// TODO Most of these get methods are breaking encapsulation
-	/** Gets the TreeMap of keys paths and values positions associated with the word
+	/** 
+	 * Gets the TreeMap of keys paths and values positions associated with the word
 	 * 
 	 * @param word word inside of the file
 	 * @return TreeMap containing path and positions of word 
 	 * 
 	 */
 	public TreeMap<String, TreeSet<Integer>> get(String word) {
-		return index.get(word);
+		tempIndex = index;
+		return tempIndex.get(word);
 	}
 	
-	/** Gets the TreeSet of positions associated with the path
+	/** 
+	 * Gets the TreeSet of positions associated with the path
 	 * 
 	 * @param word word inside of the file
 	 * @param path path of the file
 	 * @return TreeSet containing positions associated with the path
-	 * 
 	 */
 	public TreeSet<Integer> get(String word, String path) {
-		return index.get(word).get(path);
+		tempIndex = index;
+		return tempIndex.get(word).get(path);
 	}
 	
-	/** Adds key, value pair to the map
+	/**
+	 * Adds key, value pair to the map
 	 * 
 	 * @param word word inside of the file as key
 	 * @param val TreeMap as values
-	 * 
 	 */
 	public void put(String word, TreeMap<String, TreeSet<Integer>> val) {
 		index.put(word, val);
 	}
 	
-	/** Adds key, value pair to the map
+	/** 
+	 * Adds key, value pair to the map
 	 * 
 	 * @param word word inside of the file
 	 * @param path path to the file as key
 	 * @param val TreeSet as values
-	 * 
 	 */
 	public void put(String word, String path, TreeSet<Integer> val) {
 		index.get(word).put(path, val);
@@ -76,40 +79,40 @@ public class InvertedIndex {
 	public void addAll(String[] words, String location, int position)
 	*/
 	
-	/** Shows all the words in the map
-	 * 
+	/**
+	 * Shows all the words in the map
+	 *
 	 * @return Returns a set view of all the paths
-	 * 
 	 */
 	public Set<String> wordsKeySet() {
 		return index.keySet();
 	}
 	
-	/** Shows all the paths associated with the word in the map
-	 * 
+	/**
+	 * Shows all the paths associated with the word in the map
+	 *
 	 * @param word word inside of the file
 	 * @return Returns a set view of all the paths
-	 * 
 	 */
 	public Set<String> pathsKeySet(String word) {
 		return index.get(word).keySet();
 	}
 	
-	/** Shows all the positions associated with a path in the map
-	 * 
+	/**
+	 * Shows all the positions associated with a path in the map
+	 *
 	 * @param word word inside of the file
 	 * @param path path of the file
 	 * @return Returns a set view of all the positions associated with the path
-	 * 
 	 */
 	public TreeSet<Integer> positionsSet(String word, String path) {
 		return index.get(word).get(path);
 	}
 
-	/** Number of words in the the map
+	/** 
+	 * Number of words in the the map
 	 * 
 	 * @return integer size of the number of words in the map
-	 * 
 	 */
 	public int words() {
 		return index.size();
@@ -119,13 +122,14 @@ public class InvertedIndex {
 	// TODO Refactor name from "words" to "locations"
 	// TODO If the word doesn't exist, should return 0, but here there is a NullPointerException instead
 	// TODO Make similar fixes to avoid null pointers for all remaining methods
-	/** Number of paths associated with the word in the the map
+	/** 
+	 * Number of paths associated with the word in the the map
 	 * 
 	 * @param word word inside of the file
 	 * @return integer size of the number of paths associated with word in the map
 	 * 
 	 */
-	public int words(String word) {
+	public int paths(String word) {
 		return index.get(word).size();
 	}
 
@@ -136,7 +140,7 @@ public class InvertedIndex {
 	 * @return integer size of the number of paths associated with word in the map
 	 * 
 	 */
-	public int words(String word, String path) {
+	public int positions(String word, String path) {
 		return index.get(word).get(path).size();
 	}
 	
@@ -147,7 +151,8 @@ public class InvertedIndex {
 	 * 
 	 */
 	public boolean containsWord(String word) {
-		return index.containsKey(word);
+		tempIndex = index;
+		return tempIndex.containsKey(word);
 	}
 	
 	/** Checks to see if the word contains the path
@@ -158,14 +163,16 @@ public class InvertedIndex {
 	 * 
 	 */
 	public boolean containsPath(String word, String path) {
-		return index.get(word).containsKey(path);
+		tempIndex = index;
+		return tempIndex.get(word).containsKey(path);
 	}
 
-	/** Prints in the map
-	 * 
+	/** 
+	 * Prints in the map
 	 */
 	@Override
 	public String toString() {
-		return this.index.toString();
+		tempIndex = index;
+		return this.tempIndex.toString();
 	}
 }
