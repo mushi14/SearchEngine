@@ -60,9 +60,8 @@ public class ArgumentMap {
 		} else {
 			try {
 				arg = arg.trim();
-				if (arg.equals("-path")) {
-					return true;
-				} else if (arg.equals("-index")) {
+				if (arg.equals("-path") || arg.equals("-index") || arg.equals("-search") || arg.equals("-exact")
+						|| arg.equals("-results") || arg.equals("-locations")) {
 					return true;
 				} else {
 					return false;

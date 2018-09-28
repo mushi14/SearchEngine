@@ -83,7 +83,7 @@ public class Driver {
 		try {
 			if (argMap.hasFlag("-path")) {
 				if (argMap.flagPath("-path")) {
-					TextFileStemmer.filesInPath(Paths.get(argMap.getPath("-path")), index);
+					FileChecker.readFiles(FileChecker.filesInPath(Paths.get(argMap.getPath("-path"))), index);
 				}
 			}
 			if (argMap.hasFlag("-index")) {
@@ -94,16 +94,22 @@ public class Driver {
 				}
 			}
 			if (argMap.hasFlag("-search")) {
-				
+				if (argMap.flagPath("-search")) {
+					QueryParser.parse(Paths.get(argMap.getPath("-search")));
+				}
 			}
-			if (argMap.hasFlag("-exact")) {
-				
-			}
-			if (argMap.hasFlag("-results")) {
-				
-			}
-			if (argMap.hasFlag("-location")) {
-				
+//			if (argMap.hasFlag("-exact")) {
+//				
+//			}
+//			if (argMap.hasFlag("-results")) {
+//				
+//			}
+			if (argMap.hasFlag("-locations")) {
+				if (argMap.flagPath("-locations")) {
+					TreeJSONWriter.asLocations(index, Paths.get(argMap.getPath("-locations")));
+				} else {
+					TreeJSONWriter.asLocations(index, Paths.get("locations.json"));
+				}
 			}
 		} catch (IOException | NullPointerException e) {
 				System.out.println("There was an issue finding the direcotry or file: ");
