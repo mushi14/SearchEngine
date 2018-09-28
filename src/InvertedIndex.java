@@ -11,8 +11,6 @@ public class InvertedIndex {
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	private TreeMap<String, TreeMap<String, TreeSet<Integer>>> tempIndex = new TreeMap<>();
-
 
 	/**
 	 *  Initializes the index.
@@ -28,8 +26,11 @@ public class InvertedIndex {
 	 * @return TreeMap containing path and positions of word 
 	 */
 	public TreeMap<String, TreeSet<Integer>> get(String word) {
-		tempIndex = index;
-		return tempIndex.get(word);
+		TreeMap<String, TreeSet<Integer>> temp = new TreeMap<>();
+		if (index.containsKey(word)) {
+			temp = index.get(word);
+		}
+		return temp;
 	}
 	
 	/** 
@@ -40,8 +41,11 @@ public class InvertedIndex {
 	 * @return TreeSet containing positions associated with the path
 	 */
 	public TreeSet<Integer> get(String word, String path) {
-		tempIndex = index;
-		return tempIndex.get(word).get(path);
+		TreeSet<Integer> temp = new TreeSet<>();
+		if (index.containsKey(word)) {
+			temp = index.get(word).get(path);
+		}
+		return temp;
 	}
 	
 	/** 
@@ -103,8 +107,11 @@ public class InvertedIndex {
 	 * @return Returns a set view of all the paths
 	 */
 	public Set<String> pathsKeySet(String word) {
-		tempIndex = index;
-		return tempIndex.get(word).keySet();
+		if (index.containsKey(word)) {
+			return index.get(word).keySet();
+		} else {
+			return null;
+		}
 	}
 	
 	/**
@@ -115,8 +122,11 @@ public class InvertedIndex {
 	 * @return Returns a set view of all the positions associated with the path
 	 */
 	public TreeSet<Integer> positionsSet(String word, String path) {
-		tempIndex = index;
-		return tempIndex.get(word).get(path);
+		TreeSet<Integer> temp = new TreeSet<>();
+		if (index.containsKey(word)) {
+			temp = index.get(word).get(path);
+		}
+		return temp;
 	}
 
 	/** 
@@ -168,8 +178,7 @@ public class InvertedIndex {
 	 * 
 	 */
 	public boolean containsWord(String word) {
-		tempIndex = index;
-		return tempIndex.containsKey(word);
+		return index.containsKey(word);
 	}
 	
 	/** Checks to see if the word contains the path
@@ -180,8 +189,11 @@ public class InvertedIndex {
 	 * 
 	 */
 	public boolean containsPath(String word, String path) {
-		tempIndex = index;
-		return tempIndex.get(word).containsKey(path);
+		if (index.containsKey(word)) {
+			return index.get(word).containsKey(path);
+		} else {
+			return false;
+		}
 	}
 
 	/** 
