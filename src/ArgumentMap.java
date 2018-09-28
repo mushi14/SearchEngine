@@ -31,7 +31,7 @@ public class ArgumentMap {
 	 *
 	 * @param args the command line arguments to parse
 	 */
-	public void parse(String[] args) {		
+	public void parse(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
 				if ((i + 1) < args.length) {

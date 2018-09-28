@@ -18,25 +18,14 @@ public class TextFileStemmer {
 	public static final Pattern SPLIT_REGEX = Pattern.compile("(?U)\\p{Space}+");
 	public static final Pattern CLEAN_REGEX = Pattern.compile("(?U)[^\\p{Alpha}\\p{Space}]+");
 	
-	/** Checks to see if the file is a text file
-	 * 
-	 * @param file takes in a file to check if is a text file
-	 * @return true if the given file ends in ".txt" or ".text"
-	 * 
-	 */
-	public static boolean isTextFile(String file) {
-		file = file.toLowerCase();
-		return file.endsWith(".txt") || file.endsWith(".text");
-	}
-	
-	/** Checks to see if the path provided is a text file or a directory. If a valid text
+	/** 
+	 * Checks to see if the path provided is a text file or a directory. If a valid text
 	 * file, then writes to the file. If a directory, then goes through the directory 
 	 * to find its text files or directories. 
 	 * 
 	 * @param path path that is being checked 
 	 * @param index inverted index that contains the stemmed words, their files, and their positions
 	 * @throws IOException if unable to read to write to file 
-	 * 
 	 */
 	public static void filesInPath(Path path, InvertedIndex index) throws IOException {
 		if (Files.isDirectory(path)) {
@@ -44,7 +33,7 @@ public class TextFileStemmer {
 				for (Path file: filePathStream) {
 					if (Files.isRegularFile(file)) {
 						path = Paths.get(file.toString());
-						if (isTextFile(file.toString())) {
+						if (file.toString().toLowerCase().endsWith(".txt") || file.toString().toLowerCase().endsWith(".text")) {
 							TextFileStemmer.stemFile(path, index);
 						}
 					} else if (Files.isDirectory(file)) {
@@ -58,19 +47,7 @@ public class TextFileStemmer {
 		} else if (Files.isRegularFile(path)) {
 			TextFileStemmer.stemFile(path, index);
 		}
-	}	
-
-	/**
-	 * Returns a list of cleaned and stemmed words parsed from the provided line.
-	 * Uses the English {@link SnowballStemmer.ALGORITHM} for stemming.
-	 *
-	 * @param line the line of words to clean, split, and stem
-	 * @return list of cleaned and stemmed words
-	 *
-	 * @see SnowballStemmer
-	 * @see SnowballStemmer.ALGORITHM#ENGLISH
-	 * @see #stemLine(String, Stemmer)
-	 */
+	}
 	
 	/**
 	 * Cleans the text by removing any non-alphabetic characters (e.g. non-letters
@@ -86,7 +63,6 @@ public class TextFileStemmer {
 		return cleaned.toLowerCase();
 	}
 	
-	
 	/**
 	 * Splits the supplied text by whitespace. Does not perform any cleaning.
 	 *
@@ -101,7 +77,6 @@ public class TextFileStemmer {
 		return text.isEmpty() ? new String[0] : SPLIT_REGEX.split(text);
 	}
 
-	
 	/**
 	 * Cleans the text and then splits it by whitespace.
 	 *
@@ -113,21 +88,6 @@ public class TextFileStemmer {
 	 */
 	public static String[] parse(String text) {
 		return split(clean(text));
-	}
-	
-	/**
-	 * Returns a list of cleaned and stemmed words parsed from the provided line.
-	 * Uses the English {@link SnowballStemmer.ALGORITHM} for stemming.
-	 *
-	 * @param line the line of words to clean, split, and stem
-	 * @return list of cleaned and stemmed words
-	 *
-	 * @see SnowballStemmer
-	 * @see SnowballStemmer.ALGORITHM#ENGLISH
-	 * @see #stemLine(String, Stemmer)
-	 */
-	public static List<String> stemLine(String line) {
-		return stemLine(line, new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH));
 	}
 
 	/**
@@ -162,30 +122,24 @@ public class TextFileStemmer {
 	 */
 	public static void stemFile(Path path, InvertedIndex index) throws IOException {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-			int count = 1;
+			int position = 1;
 			String line = br.readLine();
-			// TODO Create a stemmer here instead of a new one per line
-			
+			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 			while(line != null) {
-				/* TODO
-				for (String word : parse(line)) {
+				String[] words = parse(line);
+				for (String word : words) {
 					word = stemmer.stem(word).toString();
-					index.add(word, )
-				}
-				*/
-				for (String word : stemLine(line)) {
-					// TODO This logic will get replaced by an index.add(...)
 					if (index.containsWord(word)) {
 						if (index.containsPath(word ,path.toString())) {
-							index.addPosition(word, path.toString(), count);
-							count++;
+							index.addPosition(word, path.toString(), position);
+							position++;
 						} else {
-							index.addPath(word, path.toString(), count);
-							count++;
+							index.addPath(word, path.toString(), position);
+							position++;
 						}
 					} else {
-						index.addWord(word, path.toString(), count);
-						count++;
+						index.addWord(word, path.toString(), position);
+						position++;
 					}
 				}
 				line = br.readLine();

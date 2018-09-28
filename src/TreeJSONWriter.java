@@ -160,9 +160,7 @@ public class TreeJSONWriter {
 	 * @see #indent(int, Writer)
 	 * @see #quote(String, Writer)
 	 */
-	public static void asPathIndex(TreeMap<String, TreeSet<Integer>> elements,
-			Writer writer, int level) throws IOException {
-
+	public static void asPathIndex(TreeMap<String, TreeSet<Integer>> elements, Writer writer, int level) throws IOException {
 		writer.write("{" + System.lineSeparator());
 				
 		int size = elements.keySet().size();
@@ -187,7 +185,7 @@ public class TreeJSONWriter {
 		indent(level, writer);
 		writer.write("}");
 	}
-	
+
 	/**
 	 * Returns the map of String keys and WordIndex values formatted as a pretty JSON object.
 	 *
@@ -222,7 +220,7 @@ public class TreeJSONWriter {
 			asInvertedIndex(elements, writer, 0);
 		}
 	}
-	
+
 	/**
 	 * Writes the map of String keys and WordIndex values as a pretty JSON object using the provided
 	 * {@link Writer} and indentation level.

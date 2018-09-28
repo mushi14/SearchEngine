@@ -18,7 +18,7 @@ public class InvertedIndex {
 	 *  Initializes the index.
 	 */
 	public InvertedIndex() {
-		this.index = new TreeMap<>();
+		index = new TreeMap<>();
 	}
 	
 	/** 
@@ -26,7 +26,6 @@ public class InvertedIndex {
 	 * 
 	 * @param word word inside of the file
 	 * @return TreeMap containing path and positions of word 
-	 * 
 	 */
 	public TreeMap<String, TreeSet<Integer>> get(String word) {
 		tempIndex = index;
@@ -45,27 +44,13 @@ public class InvertedIndex {
 		return tempIndex.get(word).get(path);
 	}
 	
-//	/**
-//	 * Adds key, value pair to the map
-//	 * 
-//	 * @param word word inside of the file as key
-//	 * @param val TreeMap as values
-//	 */
-//	public void put(String word, TreeMap<String, TreeSet<Integer>> val) {
-//		index.put(word, val);
-//	}
-//	
-//	/** 
-//	 * Adds key, value pair to the map
-//	 * 
-//	 * @param word word inside of the file
-//	 * @param path path to the file as key
-//	 * @param val TreeSet as values
-//	 */
-//	public void put(String word, String path, TreeSet<Integer> val) {
-//		index.get(word).put(path, val);
-//	}
-	
+	/** 
+	 * Adds the key word to with value TreeMap of key path and value positions
+	 * 
+	 * @param word word inside of the file
+	 * @param path path of the file
+	 * @param position position the word appears in the file
+	 */
 	public void addWord(String word, String path, int position) {
 		TreeMap<String, TreeSet<Integer>> value = new TreeMap<>();
 		value.put(path, new TreeSet<Integer>());
@@ -73,23 +58,31 @@ public class InvertedIndex {
 		index.put(word, value);
 	}
 	
+	/**
+	 * Adds a key path and value position to the already existing word in the TreeMap
+	 * 
+	 * @param word word inside of the file
+	 * @param path path of the file
+	 * @param position position the word appears in the file
+	 */
 	public void addPath(String word, String path, int position) {
 		TreeSet<Integer> value = new TreeSet<>();
 		value.add(position);
 		index.get(word).put(path, value);
 	}
 	
+	/**
+	 * Adds the position in which the word appears in the path
+	 * 
+	 * @param word word inside of the file
+	 * @param path path of the file
+	 * @param position position the word appears in the file
+	 */
 	public void addPosition(String word, String path, int position) {
 		index.get(word).get(path).add(position);
 	}
-	
+
 	/*
-	 * TODO 
-	 * 
-	public void add(String word, String location, int position) {
-		safely add this to your index initializing what you need
-	}
-	
 	public void addAll(String[] words, String location)
 	public void addAll(String[] words, String location, int position)
 	*/
@@ -110,7 +103,8 @@ public class InvertedIndex {
 	 * @return Returns a set view of all the paths
 	 */
 	public Set<String> pathsKeySet(String word) {
-		return index.get(word).keySet();
+		tempIndex = index;
+		return tempIndex.get(word).keySet();
 	}
 	
 	/**
@@ -121,7 +115,8 @@ public class InvertedIndex {
 	 * @return Returns a set view of all the positions associated with the path
 	 */
 	public TreeSet<Integer> positionsSet(String word, String path) {
-		return index.get(word).get(path);
+		tempIndex = index;
+		return tempIndex.get(word).get(path);
 	}
 
 	/** 
@@ -134,7 +129,6 @@ public class InvertedIndex {
 	}
 	
 	
-	// TODO Refactor name from "words" to "locations"
 	// TODO If the word doesn't exist, should return 0, but here there is a NullPointerException instead
 	// TODO Make similar fixes to avoid null pointers for all remaining methods
 	/** 
@@ -145,7 +139,11 @@ public class InvertedIndex {
 	 * 
 	 */
 	public int paths(String word) {
-		return index.get(word).size();
+		if (index.containsKey(word)) {
+			return index.get(word).size();
+		} else {
+			return 0;
+		}
 	}
 
 	/** Number of positions associated with the path in the the map
@@ -156,7 +154,11 @@ public class InvertedIndex {
 	 * 
 	 */
 	public int positions(String word, String path) {
-		return index.get(word).get(path).size();
+		if (index.containsKey(word)) {
+			return index.get(word).get(path).size();
+		} else {
+			return 0;
+		}
 	}
 	
 	/** Checks to see if the map contains the word
@@ -187,7 +189,6 @@ public class InvertedIndex {
 	 */
 	@Override
 	public String toString() {
-		tempIndex = index;
-		return this.tempIndex.toString();
+		return this.index.toString();
 	}
 }
