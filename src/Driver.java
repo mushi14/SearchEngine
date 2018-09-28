@@ -76,9 +76,10 @@ public class Driver {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) {
-		InvertedIndex index = new InvertedIndex();
 		
+		InvertedIndex index = new InvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
+		
 		try {
 			if (argMap.hasFlag("-path")) {
 				if (argMap.flagPath("-path")) {
@@ -91,6 +92,18 @@ public class Driver {
 				} else {
 					TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
 				}
+			}
+			if (argMap.hasFlag("-search")) {
+				
+			}
+			if (argMap.hasFlag("-exact")) {
+				
+			}
+			if (argMap.hasFlag("-results")) {
+				
+			}
+			if (argMap.hasFlag("-location")) {
+				
 			}
 		} catch (IOException | NullPointerException e) {
 				System.out.println("There was an issue finding the direcotry or file: ");

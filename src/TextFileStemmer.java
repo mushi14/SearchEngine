@@ -177,6 +177,7 @@ import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import opennlp.tools.stemmer.Stemmer;
@@ -317,5 +318,21 @@ public class TextFileStemmer {
 			System.out.println("There was an issue fiding the text file: " + path);
 		}
 	}
+	
+	public static void stemQueryFile(Path path, TreeSet<String> queries) throws IOException {
+		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+			String line = br.readLine();
+			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+			while(line != null) {
+				String[] words = parse(line);
+				for (String word : words) {
+					word = stemmer.stem(word).toString();
+					queries.add(word);
+				}
+				line = br.readLine();
+			}
+		} catch (NullPointerException e) {
+			System.out.println("There was an issue finding the query file: " + path);
+		}
+	}
 }
-

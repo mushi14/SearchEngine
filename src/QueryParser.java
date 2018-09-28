@@ -12,6 +12,5 @@ public class QueryParser {
 	
 	public static TreeSet<String> getQueries() {
 		return queries;
-	}
-	
+	}	
 }
