@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-public class FileChecker {
+public class PathChecker {
 
 	/** 
 	 * Checks to see if the path provided is a text file or a directory. If a valid text

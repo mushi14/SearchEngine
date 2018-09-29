@@ -157,7 +157,8 @@ public class InvertedIndex {
 		}
 	}
 
-	/** Number of positions associated with the path in the the map
+	/** 
+	 * Number of positions associated with the path in the the map
 	 * 
 	 * @param word word inside of the file
 	 * @param location path of the file
@@ -186,8 +187,6 @@ public class InvertedIndex {
 		}
 		return locationsMap;
 	}
-	
-
 
 	/** Checks to see if the map contains the word
 	 * 
