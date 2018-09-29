@@ -44,31 +44,36 @@ public class ArgumentMap {
 				} else {
 					argMap.put(args[i], null);
 				}
-			} 
+			}
 		}
 	}
 
-	/** 
-	 * Checks to see if argument passed is a valid flag or not 
-	 * 
-	 * @param arg argument from the command line
-	 * @return true if the argument is -path or -index
+	/**
+	 * Determines whether the argument is a flag. Flags start with a dash "-"
+	 * character, followed by at least one other non-whitespace character.
+	 *
+	 * @param arg the argument to test if its a flag
+	 * @return {@code true} if the argument is a flag
+	 *
+	 * @see String#startsWith(String)
+	 * @see String#trim()
+	 * @see String#isEmpty()
+	 * @see String#length()
 	 */
 	public static boolean isFlag(String arg) {
-		if (arg.isEmpty()) { 
-			return false;
-		} else {
-			try {
-				arg = arg.trim();
-				if (arg.equals("-path") || arg.equals("-index") || arg.equals("-search") || arg.equals("-exact")
-						|| arg.equals("-results") || arg.equals("-locations")) {
+		try {
+			arg = arg.trim();
+			if (arg.length() >= 2) {
+				if (arg.charAt(0) == '-' && arg.charAt(1) != ' ') {
 					return true;
 				} else {
 					return false;
 				}
-			} catch (NullPointerException e) {
+			} else {
 				return false;
 			}
+		} catch (NullPointerException e) {
+			return false;
 		}
 	}
 
