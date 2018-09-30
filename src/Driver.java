@@ -36,7 +36,7 @@ public class Driver {
 				}
 			}
 //			if (argMap.hasFlag("-exact")) {
-//				
+//				Search.ExactSearch();
 //			}
 //			if (argMap.hasFlag("-results")) {
 //				
@@ -57,5 +57,7 @@ public class Driver {
 		q.add("hello");
 		
 		System.out.println(Search.score(index, q));
+//		System.out.println(Search.get());
+		
 	}
 }
