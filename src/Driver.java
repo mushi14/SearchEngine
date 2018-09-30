@@ -35,12 +35,12 @@ public class Driver {
 					QueryParser.parse(Paths.get(argMap.getPath("-search")));
 				}
 			}
-//			if (argMap.hasFlag("-exact")) {
+			if (argMap.hasFlag("-exact")) {
 //				Search.ExactSearch();
-//			}
-//			if (argMap.hasFlag("-results")) {
-//				
-//			}
+			}
+			if (argMap.hasFlag("-results")) {
+				
+			}
 			if (argMap.hasFlag("-locations")) {
 				if (argMap.flagPath("-locations")) {
 					TreeJSONWriter.asLocations(index, Paths.get(argMap.getPath("-locations")));
@@ -51,13 +51,13 @@ public class Driver {
 		} catch (IOException | NullPointerException e) {
 				System.out.println("There was an issue finding the direcotry or file: ");
 		}
+		
 		TreeSet<String> q = new TreeSet<>();
 		q.add("narwhal");
 		q.add("tarsier");
 		q.add("hello");
 		
-		System.out.println(Search.score(index, q));
-//		System.out.println(Search.get());
+ 		System.out.println(Search.score(index, q));
 		
 	}
 }
