@@ -12,19 +12,15 @@ public class Search {
 
 	public static Map<Double, List<String>> score(InvertedIndex index, TreeSet<String> queries) {
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
-		List<Double> seen = new ArrayList<>();
-
-		List<String> duplicateScores = new ArrayList<>();
 
 		double totalWords = 0;
 		double totalMatches = 0;
 		double score = 0;
 
 		for (String location : index.totalLocations().keySet()) {
-			List<String> locations = new ArrayList<>();
 			List<String> temp = new ArrayList<>();
 			totalWords = index.totalLocations().get(location);
-			
+
 			for (String query : queries) {
 				if (index.containsWord(query)) {
 					if (index.get(query).containsKey(location)) {
@@ -32,89 +28,94 @@ public class Search {
 					}
 				}
 			}
+
 			if (!temp.isEmpty()) {
 				for (String query : temp) {
 					totalMatches += index.get(query, location).size();
-					System.out.println(totalMatches);
 					score = Double.parseDouble(FORMATTER.format(totalMatches / totalWords));
-					locations.add(location);
-					scores.put(score, locations);
+				}
+				if (scores.containsKey(score)) {
+					scores.get(score).add(location);
+				} else {
+					scores.put(score, new ArrayList<String>());
+					scores.get(score).add(location);
 				}
 			}
 			totalMatches = 0;
 		}
-		
-//		int  count = 0;
-//		for (String location: scores.keySet()) {
-//			if (count == 0) {
-//				seen.add(scores.get(location));
-//				duplicateScores.add(location);
-//				count++;
-//			} else {
-//				if (seen.contains(scores.get(location))) {
-//					duplicateScores.add(location);
-//				} else {
-//					seen.add(scores.get(location));
-//				}
-//			}
-//		}
-		
-//		List<Stack<String>> stack = new Stack();
-//		for (String location : compareScores(index, duplicateScores)) {
-//			System.out.println(scores.get(location) + "   " + location);
-//		}
+
+		for (Double s : scores.keySet()) {
+			if (scores.get(s).size() > 1) {
+				scores.replace(s, compareScores(index, scores.get(s)));
+			}
+		}
 		return scores;
 	}
 
 
 	public static List<String> compareScores(InvertedIndex index, List<String> duplicateScores) {
-		Map<String, Integer> totalWords = new TreeMap<>();
-		List<String> sortedWords = new ArrayList<>();
-		List<Integer> temp = new ArrayList<>();
+		TreeSet<Integer> totalWords = new TreeSet<>(Collections.reverseOrder());
+		List<String> sorted = new ArrayList<>();
+		List<String> sortedCopy = new ArrayList<>();
 
 		for (String location : duplicateScores) {
-			totalWords.put(location, index.totalLocations().get(location));
+			totalWords.add(index.totalLocations().get(location));
 		}
-		
-		temp.addAll(totalWords.values());
-		Collections.sort(temp, Collections.reverseOrder());
-		
-		for (Integer wordCount : temp) {
-			for (String location : duplicateScores) {
-				if (index.totalLocations().get(location) == wordCount) {
-					if (!sortedWords.contains(location)) {
-						sortedWords.add(location);
+
+		int range = totalWords.first();
+		boolean[] seen = new boolean[range + 1];
+
+		for (Integer wordCount : totalWords) {
+			for (int i = 0; i < duplicateScores.size(); i++) {
+				if (index.totalLocations().get(duplicateScores.get(i)) == wordCount) {
+					if (seen[wordCount] == true) {
+						for (int j = 0; j < sorted.size(); j++) {
+							if (index.totalLocations().get(sorted.get(j)) == wordCount) {
+								String temp = sortedCopy.get(j);
+								int a = sortedCopy.get(j).toLowerCase().compareTo(duplicateScores.get(i).toLowerCase());
+								if (a < 0) {
+									sortedCopy.add(duplicateScores.get(i));
+								} else if (a > 0) {
+									sortedCopy.set(j, duplicateScores.get(i));
+									sortedCopy.add(temp);
+								} else {
+									sortedCopy.add(duplicateScores.get(i));
+								}
+							}
+						}
+						sorted.clear();
+						sorted.addAll(sortedCopy);
+					} else {
+						sorted.add(duplicateScores.get(i));
+						sortedCopy.add(duplicateScores.get(i));
+						seen[wordCount] = true;
 					}
 				}
 			}
 		}
 
-//		Stack<String> stack = new Stack();
-//		for (String location : sortedWords) {
-//			stack.push(location);
-//		}
-
-		return sortedWords;
+		return sorted;
 	}
+	
+	
+	public static String compareTo(InvertedIndex index, List<String> sorted, String location, int wordCount) {
+		List<String> sortedCopy = new ArrayList<>();
 
-
-//	public static Stack sortedScores() {
-//		Stack stack = new Stack();
-//		
-//		return stack;
-//	}
-//	public int compareTo(Movie other) {
-//		// TODO Implement this however you want.
-//		// DONE
-//		int a = this.title().toLowerCase().compareTo(other.title().toLowerCase());
-//		if (a == 0) {
-//			return Integer.compare(other.year(), this.year());
-//		} else {
-//			return a;
-//		}
-//	}
-
-
+		for (int j = 0; j < sorted.size(); j++) {
+			if (index.totalLocations().get(sorted.get(j)) == wordCount) {
+				String temp = sortedCopy.get(j);
+				int a = sortedCopy.get(j).toLowerCase().compareTo(location.toLowerCase());
+				if (a > 0) {
+					compareTo(index, sorted, sorted.get(j), wordCount);
+					sortedCopy.set(j, location);
+					sortedCopy.add(temp);
+				} else {
+					sortedCopy.add(location);
+				}
+			}
+		}
+		return location;
+	}
 //	public static void ExactSearch(InvertedIndex index, TreeSet<String> queries) {
 //		
 //
@@ -122,10 +123,5 @@ public class Search {
 //
 //	public static void PartialSearch() {
 //
-//	}
-//	
-//	
-//	public static List<Double> get() {
-//		return ExactSearch();
 //	}
 }
