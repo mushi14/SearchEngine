@@ -18,7 +18,7 @@ public class Driver {
 		try {
 			if (argMap.hasFlag("-path")) {
 				if (argMap.flagPath("-path")) {
-					TextFileStemmer.filesInPath(Paths.get(argMap.getPath("-path")), index);
+					PathChecker.filesInPath(Paths.get(argMap.getPath("-path")), index);
 				}
 			}
 			if (argMap.hasFlag("-index")) {

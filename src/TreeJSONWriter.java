@@ -238,8 +238,7 @@ public class TreeJSONWriter {
 	 * @see #indent(int, Writer)
 	 * @see #quote(String, Writer)
 	 */
-	public static void asInvertedIndex(InvertedIndex elements,
-			Writer writer, int level) throws IOException {
+	public static void asInvertedIndex(InvertedIndex elements, Writer writer, int level) throws IOException {
 		
 		writer.write("{" + System.lineSeparator());
 		

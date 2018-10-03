@@ -55,22 +55,20 @@ public class ArgumentMap {
 	 * @return true if the argument is -path or -index
 	 */
 	public static boolean isFlag(String arg) {
-		if (arg.isEmpty()) { 
-			return false;
-		} else {
-			try {
-				arg = arg.trim();
-				if (arg.equals("-path")) {
-					return true;
-				} else if (arg.equals("-index")) {
+		try {
+			arg = arg.trim();
+			if (arg.length() >= 2) {
+				if (arg.charAt(0) == '-' && arg.charAt(1) != ' ') {
 					return true;
 				} else {
 					return false;
 				}
-			} catch (NullPointerException e) {
+			} else {
 				return false;
 			}
-		}
+		} catch (NullPointerException e) {
+			return false;
+		}	
 	}
 
 	/**
