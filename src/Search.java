@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -10,7 +11,7 @@ public class Search {
 	
 	private final static Map<Double, List<String>> scores = new TreeMap<>(Collections.reverseOrder());
 
-	public static Map<Double, List<String>> score(InvertedIndex index, TreeSet<String> queries) {
+	public static Map<Double, List<String>> score(InvertedIndex index, Set<String> queries) {
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 
 		double totalWords = 0;
@@ -73,9 +74,7 @@ public class Search {
 							if (index.totalLocations().get(sorted.get(j)) == wordCount) {
 								String temp = sortedCopy.get(j);
 								int a = sortedCopy.get(j).toLowerCase().compareTo(duplicateScores.get(i).toLowerCase());
-								if (a < 0) {
-									sortedCopy.add(duplicateScores.get(i));
-								} else if (a > 0) {
+								if (a > 0) {
 									sortedCopy.set(j, duplicateScores.get(i));
 									sortedCopy.add(temp);
 								} else {
@@ -93,33 +92,12 @@ public class Search {
 				}
 			}
 		}
-
 		return sorted;
 	}
-	
-	
-	public static String compareTo(InvertedIndex index, List<String> sorted, String location, int wordCount) {
-		List<String> sortedCopy = new ArrayList<>();
 
-		for (int j = 0; j < sorted.size(); j++) {
-			if (index.totalLocations().get(sorted.get(j)) == wordCount) {
-				String temp = sortedCopy.get(j);
-				int a = sortedCopy.get(j).toLowerCase().compareTo(location.toLowerCase());
-				if (a > 0) {
-					compareTo(index, sorted, sorted.get(j), wordCount);
-					sortedCopy.set(j, location);
-					sortedCopy.add(temp);
-				} else {
-					sortedCopy.add(location);
-				}
-			}
-		}
-		return location;
+	public static void exactSearch(InvertedIndex index, TreeSet<String> queries) {
+		score(index, queries);
 	}
-//	public static void ExactSearch(InvertedIndex index, TreeSet<String> queries) {
-//		
-//
-//	}
 //
 //	public static void PartialSearch() {
 //

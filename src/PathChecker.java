@@ -47,7 +47,9 @@ public class PathChecker {
 	public static void readFiles(List<String> files, InvertedIndex index) throws IOException {
 		try {
 			for (String file : files) {
-				TextFileStemmer.stemFile(Paths.get(file), index);
+				if (!file.isEmpty()) {
+					TextFileStemmer.stemFile(Paths.get(file), index);
+				}
 			}
 		} catch (NullPointerException e) {
 			System.out.println("There was an issue fiding the directory.");

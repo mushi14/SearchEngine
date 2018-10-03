@@ -16,6 +16,7 @@ public class Driver {
 		
 		InvertedIndex index = new InvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
+		TreeSet<String> queries = QueryParser.getQueries();
 		
 		try {
 			if (argMap.hasFlag("-path")) {
@@ -36,10 +37,16 @@ public class Driver {
 				}
 			}
 			if (argMap.hasFlag("-exact")) {
-//				Search.ExactSearch();
+				Search.exactSearch(index, QueryParser.parse(Paths.get(argMap.getPath("-exact"))));
 			}
 			if (argMap.hasFlag("-results")) {
-				
+				if (argMap.flagPath("-results")) {
+					TreeJSONWriter.asSearchResult(index, Paths.get(argMap.getPath("-results")), queries, 
+							Search.score(index, queries));
+				} else {
+					TreeJSONWriter.asSearchResult(index, Paths.get("results.json"), QueryParser.getQueries(), 
+							Search.score(index, QueryParser.getQueries()));
+				}
 			}
 			if (argMap.hasFlag("-locations")) {
 				if (argMap.flagPath("-locations")) {
@@ -52,12 +59,13 @@ public class Driver {
 				System.out.println("There was an issue finding the direcotry or file: ");
 		}
 		
-		TreeSet<String> q = new TreeSet<>();
-		q.add("narwhal");
-		q.add("tarsier");
-		q.add("hello");
+//		TreeSet<String> q = new TreeSet<>();
+//		q.add("aar");
+//		q.add("alpaca");
+//		q.add("eleph");
 		
- 		System.out.println(Search.score(index, q));
+//		TreeJSONWriter.asSearchResult(index, Paths.get("/Users/mushahidhassan/Desktop/result.json"), q, Search.score(index, q));
+// 		System.out.println(Search.score(index, q));
 		
 	}
 }
