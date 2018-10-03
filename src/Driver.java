@@ -37,17 +37,19 @@ public class Driver {
 				}
 			}
 			if (argMap.hasFlag("-exact")) {
-				Search.exactSearch(index, QueryParser.parse(Paths.get(argMap.getPath("-exact"))));
-			}
-			if (argMap.hasFlag("-results")) {
-				if (argMap.flagPath("-results")) {
-					TreeJSONWriter.asSearchResult(index, Paths.get(argMap.getPath("-results")), queries, 
-							Search.score(index, queries));
-				} else {
-					TreeJSONWriter.asSearchResult(index, Paths.get("results.json"), QueryParser.getQueries(), 
-							Search.score(index, QueryParser.getQueries()));
+				if (argMap.flagPath("-exact")) {
+					Search.exactSearch(index, QueryParser.parse(Paths.get(argMap.getPath("-exact"))));
 				}
 			}
+//			if (argMap.hasFlag("-results")) {
+//				if (argMap.flagPath("-results")) {
+//					TreeJSONWriter.asSearchResult(index, Paths.get(argMap.getPath("-results")), queries, 
+//							Search.score(index, queries));
+//				} else {
+//					TreeJSONWriter.asSearchResult(index, Paths.get("results.json"), QueryParser.getQueries(), 
+//							Search.score(index, QueryParser.getQueries()));
+//				}
+//			}
 			if (argMap.hasFlag("-locations")) {
 				if (argMap.flagPath("-locations")) {
 					TreeJSONWriter.asLocations(index, Paths.get(argMap.getPath("-locations")));
@@ -59,13 +61,13 @@ public class Driver {
 				System.out.println("There was an issue finding the direcotry or file: ");
 		}
 		
-//		TreeSet<String> q = new TreeSet<>();
-//		q.add("aar");
-//		q.add("alpaca");
-//		q.add("eleph");
+		TreeSet<String> q = new TreeSet<>();
+		q.add("lori");
+		q.add("narwhal");
+		q.add("tarsier");
 		
 //		TreeJSONWriter.asSearchResult(index, Paths.get("/Users/mushahidhassan/Desktop/result.json"), q, Search.score(index, q));
-// 		System.out.println(Search.score(index, q));
+ 		System.out.println(Search.score(index, q));
 		
 	}
 }

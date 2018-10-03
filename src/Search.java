@@ -1,6 +1,7 @@
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,14 +11,14 @@ import java.util.TreeSet;
 public class Search {
 	
 	private final static Map<Double, List<String>> scores = new TreeMap<>(Collections.reverseOrder());
+	private final static Map<String, Double> countsMap = new HashMap<String, Double>();
 
 	public static Map<Double, List<String>> score(InvertedIndex index, Set<String> queries) {
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
-
-		double totalWords = 0;
+		
 		double totalMatches = 0;
+		double totalWords = 0;
 		double score = 0;
-
 		for (String location : index.totalLocations().keySet()) {
 			List<String> temp = new ArrayList<>();
 			totalWords = index.totalLocations().get(location);
@@ -32,8 +33,10 @@ public class Search {
 
 			if (!temp.isEmpty()) {
 				for (String query : temp) {
+					System.out.println(query);
 					totalMatches += index.get(query, location).size();
-					score = Double.parseDouble(FORMATTER.format(totalMatches / totalWords));
+					System.out.println("total words: " + totalWords + " total matches: " + totalMatches);
+//					System.out.println(Double.valueOf(FORMATTER.format(totalMatches / totalWords)));
 				}
 				if (scores.containsKey(score)) {
 					scores.get(score).add(location);
@@ -41,8 +44,8 @@ public class Search {
 					scores.put(score, new ArrayList<String>());
 					scores.get(score).add(location);
 				}
+				totalMatches = 0;
 			}
-			totalMatches = 0;
 		}
 
 		for (Double s : scores.keySet()) {
@@ -52,7 +55,6 @@ public class Search {
 		}
 		return scores;
 	}
-
 
 	public static List<String> compareScores(InvertedIndex index, List<String> duplicateScores) {
 		TreeSet<Integer> totalWords = new TreeSet<>(Collections.reverseOrder());
@@ -95,9 +97,36 @@ public class Search {
 		return sorted;
 	}
 
+//	public static double getCount(InvertedIndex index, List<String> temp, String location, DecimalFormat FORMATTER) {
+//		double totalMatches = 0;
+//		double totalWords = index.totalLocations().get(location);
+//		double score = 0;
+//		
+//		if (!temp.isEmpty()) {
+//			for (String query : temp) {
+//				totalMatches += index.get(query, location).size();
+//				score = Double.parseDouble(FORMATTER.format(totalMatches / totalWords));
+//			}
+//			if (scores.containsKey(score)) {
+//				scores.get(score).add(location);
+//			} else {
+//				scores.put(score, new ArrayList<String>());
+//				scores.get(score).add(location);
+//			}
+//		}
+//		return totalMatches;
+//	}
+	
+	
+	public static double get(String location) {
+		return countsMap.get(location); 
+	}
+	
+	
 	public static void exactSearch(InvertedIndex index, TreeSet<String> queries) {
 		score(index, queries);
 	}
+	
 //
 //	public static void PartialSearch() {
 //

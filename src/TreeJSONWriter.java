@@ -281,7 +281,7 @@ public class TreeJSONWriter {
 						indent(level + 1, writer);
 						quote("count", writer);
 						writer.write(": ");
-						writer.write(elements.totalLocations().get(location) + "," + System.lineSeparator());
+						writer.write(Search.get(location) + "," + System.lineSeparator());
 						indent(level + 1, writer);
 						quote("score", writer);
 						writer.write(": ");
