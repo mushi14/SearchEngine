@@ -5,7 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -16,7 +19,7 @@ public class TextFileStemmer {
 
 	public static final Pattern SPLIT_REGEX = Pattern.compile("(?U)\\p{Space}+");
 	public static final Pattern CLEAN_REGEX = Pattern.compile("(?U)[^\\p{Alpha}\\p{Space}]+");
-	
+	public static Map<Double, List<String>> finalQueries =  new TreeMap<>(Collections.reverseOrder());
 	/**
 	 * Cleans the text by removing any non-alphabetic characters (e.g. non-letters
 	 * like digits, punctuation, symbols, and diacritical marks like the umlaut)
@@ -117,7 +120,7 @@ public class TextFileStemmer {
 		}
 	}
 	
-	public static void stemQueryFile(Path path, TreeSet<String> queries) throws IOException {
+	public static Map<Double, List<String>> stemQueryFile(InvertedIndex index, Path path, TreeSet<String> queries) throws IOException {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			String line = br.readLine();
 			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
@@ -127,10 +130,15 @@ public class TextFileStemmer {
 					word = stemmer.stem(word).toString();
 					queries.add(word);
 				}
+				if (!queries.isEmpty()) {
+					finalQueries = Search.score(index, queries);
+				}
+				queries.clear();
 				line = br.readLine();
 			}
 		} catch (NullPointerException e) {
 			System.out.println("There was an issue finding the query file: " + path);
 		}
+		return finalQueries;
 	}
 }

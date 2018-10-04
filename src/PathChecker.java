@@ -56,10 +56,10 @@ public class PathChecker {
 		}
 	}
 	
-	public static void readQueryFiles(List<String> files, TreeSet<String> index) throws IOException {
+	public static void readQueryFiles(InvertedIndex index, List<String> files, TreeSet<String> queries) throws IOException {
 		try {
 			for (String file : files) {
-				TextFileStemmer.stemQueryFile(Paths.get(file), index);
+				TextFileStemmer.stemQueryFile(index, Paths.get(file), queries);
 			}
 		} catch (NullPointerException e) {
 			System.out.println("There was an issue fiding the directory.");
