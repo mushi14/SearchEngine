@@ -4,9 +4,6 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -234,16 +231,16 @@ public class TreeJSONWriter {
 	
 	
 
-	public static void asSearchResult(InvertedIndex elements, Path path, Set<String> queries, 
+	/* public static void asSearchResult(InvertedIndex elements, Path path, Set<String> queries, 
 			Map<Double, List<String>> scores) {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			asSearchResult(elements, queries, scores, writer, 0);
 		} catch (IOException | NullPointerException e) {
 			System.out.println("There was an issue finding the direcotry or file: " + path);
 		}
-	}
+	} */
 	
-	public static void asSearchResult(InvertedIndex elements, Map<Double, List<String>> scores,
+	/* public static void asSearchResult(InvertedIndex elements, Map<Double, List<String>> scores,
 			Writer writer, int level) {
 		
 		try {
@@ -294,11 +291,11 @@ public class TreeJSONWriter {
 		} catch (IOException | NullPointerException e) {
 			System.out.println("There was an issue finding the direcotry or file: " + writer);
 		}
-	}
+	} */
 	
 	
 	
-	public static void asSearchResult(InvertedIndex elements,Set<String> queries, 
+	/* public static void asSearchResult(InvertedIndex elements,Set<String> queries, 
 			Map<Double, List<String>> scores, Writer writer, int level) {
 		try {
 
@@ -339,5 +336,5 @@ public class TreeJSONWriter {
 		} catch (IOException | NullPointerException e) {
 			System.out.println("There was an issue finding the direcotry or file: " + writer);
 		}
-	}
+	} */
 }

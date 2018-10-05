@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
 public class PathChecker {
 
@@ -56,13 +55,15 @@ public class PathChecker {
 		}
 	}
 	
-	public static void readQueryFiles(InvertedIndex index, List<String> files, TreeSet<String> queries) throws IOException {
+	public static void readQueryFiles(InvertedIndex index, Path path) throws IOException {
+		List<String> files = filesInPath(path);
 		try {
 			for (String file : files) {
-				TextFileStemmer.stemQueryFile(index, Paths.get(file), queries);
+				TextFileStemmer.stemQueryFile(index, Paths.get(file));
 			}
 		} catch (NullPointerException e) {
 			System.out.println("There was an issue fiding the directory.");
 		}
 	}
+	
 }

@@ -120,25 +120,50 @@ public class TextFileStemmer {
 		}
 	}
 	
-	public static Map<Double, List<String>> stemQueryFile(InvertedIndex index, Path path, TreeSet<String> queries) throws IOException {
+//	public static /* Map<Double, List<String>>*/ void stemQueryFile(InvertedIndex index, Path path, TreeSet<String> queries) throws IOException {
+//		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+//			String line = br.readLine();
+//			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+//			while(line != null) {
+//				String[] words = parse(line);
+//				for (String word : words) {
+//					word = stemmer.stem(word).toString();
+//					queries.add(word);
+//				}
+//				if (!queries.isEmpty() ) {
+//					finalQueries = Search.score(index, queries);
+//				}
+//				queries.clear();
+//				line = br.readLine();
+//			}
+//		} catch (NullPointerException e) {
+//			System.out.println("There was an issue finding the query file: " + path);
+//		}
+//		for (Double d : finalQueries.keySet()) {
+//			System.out.println(d + "      " + finalQueries.get(d));
+//		}
+//	}
+	
+	public static void stemQueryFile(InvertedIndex index, Path path) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+			
 			String line = br.readLine();
-			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-			while(line != null) {
+			
+			while (line != null) {
+				TreeSet<String> queries = new TreeSet<>();
 				String[] words = parse(line);
+				
 				for (String word : words) {
-					word = stemmer.stem(word).toString();
 					queries.add(word);
 				}
+				
 				if (!queries.isEmpty()) {
-					finalQueries = Search.score(index, queries);
+					Search.score(index, queries);
 				}
-				queries.clear();
 				line = br.readLine();
 			}
-		} catch (NullPointerException e) {
+		} catch (IOException | NullPointerException e) {
 			System.out.println("There was an issue finding the query file: " + path);
 		}
-		return finalQueries;
 	}
 }

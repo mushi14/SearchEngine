@@ -33,14 +33,15 @@ public class Driver {
 			}
 			if (argMap.hasFlag("-search")) {
 				if (argMap.flagPath("-search")) {
-					QueryParser.parse(index, Paths.get(argMap.getPath("-search")));
+					System.out.println(index);
+					TextFileStemmer.stemQueryFile(index, Paths.get(argMap.getPath("-search")));
 				}
 			}
-			if (argMap.hasFlag("-exact")) {
-				if (argMap.flagPath("-exact")) {
-					Search.exactSearch(index, QueryParser.parse(index, Paths.get(argMap.getPath("-exact"))));
-				}
-			}
+//			if (argMap.hasFlag("-exact")) {
+//				if (argMap.flagPath("-exact")) {
+//					Search.exactSearch(index, QueryParser.parse(index, Paths.get(argMap.getPath("-exact"))));
+//				}
+//			}
 //			if (argMap.hasFlag("-results")) {
 //				if (argMap.flagPath("-results")) {
 //					TreeJSONWriter.asSearchResult(index, Paths.get(argMap.getPath("-results")), queries, 
@@ -60,20 +61,5 @@ public class Driver {
 		} catch (IOException | NullPointerException e) {
 				System.out.println("There was an issue finding the direcotry or file: ");
 		}
-		
-//		System.out.println(index);
-		TreeSet<String> q = new TreeSet<>();
-		q.add("lori");
-		q.add("narwhal");
-		q.add("tarsier");
-		
-//		TreeJSONWriter.asSearchResult(index, Paths.get("/Users/mushahidhassan/Desktop/result.json"), q, Search.score(index, q));
-// 		System.out.println(Search.score(index, q));
-//		try {
-//			System.out.println(TextFileStemmer.stemQueryFile(index, Paths.get(argMap.getPath("-search")), queries));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-
 	}
 }
