@@ -4,8 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import opennlp.tools.stemmer.Stemmer;
@@ -55,25 +53,6 @@ public class TextFileStemmer {
 	 */
 	public static String[] parse(String text) {
 		return split(clean(text));
-	}
-
-	/**
-	 * Returns a list of cleaned and stemmed words parsed from the provided line.
-	 *
-	 * @param line the line of words to clean, split, and stem
-	 * @param stemmer the stemmer to use
-	 * @return list of cleaned and stemmed words
-	 *
-	 * @see Stemmer#stem(CharSequence)
-	 * @see TextParser#parse(String)
-	 */
-	public static List<String> stemLine(String line, Stemmer stemmer) {
-		String[] words = parse(line);
-		List<String> stemmedWords = new ArrayList<>();
-		for (String word : words) {
-			stemmedWords.add(stemmer.stem(word).toString());
-		}
-		return stemmedWords;
 	}
 
 	/**

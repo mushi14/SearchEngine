@@ -1,6 +1,5 @@
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -35,24 +34,6 @@ public class TreeJSONWriter {
 		writer.write('"');
 		writer.write(element);
 		writer.write('"');
-	}
-
-	/**
-	 * Returns the set of elements formatted as a pretty JSON array of numbers.
-	 *
-	 * @param elements the elements to convert to JSON
-	 * @return {@link String} containing the elements in pretty JSON format
-	 *
-	 */
-	public static String asPositionArray(TreeSet<Integer> elements) {
-		try {
-			StringWriter writer = new StringWriter();
-			asPositionArray(elements, writer, 0);
-			return writer.toString();
-		}
-		catch (IOException e) {
-			return null;
-		}
 	}
 
 	/**
@@ -106,24 +87,6 @@ public class TreeJSONWriter {
 		}
 		indent(level, writer);
 		writer.write(']');
-	}
-
-	/**
-	 * Returns the map of elements formatted as a pretty JSON object.
-	 *
-	 * @param elements the elements to convert to JSON
-	 * @return {@link String} containing the elements in pretty JSON format
-	 *
-	 */
-	public static String asPathIndex(TreeMap<String, TreeSet<Integer>> elements) {
-		try {
-			StringWriter writer = new StringWriter();
-			asPathIndex(elements, writer, 0);
-			return writer.toString();
-		}
-		catch (IOException e) {
-			return null;
-		}
 	}
 
 	/**
@@ -184,24 +147,6 @@ public class TreeJSONWriter {
 		}
 		indent(level, writer);
 		writer.write("}");
-	}
-
-	/**
-	 * Returns the map of String keys and WordIndex values formatted as a pretty JSON object.
-	 *
-	 * @param elements the elements to convert to JSON
-	 * @return {@link String} containing the elements in pretty JSON format
-	 *
-	 */
-	public static String asInvertedIndex(InvertedIndex elements) {
-		try {
-			StringWriter writer = new StringWriter();
-			asInvertedIndex(elements, writer, 0);
-			return writer.toString();
-		}
-		catch (IOException e) {
-			return null;
-		}
 	}
 
 	/**
