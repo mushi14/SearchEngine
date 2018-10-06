@@ -44,11 +44,10 @@ public class TreeJSONWriter {
 	 * @param path     the path to the file write to output
 	 * @throws IOException if the writer encounters any issues
 	 */
-	public static void asArray(TreeSet<Integer> elements, Path path) {
-		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-			asArray(elements, writer, 0);
-		} catch (IOException | NullPointerException e) {
-			System.out.println("There was an issue finding the direcotry or file: " + path);
+	public static void asPositionArray(TreeSet<Integer> elements, Path path) throws IOException {
+		try (BufferedWriter writer = Files.newBufferedWriter(path,
+				StandardCharsets.UTF_8)) {
+			asPositionArray(elements, writer, 0);
 		}
 	}
 
@@ -68,29 +67,26 @@ public class TreeJSONWriter {
 	 *
 	 * @see #indent(int, Writer)
 	 */
-	public static void asArray(TreeSet<Integer> elements, Writer writer, int level) {
-		try {
-			writer.write('[' + System.lineSeparator());
-			
-			if (!elements.isEmpty()) {
-				int size = elements.size();
-				int count = 0;
-				for (Integer elem : elements) {
-					count++;
-					if (count != size) {
-						indent(level + 1, writer);
-						writer.write(elem.toString() + ',' + System.lineSeparator());
-					} else {
-						indent(level + 1, writer);
-						writer.write(elem.toString() + System.lineSeparator());
-					}
+	public static void asPositionArray(TreeSet<Integer> elements, Writer writer, int level) throws IOException {
+
+		writer.write('[' + System.lineSeparator());
+		
+		if (!elements.isEmpty()) {
+			int size = elements.size();
+			int count = 0;
+			for (Integer elem : elements) {
+				count++;
+				if (count != size) {
+					indent(level + 1, writer);
+					writer.write(elem.toString() + ',' + System.lineSeparator());
+				} else {
+					indent(level + 1, writer);
+					writer.write(elem.toString() + System.lineSeparator());
 				}
 			}
-			indent(level, writer);
-			writer.write(']');
-		} catch (IOException | NullPointerException e) {
-			System.out.println("There was an issue finding the direcotry or file: " + writer);
 		}
+		indent(level, writer);
+		writer.write(']');
 	}
 
 	/**
@@ -102,11 +98,11 @@ public class TreeJSONWriter {
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 */
-	public static void asObject(TreeMap<String, TreeSet<Integer>> elements, Path path) {
-		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-			asObject(elements, writer, 0);
-		} catch (IOException | NullPointerException e) {
-			System.out.println("There was an issue finding the direcotry or file: " + path);
+	public static void asPathIndex(TreeMap<String, TreeSet<Integer>> elements,
+			Path path) throws IOException {
+		try (BufferedWriter writer = Files.newBufferedWriter(path,
+				StandardCharsets.UTF_8)) {
+			asPathIndex(elements, writer, 0);
 		}
 	}
 
@@ -127,40 +123,54 @@ public class TreeJSONWriter {
 	 * @see #indent(int, Writer)
 	 * @see #quote(String, Writer)
 	 */
-	public static void asObject(TreeMap<String, TreeSet<Integer>> elements, Writer writer, int level) {
-		try {
-			writer.write("{" + System.lineSeparator());
-			int size = elements.keySet().size();
-			int count = 0;
+	public static void asPathIndex(TreeMap<String, TreeSet<Integer>> elements, Writer writer, int level) throws IOException {
+		writer.write("{" + System.lineSeparator());
+				
+		int size = elements.keySet().size();
+		int count = 0;
+		
+		for (String key : elements.keySet()) {
+			count++;
+			if (count != size) {
+				indent(level + 1, writer);
+				quote(key, writer);
+				writer.write(": ");
+				asPositionArray(elements.get(key), writer, level + 1);
+				writer.write("," + System.lineSeparator());
+			} else {
+				indent(level + 1, writer);
+				quote(key, writer);
+				writer.write(": ");
+				asPositionArray(elements.get(key), writer, level + 1);
+				writer.write(System.lineSeparator());
+			}	
+		}
+		indent(level, writer);
+		writer.write("}");
+	}
 
-			for (String key : elements.keySet()) {
-				count++;
-				if (count != size) {
-					indent(level + 1, writer);
-					quote(key, writer);
-					writer.write(": ");
-					asArray(elements.get(key), writer, level + 1);
-					writer.write("," + System.lineSeparator());
-				} else {
-					indent(level + 1, writer);
-					quote(key, writer);
-					writer.write(": ");
-					asArray(elements.get(key), writer, level + 1);
-					writer.write(System.lineSeparator());
-				}	
-			}
-			indent(level, writer);
-			writer.write("}");
-		} catch (IOException | NullPointerException e) {
-			System.out.println("There was an issue finding the direcotry or file: " + writer);
+	/**
+	 * Writes the map of String keys and WordIndex values formatted as a pretty JSON object to
+	 * the specified file.
+	 *
+	 * @param elements the elements to convert to JSON
+	 * @param path     the path to the file write to output
+	 * @throws IOException if the writer encounters any issues
+	 *
+	 */
+	public static void asInvertedIndex(InvertedIndex elements,
+			Path path) throws IOException {
+		try (BufferedWriter writer = Files.newBufferedWriter(path,
+				StandardCharsets.UTF_8)) {
+			asInvertedIndex(elements, writer, 0);
 		}
 	}
-	
+
 	/**
 	 * Writes the map of String keys and WordIndex values as a pretty JSON object using the provided
 	 * {@link Writer} and indentation level.
 	 *
-	 * @param index the elements to convert to JSON
+	 * @param elements the elements to convert to JSON
 	 * @param writer   the writer to use
 	 * @param level    the initial indentation level
 	 * @throws IOException if the writer encounters any issues
@@ -173,36 +183,33 @@ public class TreeJSONWriter {
 	 * @see #indent(int, Writer)
 	 * @see #quote(String, Writer)
 	 */
-	public static void asInvertedIndex(InvertedIndex index, Path path) {
-		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-
-			int level = 0;
-			writer.write("{" + System.lineSeparator());
-			int size = index.words();
-			int count = 0;
-			
-			for (String key : index.wordsKeySet()) {
-				count++;
-				if (count != size) {
-					indent(level + 1, writer);
-					quote(key, writer);
-					writer.write(": ");
-					asObject(index.get(key), writer, level + 1);
-					writer.write("," + System.lineSeparator());
-				} else {
-					indent(level + 1, writer);
-					quote(key, writer);
-					writer.write(": ");
-					asObject(index.get(key), writer, level + 1);
-					writer.write(System.lineSeparator());
-				}
+	public static void asInvertedIndex(InvertedIndex elements, Writer writer, int level) throws IOException {
+		
+		writer.write("{" + System.lineSeparator());
+		
+		int size = elements.words();
+		int count = 0;
+		
+		for (String key : elements.wordsKeySet()) {
+			count++;
+			if (count != size) {
+				indent(level + 1, writer);
+				quote(key, writer);
+				writer.write(": ");
+				asPathIndex(elements.get(key), writer, level + 1);
+				writer.write("," + System.lineSeparator());
+			} else {
+				indent(level + 1, writer);
+				quote(key, writer);
+				writer.write(": ");
+				asPathIndex(elements.get(key), writer, level + 1);
+				writer.write(System.lineSeparator());
 			}
-			writer.write("}" + System.lineSeparator());
-		} catch (IOException | NullPointerException e) {
-			System.out.println("There was an issue finding the direcotry or file: " + path);
 		}
+		writer.write("}" + System.lineSeparator());
 	}
-	
+
+
 	public static void asLocations(InvertedIndex index, Path path) {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)){
 			

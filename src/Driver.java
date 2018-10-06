@@ -34,7 +34,11 @@ public class Driver {
 			if (argMap.hasFlag("-search")) {
 				if (argMap.flagPath("-search")) {
 					System.out.println(index);
-					TextFileStemmer.stemQueryFile(index, Paths.get(argMap.getPath("-search")));
+					System.out.println();
+					PathChecker.readQueryFiles(index, Paths.get(argMap.getPath("-search")));
+//					Search.printScores();
+//					Search.printScoresMap();
+					Search.printMap();
 				}
 			}
 //			if (argMap.hasFlag("-exact")) {

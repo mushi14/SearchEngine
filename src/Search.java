@@ -3,48 +3,118 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
+
 
 public class Search {
 	
-	private static final Map<Double, List<String>> scores = new TreeMap<>(Collections.reverseOrder());
-	private static final List<String> seen = new ArrayList<>();
+//	private static final Map<String, Double> scoresMap = new TreeMap<>();
+//	private static final Hashtable<Double, List<String>> scores = new Hashtable<>();
+//	private static final Map<String, Hashtable<Double, List<String>>> map = new TreeMap<>();
+//	private static final List<String> seen = new ArrayList<>();
 	
-	public static void score(InvertedIndex index, TreeSet<String> queries) {
-
+	static Map<String, Map<Double, List<String>>> map = new TreeMap<>();
+	
+	static double totalMatches = 0;
+	static double totalWords = 0;
+	static double score = 0;
+	
+	
+	
+	public static Map<String, Map<Double, List<String>>> score(InvertedIndex index, Set<String> queries) {
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
-		double totalWords = 0;
-		double totalMatches = 0;
-		double score = 0;
-		for (String loc : index.totalLocations().keySet()) {
-			for (String q : queries) {
-				if (!seen.contains(q)) {
-					System.out.println(q);
-					if (index.get(q).containsKey(loc)) {
-						System.out.println(index.get(q).containsKey(loc));
-						totalMatches += index.get(q, loc).size();
-					}
+		boolean contains = false;
+		Map<Double, List<String>> scores = new TreeMap<>(Collections.reverseOrder());
+
+		
+		for (String file : index.totalLocations().keySet()) {
+			for (String query : queries) {
+				if (index.get(query).containsKey(file)) {
+					contains = true;
+					totalWords = index.totalLocations().get(file);
+					totalMatches += index.get(query, file).size();
+					score = Double.valueOf(FORMATTER.format(totalMatches / totalWords));
 				}
 			}
-			System.out.println();
-			totalWords = index.totalLocations().get(loc);
-			score = Double.valueOf(FORMATTER.format(totalMatches / totalWords));
-			scores.put(score, new ArrayList<String>());
-			scores.get(score).add(loc);
+			if (contains == true) {
+				if (scores.containsKey(score)) {
+					scores.get(score).add(file);
+				} else {
+					scores.put(score, new ArrayList<>());
+					scores.get(score).add(file);
+				}
+			}
+			contains = false;
+			totalMatches = 0;
+			totalWords = 0;
+			score = 0;
 		}
-		
-		for (String q : queries) {
-			if (!seen.contains(q)) {
-				seen.add(q);
+
+		Map<Double, List<String>> newScores = new TreeMap<>(scores);
+		for (Double score : scores.keySet()) {
+			if (scores.get(score).size() > 1) {
+				newScores.put(score ,compareTo(scores.get(score), index));
 			}
 		}
+		newScores.putAll(scores);
+
+		String temp = "";
+		for (String query : queries) {
+			temp += query + " ";
+		}
+		map.put(temp, scores);
+		return map;
+	}
+
+
+	public static List<String> compareTo(List<String> files, InvertedIndex index) {
+		List<String> temp = new ArrayList<>();
+		Map<Double, List<String>> tempMap = new TreeMap<>(Collections.reverseOrder());
+
+		for (String file : files) {
+			totalWords = index.totalLocations().get(file);
+			if (tempMap.containsKey(totalWords)) {
+				tempMap.get(totalWords).add(file);
+			} else {
+				tempMap.put(totalWords, new ArrayList<>());
+				tempMap.get(totalWords).add(file);
+			}
+		}
+		for (Double score : tempMap.keySet()) {
+			if (tempMap.get(score).size() > 1) {
+				Collections.sort(tempMap.get(score));
+			}
+		}
+		for (Double score : tempMap.keySet()) {
+			for (String file : tempMap.get(score)) {
+				temp.add(file);
+			}
+		}
+		
+		return temp;
 	}
 	
+
+	public static void printMap() {
+		System.out.println(map.toString());
+	}
+
+
+
 	
+	
+	
+	
+//	public static void printScoresMap() {
+//		System.out.println(scoresMap.toString());
+//	}
+//	
+//	public static void printMap() {
+//		System.out.println(map.toString());
+//	}
 	
 //	public static Map<Double, List<String>> score(InvertedIndex index, TreeSet<String> queries) {
-//		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 //		double totalWords = 0;
 //		double totalMatches = 0;
 //		double score = 0;
@@ -143,5 +213,59 @@ public class Search {
 //
 //	public static void PartialSearch() {
 //
+//	}
+	
+	
+	
+	
+	
+	
+	
+	
+//	public static void score(InvertedIndex index, TreeSet<String> queries) {
+//
+//		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
+//		double totalWords = 0;
+//		double totalMatches = 0;
+//		double score = 0;
+//		
+//		boolean contains = false;
+//
+//		double temp = 0;
+//		for (String loc : index.totalLocations().keySet()) {
+//			for (String q : queries) {
+//				if (index.get(q).containsKey(loc)) {
+//					contains = true;
+//					map.put(q, null);
+//					if (!scoresMap.containsKey(q)) {
+//						totalMatches += index.get(q, loc).size();
+//						totalWords = index.totalLocations().get(loc);
+//						score = Double.valueOf(FORMATTER.format(totalMatches / totalWords));
+//					} else {
+//						score = scoresMap.get(q);
+//					}
+//					temp = score;
+//				} 
+//			}
+//			
+//			for (String word : map.keySet()) {
+//				
+//			}
+//			if (contains == true) {
+//				if (scores.containsKey(score)) {
+//					if (!scores.get(score).contains(loc)) {
+//						scores.get(score).add(loc);
+//					}
+//				} else {
+//					scores.put(score, new ArrayList<>());
+//					scores.get(score).add(loc);
+//				}
+//				
+//				for (String q : queries) {
+//					scoresMap.put(q, score);
+//				}
+//			}
+//			contains = false;
+//		}
 //	}
 }
