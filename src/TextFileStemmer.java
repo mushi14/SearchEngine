@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.Collections;
 import java.util.List;
@@ -140,7 +141,7 @@ public class TextFileStemmer {
 				}
 				
 				if (!queries.isEmpty()) {
-					Search.score(index, queries);
+					TreeJSONWriter.asSearchResult(index, Search.score(index, queries), Paths.get("/Users/mushahidhassan/Desktop/result.json"));
 				}
 				line = br.readLine();
 			}

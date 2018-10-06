@@ -25,7 +25,7 @@ public class Search {
 	public static Map<String, Map<Double, List<String>>> score(InvertedIndex index, Set<String> queries) {
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 		boolean contains = false;
-		Map<Double, List<String>> scores = new TreeMap<>(Collections.reverseOrder());
+		TreeMap<Double, List<String>> scores = new TreeMap<>(Collections.reverseOrder());
 
 		
 		for (String file : index.totalLocations().keySet()) {
@@ -51,19 +51,27 @@ public class Search {
 			score = 0;
 		}
 
-		Map<Double, List<String>> newScores = new TreeMap<>(scores);
+		Map<Double, List<String>> newScores = new TreeMap<>(Collections.reverseOrder());
+		newScores = (TreeMap)scores.clone();
+		
 		for (Double score : scores.keySet()) {
 			if (scores.get(score).size() > 1) {
 				newScores.put(score ,compareTo(scores.get(score), index));
 			}
 		}
-		newScores.putAll(scores);
 
 		String temp = "";
+		int size = queries.size();
+		int count = 0;
 		for (String query : queries) {
-			temp += query + " ";
+			count++;
+			if (count != size) {
+				temp += query + " ";
+			} else {
+				temp += query;
+			}
 		}
-		map.put(temp, scores);
+		map.put(temp, newScores);
 		return map;
 	}
 

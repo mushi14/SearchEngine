@@ -4,6 +4,8 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -44,10 +46,11 @@ public class TreeJSONWriter {
 	 * @param path     the path to the file write to output
 	 * @throws IOException if the writer encounters any issues
 	 */
-	public static void asPositionArray(TreeSet<Integer> elements, Path path) throws IOException {
-		try (BufferedWriter writer = Files.newBufferedWriter(path,
-				StandardCharsets.UTF_8)) {
+	public static void asPositionArray(TreeSet<Integer> elements, Path path) {
+		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			asPositionArray(elements, writer, 0);
+		} catch (IOException | NullPointerException e) {
+			System.out.println("There was an issue finding the direcotry or file: " + path);
 		}
 	}
 
@@ -98,11 +101,11 @@ public class TreeJSONWriter {
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 */
-	public static void asPathIndex(TreeMap<String, TreeSet<Integer>> elements,
-			Path path) throws IOException {
-		try (BufferedWriter writer = Files.newBufferedWriter(path,
-				StandardCharsets.UTF_8)) {
+	public static void asPathIndex(TreeMap<String, TreeSet<Integer>> elements, Path path) {
+		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			asPathIndex(elements, writer, 0);
+		} catch (IOException | NullPointerException e) {
+			System.out.println("There was an issue finding the direcotry or file: " + path);
 		}
 	}
 
@@ -158,11 +161,11 @@ public class TreeJSONWriter {
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 */
-	public static void asInvertedIndex(InvertedIndex elements,
-			Path path) throws IOException {
-		try (BufferedWriter writer = Files.newBufferedWriter(path,
-				StandardCharsets.UTF_8)) {
+	public static void asInvertedIndex(InvertedIndex elements, Path path) throws IOException {
+		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			asInvertedIndex(elements, writer, 0);
+		} catch (IOException | NullPointerException e) {
+			System.out.println("There was an issue finding the direcotry or file: " + path);
 		}
 	}
 
@@ -211,7 +214,7 @@ public class TreeJSONWriter {
 
 
 	public static void asLocations(InvertedIndex index, Path path) {
-		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)){
+		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			
 			int level = 0;
 			writer.write("{" + System.lineSeparator());
@@ -237,111 +240,63 @@ public class TreeJSONWriter {
 	}
 	
 	
-
-	/* public static void asSearchResult(InvertedIndex elements, Path path, Set<String> queries, 
-			Map<Double, List<String>> scores) {
+	public static void asSearchResult(InvertedIndex elements, Map<String, Map<Double, List<String>>> scores, 
+			Path path) {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-			asSearchResult(elements, queries, scores, writer, 0);
+			asSearchResult(elements, scores, writer, 0);
 		} catch (IOException | NullPointerException e) {
 			System.out.println("There was an issue finding the direcotry or file: " + path);
 		}
-	} */
-	
-	/* public static void asSearchResult(InvertedIndex elements, Map<Double, List<String>> scores,
-			Writer writer, int level) {
-		
-		try {
-			for (Double score : scores.keySet()) {
-				int size = scores.get(score).size();
-				int count = 0;
-				for (String location : scores.get(score)) {
-					count++;
-					if (count != size) {
-						indent(level, writer);
-						writer.write("{" + System.lineSeparator());
-						indent(level + 1, writer);
-						quote("where", writer);
-						writer.write(": ");
-						quote(location, writer);
-						writer.write("," + System.lineSeparator());
-						indent(level + 1, writer);
-						quote("count", writer);
-						writer.write(": ");
-						writer.write(elements.totalLocations().get(location) + "," + System.lineSeparator());
-						indent(level + 1, writer);
-						quote("score", writer);
-						writer.write(": ");
-						writer.write(String.valueOf(score) + System.lineSeparator());
-						indent(level, writer);
-						writer.write("}," + System.lineSeparator());
-					} else {
-						indent(level, writer);
-						writer.write("{" + System.lineSeparator());
-						indent(level + 1, writer);
-						quote("where", writer);
-						writer.write(": ");
-						quote(location, writer);
-						writer.write("," + System.lineSeparator());
-						indent(level + 1, writer);
-						quote("count", writer);
-						writer.write(": ");
-						writer.write(Search.get(location) + "," + System.lineSeparator());
-						indent(level + 1, writer);
-						quote("score", writer);
-						writer.write(": ");
-						writer.write(String.valueOf(score) + System.lineSeparator());
-						indent(level, writer);
-						writer.write("}" + System.lineSeparator());
-					}
-				}
-			}
-		} catch (IOException | NullPointerException e) {
-			System.out.println("There was an issue finding the direcotry or file: " + writer);
-		}
-	} */
-	
-	
-	
-	/* public static void asSearchResult(InvertedIndex elements,Set<String> queries, 
-			Map<Double, List<String>> scores, Writer writer, int level) {
-		try {
+	}
 
-			writer.write("[" + System.lineSeparator());
-			indent(level + 1, writer);
+	public static void asSearchResult(InvertedIndex elements, Map<String, Map<Double, List<String>>> scores,
+			Writer writer, int level) throws IOException {
+		
+		writer.write("[" + System.lineSeparator());
+		asNestedSearch(scores, writer, level + 1);
+		writer.write("]");
+		
+	}
+	
+	public static void asNestedSearch( Map<String, Map<Double, List<String>>> scores, Writer writer, 
+			int level) throws IOException {
+
+		for (String word : scores.keySet()) {
+			indent(level, writer);
 			writer.write("{" + System.lineSeparator());
-			indent(level + 2, writer);
+			indent(level + 1, writer);
 			quote("queries", writer);
 			writer.write(": ");
-			
-			
-			String temp = "";
-			int count = queries.size();
-			for (String query : queries) {
-				count++;
-				if (count != queries.size()) {
-					temp += query + " ";
-				} else {
-					temp += query;
-				}
-			}
-			quote(temp, writer);
-			
-			
+			quote(word, writer);
 			writer.write("," + System.lineSeparator());
-			indent(level + 2, writer);
+			indent(level + 1, writer);
 			quote("results", writer);
 			writer.write(": [" + System.lineSeparator());
 			
-			asSearchResult(elements, scores, writer, level + 3);
-			
-			indent(level + 2, writer);
-			writer.write("]" + System.lineSeparator());
-			indent(level + 1, writer);
-			writer.write("}" + System.lineSeparator());
+			for (Double sc : scores.get(word).keySet()) {
+				indent(level + 2, writer);
+				writer.write("{" + System.lineSeparator());
+				
+				for (String file : scores.get(word).get(sc)) {
+					indent(level + 3, writer);
+					quote("where", writer);
+					writer.write(": ");
+					quote(file, writer);
+					writer.write("," + System.lineSeparator());
+					indent(level + 3, writer);
+					quote("count", writer);
+					writer.write(": " + Search.totalMatches + "," + System.lineSeparator());
+					indent(level + 3, writer);
+					quote("score", writer);
+					writer.write(": " + sc + System.lineSeparator());
+					indent(level + 2, writer);
+					writer.write("}," + System.lineSeparator());
+				}
+				indent(level + 1, writer);
+				writer.write("]" + System.lineSeparator());
+			}
 			indent(level, writer);
-			writer.write("]");
-		} catch (IOException | NullPointerException e) {
-			System.out.println("There was an issue finding the direcotry or file: " + writer);
+			writer.write("}" + System.lineSeparator());
 		}
-	} */
+	}
 }

@@ -36,8 +36,6 @@ public class Driver {
 					System.out.println(index);
 					System.out.println();
 					PathChecker.readQueryFiles(index, Paths.get(argMap.getPath("-search")));
-//					Search.printScores();
-//					Search.printScoresMap();
 					Search.printMap();
 				}
 			}
@@ -48,8 +46,7 @@ public class Driver {
 //			}
 //			if (argMap.hasFlag("-results")) {
 //				if (argMap.flagPath("-results")) {
-//					TreeJSONWriter.asSearchResult(index, Paths.get(argMap.getPath("-results")), queries, 
-//							Search.score(index, queries));
+//					TextFileStemmer.stemQueryFile(index, path);
 //				} else {
 //					TreeJSONWriter.asSearchResult(index, Paths.get("results.json"), QueryParser.getQueries(), 
 //							Search.score(index, QueryParser.getQueries()));
