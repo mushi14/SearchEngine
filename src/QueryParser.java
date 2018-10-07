@@ -1,6 +1,7 @@
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,8 +55,22 @@ public class QueryParser {
 		for (String l : queryMap.keySet()) {
 			for (String sc : queryMap.get(l).keySet()) {
 				if (queryMap.get(l).get(sc).size() > 1) {
-					/* Do something */
+					Collections.sort(queryMap.get(l).get(sc), new Comparison());
 				}
+			}
+		}
+	}
+
+	static class Comparison implements Comparator<Query> {
+
+		@Override
+		public int compare(Query o1, Query o2) {
+			if (o1.totalWords > o2.totalWords) {
+				return -1;
+			} else if (o1.totalWords < o2.totalWords) {
+				return 1;
+			} else {
+				return o1.location.toLowerCase().compareTo(o2.location.toLowerCase());
 			}
 		}
 	}
