@@ -4,6 +4,9 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -237,107 +240,54 @@ public class TreeJSONWriter {
 		}
 	}
 	
+	public static void asSearchResult(InvertedIndex elements, Path path) {
+		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+			asSearchResult(elements, QueryParser.queryMap, writer, 0);
+		} catch (IOException | NullPointerException e) {
+			System.out.println("There was an issue finding the direcotry or file: " + path);
+		}
+	}
 	
+	public static void asSearchResult(InvertedIndex elements, Map<String, Map<String, List<Query>>> queryMap,
+			Writer writer, int level) throws IOException {
+
+		writer.write("[" + System.lineSeparator());
+		indent(level + 1, writer);
+		
+		Iterator itr = queryMap.keySet().iterator();
+		while (itr.hasNext()) {
+			writer.write("{" + System.lineSeparator());
+			indent(level + 2, writer);
+			quote("queries", writer);
+			writer.write(": ");
+			quote(itr.next().toString(), writer);
+			writer.write(System.lineSeparator());
+			quote("results", writer);
+			writer.write(": [" + System.lineSeparator());
+
+			asNestedSearch(itr.next().toString(), queryMap, writer, level + 3);
+
+			writer.write("]" + System.lineSeparator());
+
+			if (itr.hasNext()) {
+				writer.write("},");
+			} else {
+				writer.write("}");
+			}
+		}
+		
+		writer.write("]");
+
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	public static void asSearchResult(InvertedIndex elements, Map<String, Map<String, List<String>>> scores, 
-//			Path path) {
-//		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-//			asSearchResult(elements, scores, writer, 0);
-//		} catch (IOException | NullPointerException e) {
-//			System.out.println("There was an issue finding the direcotry or file: " + path);
-//		}
-//	}
-//
-//	public static void asSearchResult(InvertedIndex elements, Map<String, Map<String, List<String>>> scores,
-//			Writer writer, int level) throws IOException {
-//		
-//		writer.write("[" + System.lineSeparator());
-//		asNestedSearch(scores, writer, level + 1);
-//		writer.write("]");
-//		
-//	}
-//	
-//	public static void asNestedSearch( Map<String, Map<String, List<String>>> scores, Writer writer, 
-//			int level) throws IOException {
-//
-//		int size = scores.keySet().size();
-//		int count = 0;
-//		int temp = 0;
-//		int temp2 = 0;
-//		for (String word : scores.keySet()) {
-//			count++;
-//			indent(level, writer);
-//			writer.write("{" + System.lineSeparator());
-//			indent(level + 1, writer);
-//			quote("queries", writer);
-//			writer.write(": ");
-//			quote(word, writer);
-//			writer.write("," + System.lineSeparator());
-//			indent(level + 1, writer);
-//			quote("results", writer);
-//			writer.write(": [" + System.lineSeparator());
-//			
-//			for (String sc : scores.get(word).keySet()) {
-//				
-//				temp = count;
-//				size = scores.get(word).get(sc).size();
-//				count++;
-//				for (String file : scores.get(word).get(sc)) {
-//					temp2 = count;
-//					size = scores.get(word).get(sc).size();
-//					count++;
-//					indent(level + 2, writer);
-//					writer.write("{" + System.lineSeparator());
-//					indent(level + 3, writer);
-//					quote("where", writer);
-//					writer.write(": ");
-//					quote(file, writer);
-//					writer.write("," + System.lineSeparator());
-//					indent(level + 3, writer);
-//					quote("count", writer);
-//					writer.write(": " + Search.matchesMap.get(file) + "," + System.lineSeparator());
-//					indent(level + 3, writer);
-//					quote("score", writer);
-//					writer.write(": " + sc + System.lineSeparator());
-//					indent(level + 2, writer);
-//					if (count != size) {
-//						writer.write("}," + System.lineSeparator());
-//					} else {
-//						writer.write("}" + System.lineSeparator());
-//					}
-//				}
-//				
-//				if (count != size) {
-//					writer.write("}," + System.lineSeparator());
-//				} else {
-//					writer.write("}" + System.lineSeparator());
-//				}
-//				
-//			}
-//			size = scores.keySet().size();
-//			count = temp;
-//			indent(level + 1, writer);
-//			writer.write("]" + System.lineSeparator());
-//			indent(level, writer);
-//			if (count != size) {
-//				writer.write("}," + System.lineSeparator());
-//			} else {
-//				writer.write("}" + System.lineSeparator());
-//			}
-//		}
-//	}
+	public static void asNestedSearch(String next, Map<String, Map<String, List<Query>>> queryMap, Writer writer, 
+			int level) throws IOException {
+		
+		indent(level, writer);
+		
+		Iterator itr = queryMap.get(next).keySet().iterator();
+
+		writer.write("{");
+
+	}
 }
