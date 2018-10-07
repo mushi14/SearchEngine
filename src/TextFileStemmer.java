@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +106,6 @@ public class TextFileStemmer {
 			
 			String line = br.readLine();
 			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-			List<String> seen = new ArrayList<>();
 
 			while (line != null) {
 				Set<String> queries = new TreeSet<>();
@@ -115,10 +113,7 @@ public class TextFileStemmer {
 
 				for (String word : words) {
 					word = stemmer.stem(word).toString();
-					if (!seen.contains(word)) {
-						seen.add(word);
-						queries.add(word);
-					}
+					queries.add(word);
 				}
 
 				if (!queries.isEmpty()) {

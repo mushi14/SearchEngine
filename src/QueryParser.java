@@ -12,6 +12,7 @@ public class QueryParser {
 	public static final Map<String, Map<String, List<Query>>> queryMap = new TreeMap<>();
 
 	public static void addQueries(InvertedIndex index, Set<String> queries) {
+		
 
 		String temp = "";
 		int size = queries.size();
@@ -27,8 +28,6 @@ public class QueryParser {
 		
 		if (!queryMap.containsKey(temp)) {
 			queryMap.put(temp, new TreeMap<>(Collections.reverseOrder()));
-		} else {
-			
 		}
 		
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
@@ -53,7 +52,12 @@ public class QueryParser {
 			if (contains == true) {
 				if (queryMap.get(temp).containsKey(score)) {
 					Query q = new Query(loc, totalMatches, totalWords, score);
-					queryMap.get(temp).get(score).add(q);
+					
+					for (Query qu : queryMap.get(temp).get(score)) {
+						if (!qu.getLocation().equals(loc)) {
+							queryMap.get(temp).get(score).add(q);
+						}
+					}
 				} else {
 					queryMap.get(temp).put(score, new ArrayList<>());
 					Query q = new Query(loc, totalMatches, totalWords, score);

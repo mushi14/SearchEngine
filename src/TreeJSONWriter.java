@@ -294,6 +294,7 @@ public class TreeJSONWriter {
 			String temp = itr.next().toString();
 			int size = queryMap.get(next).get(temp).size();
 			int count = 0;
+
 			for (Query q : queryMap.get(next).get(temp)) {
 				count++;
 				indent(level, writer);
@@ -311,20 +312,22 @@ public class TreeJSONWriter {
 				writer.write(": " + String.valueOf(q.score) + System.lineSeparator());
 				indent(level, writer);
 				
-				if (count < size) {
-					writer.write("}," + System.lineSeparator());
-				} else {
-					writer.write("}" + System.lineSeparator());
+				if (size > 1) {
+					if (count < size) {
+						writer.write("}," + System.lineSeparator());
+					} else {
+						writer.write("}" + System.lineSeparator());
+					}
 				}
 			}
 			
-//			if (itr.hasNext()) {
-//				indent(level, writer);
-//				writer.write("}," + System.lineSeparator());
-//			} else {
-//				indent(level, writer);
-//				writer.write("}" + System.lineSeparator());
-//			}
+			if (itr.hasNext()) {
+				indent(level, writer);
+				writer.write("}," + System.lineSeparator());
+			} else {
+				indent(level, writer);
+				writer.write("}" + System.lineSeparator());
+			}
 			
 //			if (itr.hasNext()) {
 //				writer.write("},");
