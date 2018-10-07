@@ -54,16 +54,4 @@ public class PathChecker {
 			System.out.println("There was an issue fiding the directory.");
 		}
 	}
-	
-	public static void readQueryFiles(InvertedIndex index, Path path) throws IOException {
-		List<String> files = filesInPath(path);
-		try {
-			for (String file : files) {
-				TextFileStemmer.stemQueryFile(index, Paths.get(file));
-			}
-		} catch (NullPointerException e) {
-			System.out.println("There was an issue fiding the directory.");
-		}
-	}
-	
 }

@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.Collections;
 import java.util.List;
@@ -100,31 +99,7 @@ public class TextFileStemmer {
 			System.out.println("There was an issue fiding the text file: " + path);
 		}
 	}
-	
-//	public static /* Map<Double, List<String>>*/ void stemQueryFile(InvertedIndex index, Path path, TreeSet<String> queries) throws IOException {
-//		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-//			String line = br.readLine();
-//			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-//			while(line != null) {
-//				String[] words = parse(line);
-//				for (String word : words) {
-//					word = stemmer.stem(word).toString();
-//					queries.add(word);
-//				}
-//				if (!queries.isEmpty() ) {
-//					finalQueries = Search.score(index, queries);
-//				}
-//				queries.clear();
-//				line = br.readLine();
-//			}
-//		} catch (NullPointerException e) {
-//			System.out.println("There was an issue finding the query file: " + path);
-//		}
-//		for (Double d : finalQueries.keySet()) {
-//			System.out.println(d + "      " + finalQueries.get(d));
-//		}
-//	}
-	
+
 	public static void stemQueryFile(InvertedIndex index, Path path) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			
@@ -141,7 +116,7 @@ public class TextFileStemmer {
 				}
 				
 				if (!queries.isEmpty()) {
-					TreeJSONWriter.asSearchResult(index, Search.score(index, queries), Paths.get("/Users/mushahidhassan/Desktop/result.json"));
+					TreeJSONWriter.asSearchResult(index, SearchTest.score(index, queries), outfile);
 				}
 				line = br.readLine();
 			}

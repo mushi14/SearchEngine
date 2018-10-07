@@ -33,23 +33,19 @@ public class Driver {
 			}
 			if (argMap.hasFlag("-search")) {
 				if (argMap.flagPath("-search")) {
-					System.out.println(index);
-					System.out.println();
-					PathChecker.readQueryFiles(index, Paths.get(argMap.getPath("-search")));
-					Search.printMap();
+					for (String file : PathChecker.filesInPath(Paths.get(argMap.getPath("-search")))) {
+						TextFileStemmer.stemQueryFile(index, Paths.get(file));
+					}
 				}
 			}
 //			if (argMap.hasFlag("-exact")) {
 //				if (argMap.flagPath("-exact")) {
-//					Search.exactSearch(index, QueryParser.parse(index, Paths.get(argMap.getPath("-exact"))));
+//					
 //				}
 //			}
 //			if (argMap.hasFlag("-results")) {
 //				if (argMap.flagPath("-results")) {
-//					TextFileStemmer.stemQueryFile(index, path);
-//				} else {
-//					TreeJSONWriter.asSearchResult(index, Paths.get("results.json"), QueryParser.getQueries(), 
-//							Search.score(index, QueryParser.getQueries()));
+//					
 //				}
 //			}
 			if (argMap.hasFlag("-locations")) {
