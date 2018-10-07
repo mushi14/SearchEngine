@@ -253,7 +253,7 @@ public class TreeJSONWriter {
 
 		writer.write("[" + System.lineSeparator());
 		
-		Iterator itr = queryMap.keySet().iterator();
+		Iterator<String> itr = queryMap.keySet().iterator();
 		while (itr.hasNext()) {
 			String next = itr.next().toString();
 			indent(level + 1, writer);
@@ -288,7 +288,7 @@ public class TreeJSONWriter {
 	public static void asNestedSearch(String next, Map<String, Map<String, List<Query>>> queryMap, Writer writer, 
 			int level) throws IOException {
 
-		Iterator itr = queryMap.get(next).keySet().iterator();
+		Iterator<String> itr = queryMap.get(next).keySet().iterator();
 		while (itr.hasNext()) {
 			
 			String temp = itr.next().toString();

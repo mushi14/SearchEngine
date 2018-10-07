@@ -29,7 +29,8 @@ public class QueryParser {
 		if (!queryMap.containsKey(temp)) {
 			queryMap.put(temp, new TreeMap<>(Collections.reverseOrder()));
 		}
-		
+
+
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 
 		double totalMatches = 0;
@@ -51,10 +52,10 @@ public class QueryParser {
 			
 			if (contains == true) {
 				if (queryMap.get(temp).containsKey(score)) {
-					Query q = new Query(loc, totalMatches, totalWords, score);
 					
 					for (Query qu : queryMap.get(temp).get(score)) {
 						if (!qu.getLocation().equals(loc)) {
+							Query q = new Query(loc, totalMatches, totalWords, score);
 							queryMap.get(temp).get(score).add(q);
 						}
 					}
@@ -64,6 +65,8 @@ public class QueryParser {
 					queryMap.get(temp).get(score).add(q);
 				}
 			}
+			
+			System.out.println(queryMap);
 			contains = false;
 			totalMatches = 0;
 			totalWords = 0;
