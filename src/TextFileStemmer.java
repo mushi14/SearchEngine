@@ -4,9 +4,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -105,18 +107,23 @@ public class TextFileStemmer {
 			
 			String line = br.readLine();
 			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+			List<String> seen = new ArrayList<>();
 
 			while (line != null) {
-				TreeSet<String> queries = new TreeSet<>();
+				Set<String> queries = new TreeSet<>();
 				String[] words = parse(line);
 
 				for (String word : words) {
 					word = stemmer.stem(word).toString();
-					queries.add(word);
+					if (!seen.contains(word)) {
+						seen.add(word);
+						queries.add(word);
+					}
 				}
 				
+
 				if (!queries.isEmpty()) {
-					TreeJSONWriter.asSearchResult(index, SearchTest.score(index, queries), outfile);
+					QueryParser.addQueries(index, line, queries);
 				}
 				line = br.readLine();
 			}

@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.TreeSet;
 
 public class Driver {
 
@@ -16,8 +15,7 @@ public class Driver {
 		
 		InvertedIndex index = new InvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
-		TreeSet<String> queries = QueryParser.getQueries();
-		
+
 		try {
 			if (argMap.hasFlag("-path")) {
 				if (argMap.flagPath("-path")) {
@@ -36,6 +34,7 @@ public class Driver {
 					for (String file : PathChecker.filesInPath(Paths.get(argMap.getPath("-search")))) {
 						TextFileStemmer.stemQueryFile(index, Paths.get(file));
 					}
+					System.out.println(QueryParser.queryMap);
 				}
 			}
 //			if (argMap.hasFlag("-exact")) {
