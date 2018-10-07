@@ -252,27 +252,32 @@ public class TreeJSONWriter {
 			Writer writer, int level) throws IOException {
 
 		writer.write("[" + System.lineSeparator());
-		indent(level + 1, writer);
 		
 		Iterator itr = queryMap.keySet().iterator();
 		while (itr.hasNext()) {
+			String next = itr.next().toString();
+			indent(level + 1, writer);
 			writer.write("{" + System.lineSeparator());
 			indent(level + 2, writer);
 			quote("queries", writer);
 			writer.write(": ");
-			quote(itr.next().toString(), writer);
-			writer.write(System.lineSeparator());
+			quote(next, writer);
+			writer.write("," + System.lineSeparator());
+			indent(level + 2, writer);
 			quote("results", writer);
 			writer.write(": [" + System.lineSeparator());
 
-			asNestedSearch(itr.next().toString(), queryMap, writer, level + 3);
+			asNestedSearch(next, queryMap, writer, level + 3);
 
+			indent(level + 2, writer);
 			writer.write("]" + System.lineSeparator());
 
 			if (itr.hasNext()) {
-				writer.write("},");
+				indent(level + 1, writer);
+				writer.write("}," + System.lineSeparator());
 			} else {
-				writer.write("}");
+				indent(level + 1, writer);
+				writer.write("}" + System.lineSeparator());
 			}
 		}
 		
@@ -282,12 +287,50 @@ public class TreeJSONWriter {
 	
 	public static void asNestedSearch(String next, Map<String, Map<String, List<Query>>> queryMap, Writer writer, 
 			int level) throws IOException {
-		
-		indent(level, writer);
-		
+
 		Iterator itr = queryMap.get(next).keySet().iterator();
-
-		writer.write("{");
-
+		while (itr.hasNext()) {
+			
+			String temp = itr.next().toString();
+			int size = queryMap.get(next).get(temp).size();
+			int count = 0;
+			for (Query q : queryMap.get(next).get(temp)) {
+				count++;
+				indent(level, writer);
+				writer.write("{" + System.lineSeparator());
+				indent(level + 1, writer);
+				quote("where", writer);
+				writer.write(": ");
+				quote(q.location, writer);
+				writer.write("," + System.lineSeparator());
+				indent(level + 1, writer);
+				quote("count", writer);
+				writer.write(": " + (int) q.totalMatches + "," + System.lineSeparator());
+				indent(level + 1, writer);
+				quote("score", writer);
+				writer.write(": " + String.valueOf(q.score) + System.lineSeparator());
+				indent(level, writer);
+				
+				if (count < size) {
+					writer.write("}," + System.lineSeparator());
+				} else {
+					writer.write("}" + System.lineSeparator());
+				}
+			}
+			
+//			if (itr.hasNext()) {
+//				indent(level, writer);
+//				writer.write("}," + System.lineSeparator());
+//			} else {
+//				indent(level, writer);
+//				writer.write("}" + System.lineSeparator());
+//			}
+			
+//			if (itr.hasNext()) {
+//				writer.write("},");
+//			} else {
+//				writer.write("}");
+//			}
+		}
 	}
 }

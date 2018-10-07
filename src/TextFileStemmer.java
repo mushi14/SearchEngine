@@ -120,10 +120,9 @@ public class TextFileStemmer {
 						queries.add(word);
 					}
 				}
-				
 
 				if (!queries.isEmpty()) {
-					QueryParser.addQueries(index, line, queries);
+					QueryParser.addQueries(index, queries);
 				}
 				line = br.readLine();
 			}

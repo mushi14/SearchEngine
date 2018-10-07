@@ -11,10 +11,24 @@ public class QueryParser {
 
 	public static final Map<String, Map<String, List<Query>>> queryMap = new TreeMap<>();
 
-	public static void addQueries(InvertedIndex index, String line, Set<String> queries) {
+	public static void addQueries(InvertedIndex index, Set<String> queries) {
 
-		if (!queryMap.containsKey(line)) {
-			queryMap.put(line, new TreeMap<>(Collections.reverseOrder()));
+		String temp = "";
+		int size = queries.size();
+		int count = 0;
+		for (String query : queries) {
+			count++;
+			if (count != size) {
+				temp += query + " ";
+			} else {
+				temp += query;
+			}
+		}
+		
+		if (!queryMap.containsKey(temp)) {
+			queryMap.put(temp, new TreeMap<>(Collections.reverseOrder()));
+		} else {
+			
 		}
 		
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
@@ -37,13 +51,13 @@ public class QueryParser {
 			}
 			
 			if (contains == true) {
-				if (queryMap.get(line).containsKey(score)) {
+				if (queryMap.get(temp).containsKey(score)) {
 					Query q = new Query(loc, totalMatches, totalWords, score);
-					queryMap.get(line).get(score).add(q);
+					queryMap.get(temp).get(score).add(q);
 				} else {
-					queryMap.get(line).put(score, new ArrayList<>());
+					queryMap.get(temp).put(score, new ArrayList<>());
 					Query q = new Query(loc, totalMatches, totalWords, score);
-					queryMap.get(line).get(score).add(q);
+					queryMap.get(temp).get(score).add(q);
 				}
 			}
 			contains = false;

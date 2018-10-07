@@ -32,6 +32,7 @@ public class Driver {
 			if (argMap.hasFlag("-search")) {
 				if (argMap.flagPath("-search")) {
 					for (String file : PathChecker.filesInPath(Paths.get(argMap.getPath("-search")))) {
+						QueryParser.queryMap.clear();
 						TextFileStemmer.stemQueryFile(index, Paths.get(file));
 					}
 				}
@@ -43,7 +44,9 @@ public class Driver {
 //			}
 			if (argMap.hasFlag("-results")) {
 				if (argMap.flagPath("-results")) {
-					
+					TreeJSONWriter.asSearchResult(index, Paths.get(argMap.getPath("-results")));
+				} else {
+					TreeJSONWriter.asSearchResult(index, Paths.get("results.json"));
 				}
 			}
 			if (argMap.hasFlag("-locations")) {
