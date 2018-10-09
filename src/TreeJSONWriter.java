@@ -321,8 +321,12 @@ public class TreeJSONWriter {
 						bracket = true;
 						writer.write("}," + System.lineSeparator());
 					} else {
-						bracket = true;
-						writer.write("}" + System.lineSeparator());
+						if (count == size) {
+							bracket = true;
+							writer.write("}" + System.lineSeparator());
+						} else {
+							bracket = false;
+						}
 					}
 				}
 			}
