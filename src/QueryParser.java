@@ -19,43 +19,44 @@ public class QueryParser {
 
 		if (!queryMap.containsKey(temp)) {
 			queryMap.put(temp, new TreeMap<>(Collections.reverseOrder()));
-			DecimalFormat FORMATTER = new DecimalFormat("0.000000");
-			double totalMatches = 0;
-			double totalWords = 0;
-			double rawScore = 0;
-			String score = "";
+		}
+		
+		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
+		double totalMatches = 0;
+		double totalWords = 0;
+		double rawScore = 0;
+		String score = "";
 
-			for (String loc : index.totalLocations().keySet()) {
-				boolean contains = false;
-				for (String query : queries) {
-					if (index.containsWord(query)) {
-						if (index.get(query).containsKey(loc)) {
-							contains = true;
-							totalMatches += index.get(query, loc).size();
-							totalWords = index.totalLocations().get(loc);
-							rawScore = totalMatches / totalWords;
-							rawScore = round(rawScore);
-							score = FORMATTER.format(totalMatches / totalWords);
-						}
+		for (String loc : index.totalLocations().keySet()) {
+			boolean contains = false;
+			for (String query : queries) {
+				if (index.containsWord(query)) {
+					if (index.get(query).containsKey(loc)) {
+						contains = true;
+						totalMatches += index.get(query, loc).size();
+						totalWords = index.totalLocations().get(loc);
+						rawScore = totalMatches / totalWords;
+						rawScore = round(rawScore);
+						score = FORMATTER.format(totalMatches / totalWords);
 					}
 				}
-				if (contains == true) {
-					if (queryMap.get(temp).containsKey(rawScore)) {
-						Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
-						if (!queryMap.get(temp).get(rawScore).contains(q)) {
-							queryMap.get(temp).get(rawScore).add(q);
-						}
-					} else {
-						queryMap.get(temp).put(rawScore, new ArrayList<>());
-						Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
+			}
+			if (contains == true) {
+				if (queryMap.get(temp).containsKey(rawScore)) {
+					Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
+					if (!queryMap.get(temp).get(rawScore).contains(q)) {
 						queryMap.get(temp).get(rawScore).add(q);
 					}
+				} else {
+					queryMap.get(temp).put(rawScore, new ArrayList<>());
+					Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
+					queryMap.get(temp).get(rawScore).add(q);
 				}
-				totalMatches = 0;
-				totalWords = 0;
-				rawScore = 0;
-				score = "";
 			}
+			totalMatches = 0;
+			totalWords = 0;
+			rawScore = 0;
+			score = "";
 		}
 		for (String l : queryMap.keySet()) {
 			for (Double sc : queryMap.get(l).keySet()) {
@@ -65,6 +66,7 @@ public class QueryParser {
 			}
 		}
 	}
+
 
 	public static void partialSearch(InvertedIndex index, Set<String> queries) {
 		String temp = String.join(" ", queries);
@@ -79,22 +81,24 @@ public class QueryParser {
 		double rawScore = 0;
 		String score = "";
 
+		Set<String> words = new TreeSet<>();
+
+		for (String query : queries) {
+			if (!index.wordStartsWith(query).isEmpty()) {
+				words.addAll(index.wordStartsWith(query));
+			}
+		}
+
 		for (String loc : index.totalLocations().keySet()) {
 			boolean contains = false;
-			for (String query : queries) {
-				if (!index.wordStartsWith(query).isEmpty()) {
-					Set<String> words = new TreeSet<>();
-					words = index.wordStartsWith(query);
-					for (String word : words) {
-						if (index.get(word).containsKey(loc)) {
-							contains = true;
-							totalMatches += index.get(word, loc).size();
-							totalWords = index.totalLocations().get(loc);
-							rawScore = totalMatches / totalWords;
-							rawScore = round(rawScore);
-							score = FORMATTER.format(totalMatches / totalWords);
-						}
-					}
+			for (String word : words) {
+				if (index.get(word).containsKey(loc)) {
+					contains = true;
+					totalMatches += index.get(word, loc).size();
+					totalWords = index.totalLocations().get(loc);
+					rawScore = totalMatches / totalWords;
+					rawScore = round(rawScore);
+					score = FORMATTER.format(totalMatches / totalWords);
 				}
 			}
 			if (contains == true) {
