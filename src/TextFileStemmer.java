@@ -101,6 +101,29 @@ public class TextFileStemmer {
 		}
 	}
 
+	public static void stemQueryFile(InvertedIndex index, Path path, boolean exact) {
+		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+			String line = br.readLine();
+			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+
+			while (line != null) {
+				Set<String> queries = new TreeSet<>();
+				String[] words = parse(line);
+				for (String word : words) {
+					word = stemmer.stem(word).toString();
+					queries.add(word);
+				}
+				if (!queries.isEmpty()) {
+					QueryParser.exactSearch(index, queries);
+				}
+				line = br.readLine();
+			}
+		} catch (IOException | NullPointerException e) {
+			System.out.println("There was an issue finding the query file: " + path);
+		}
+	}
+	
+	
 	public static void stemQueryFile(InvertedIndex index, Path path) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			String line = br.readLine();
@@ -114,7 +137,6 @@ public class TextFileStemmer {
 					queries.add(word);
 				}
 				if (!queries.isEmpty()) {
-//					QueryParser.exactSearch(index, queries);
 					QueryParser.partialSearch(index, queries);
 				}
 				line = br.readLine();

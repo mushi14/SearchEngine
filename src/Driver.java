@@ -15,6 +15,7 @@ public class Driver {
 		
 		InvertedIndex index = new InvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
+		boolean exact = false;
 
 		try {
 			if (argMap.hasFlag("-path")) {
@@ -33,15 +34,19 @@ public class Driver {
 				if (argMap.flagPath("-search")) {
 					for (String file : PathChecker.filesInPath(Paths.get(argMap.getPath("-search")))) {
 						QueryParser.queryMap.clear();
-						TextFileStemmer.stemQueryFile(index, Paths.get(file));
+						if (argMap.hasFlag("-exact")) {
+							TextFileStemmer.stemQueryFile(index, Paths.get(file), exact);
+						} else {
+							TextFileStemmer.stemQueryFile(index, Paths.get(file));
+						}
 					}
 				}
 			}
-//			if (argMap.hasFlag("-exact")) {
-//				if (argMap.flagPath("-exact")) {
-//					
-//				}
-//			}
+			if (argMap.flagPath("-exact")) {
+				if (argMap.hasFlag("-exact")) {
+					exact = true;
+				}
+			}
 			if (argMap.hasFlag("-results")) {
 				if (argMap.flagPath("-results")) {
 					TreeJSONWriter.asSearchResult(index, Paths.get(argMap.getPath("-results")));

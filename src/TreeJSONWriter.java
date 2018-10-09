@@ -285,58 +285,6 @@ public class TreeJSONWriter {
 
 	}
 	
-//	public static void asNestedSearch(String next, Map<String, Map<String, List<Query>>> queryMap, Writer writer, 
-//			int level) throws IOException {
-//
-//		Iterator<String> itr = queryMap.get(next).keySet().iterator();
-//		int size = queryMap.get(next).keySet().size();
-//		int count = 0;
-//
-//		while (itr.hasNext()) {
-//			boolean bracket = false;
-//			count++;
-//			String temp = itr.next().toString();
-//
-//			int tempSize = queryMap.get(next).get(temp).size();
-//			int counter = 0;
-//			for (Query q : queryMap.get(next).get(temp)) {
-//				counter++;
-//				indent(level, writer);
-//				writer.write("{" + System.lineSeparator());
-//				indent(level + 1, writer);
-//				quote("where", writer);
-//				writer.write(": ");
-//				quote(q.location, writer);
-//				writer.write("," + System.lineSeparator());
-//				indent(level + 1, writer);
-//				quote("count", writer);
-//				writer.write(": " + (int) q.totalMatches + "," + System.lineSeparator());
-//				indent(level + 1, writer);
-//				quote("score", writer);
-//				writer.write(": " + String.valueOf(q.score) + System.lineSeparator());
-//				indent(level, writer);
-//				
-//				if (tempSize > 1) {
-//					if (counter != tempSize) {
-//						bracket = true;
-//						writer.write("}," + System.lineSeparator());
-//					} else {
-//						bracket = true;
-//						writer.write("}" + System.lineSeparator());
-//					}
-//				}
-//			}
-//
-//			if (count != size && bracket == false) {
-//				writer.write("}," + System.lineSeparator());
-//			} else if (count == size && bracket == false) {
-//				writer.write("}" + System.lineSeparator());
-//			}
-//			bracket = true;
-//		}
-//	}
-	
-	
 	public static void asNestedSearch(String next, Map<String, Map<Double, List<Query>>> queryMap, Writer writer, 
 			int level) throws IOException {
 		

@@ -95,19 +95,14 @@ public class QueryParser {
 			double rawScore = 0;
 			String score = "";
 
-			List<Query> tempList = new ArrayList<>();
-			
 			for (String loc : index.totalLocations().keySet()) {
 				boolean contains = false;
 				for (String query : queries) {
-//					System.out.println(query);
 					if (!index.wordStartsWith(query).isEmpty()) {
 						Set<String> words = new TreeSet<>();
 						words = index.wordStartsWith(query);
 						for (String word : words) {
-//							System.out.println(word);
 							if (index.get(word).containsKey(loc)) {
-//								System.out.print(word + "      ");
 								contains = true;
 								totalMatches += index.get(word, loc).size();
 								totalWords = index.totalLocations().get(loc);
@@ -118,7 +113,6 @@ public class QueryParser {
 						}
 					}
 				}
-//				System.out.println();
 				if (contains == true) {
 					if (queryMap.get(temp).containsKey(rawScore)) {
 						Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
