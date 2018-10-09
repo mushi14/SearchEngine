@@ -3,12 +3,14 @@ public class Query {
 	public String location;
 	public double totalMatches;
 	public double totalWords;
+	public double rawScore;
 	public String score;
 
-	public Query(String loc, double matches, double words, String sc) {
+	public Query(String loc, double matches, double words, double rs, String sc) {
 		this.location = loc;
 		this.totalMatches = matches;
 		this.totalWords = words;
+		this.rawScore = rs;
 		this.score = sc;
 	}
 
@@ -22,6 +24,10 @@ public class Query {
 
 	public double getWords() {
 		return totalWords;
+	}
+
+	public double getRawScore() {
+		return rawScore;
 	}
 
 	public String getScore() {

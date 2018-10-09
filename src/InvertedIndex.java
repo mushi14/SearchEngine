@@ -198,6 +198,16 @@ public class InvertedIndex {
 		return index.containsKey(word);
 	}
 	
+	public Set<String> wordStartsWith(String w) {
+		Set<String> words = new TreeSet<>();
+		for (String word : index.keySet()) {
+			if (word.startsWith(w)) {
+				words.add(word) ;
+			} 
+		}
+		return words;
+	}
+	
 	/** Checks to see if the word contains the path
 	 * 
 	 * @param word word inside the file
