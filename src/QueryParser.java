@@ -13,19 +13,11 @@ import java.util.TreeSet;
 public class QueryParser {
 
 	public static final Map<String, Map<Double, List<Query>>> queryMap = new TreeMap<>();
+	static List<String> seen = new ArrayList<>();
 
 	public static void exactSearch(InvertedIndex index, Set<String> queries) {
-		String temp = "";
-		int size = queries.size();
-		int count = 0;
-		for (String query : queries) {
-			count++;
-			if (count != size) {
-				temp += query + " ";
-			} else {
-				temp += query;
-			}
-		}
+		String temp = String.join(" ", queries);
+
 		if (!queryMap.containsKey(temp)) {
 			queryMap.put(temp, new TreeMap<>(Collections.reverseOrder()));
 			DecimalFormat FORMATTER = new DecimalFormat("0.000000");
@@ -76,65 +68,57 @@ public class QueryParser {
 	}
 
 	public static void partialSearch(InvertedIndex index, Set<String> queries) {
-		String temp = "";
-		int size = queries.size();
-		int count = 0;
-		for (String query : queries) {
-			count++;
-			if (count != size) {
-				temp += query + " ";
-			} else {
-				temp += query;
-			}
-		}
+		String temp = String.join(" ", queries);
+
 		if (!queryMap.containsKey(temp)) {
 			queryMap.put(temp, new TreeMap<>(Collections.reverseOrder()));
-			DecimalFormat FORMATTER = new DecimalFormat("0.000000");
-			double totalMatches = 0;
-			double totalWords = 0;
-			double rawScore = 0;
-			String score = "";
+		}
+		
+		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
+		double totalMatches = 0;
+		double totalWords = 0;
+		double rawScore = 0;
+		String score = "";
 
-			for (String loc : index.totalLocations().keySet()) {
-				boolean contains = false;
-				for (String query : queries) {
-					if (!index.wordStartsWith(query).isEmpty()) {
-						Set<String> words = new TreeSet<>();
-						words = index.wordStartsWith(query);
-						for (String word : words) {
-							if (index.get(word).containsKey(loc)) {
-								contains = true;
-								totalMatches += index.get(word, loc).size();
-								totalWords = index.totalLocations().get(loc);
-								rawScore = totalMatches / totalWords;
-								rawScore = round(rawScore);
-								score = FORMATTER.format(totalMatches / totalWords);
-							}
+		for (String loc : index.totalLocations().keySet()) {
+			boolean contains = false;
+			for (String query : queries) {
+				if (!index.wordStartsWith(query).isEmpty()) {
+					Set<String> words = new TreeSet<>();
+					words = index.wordStartsWith(query);
+					for (String word : words) {
+						if (index.get(word).containsKey(loc)) {
+							contains = true;
+							totalMatches += index.get(word, loc).size();
+							totalWords = index.totalLocations().get(loc);
+							rawScore = totalMatches / totalWords;
+							rawScore = round(rawScore);
+							score = FORMATTER.format(totalMatches / totalWords);
 						}
 					}
 				}
-				if (contains == true) {
-					if (queryMap.get(temp).containsKey(rawScore)) {
-						Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
-						if (!queryMap.get(temp).get(rawScore).contains(q)) {
-							queryMap.get(temp).get(rawScore).add(q);
-						}
-					} else {
-						queryMap.get(temp).put(rawScore, new ArrayList<>());
-						Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
+			}
+			if (contains == true) {
+				if (queryMap.get(temp).containsKey(rawScore)) {
+					Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
+					if (!queryMap.get(temp).get(rawScore).contains(q)) {
 						queryMap.get(temp).get(rawScore).add(q);
 					}
+				} else {
+					queryMap.get(temp).put(rawScore, new ArrayList<>());
+					Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
+					queryMap.get(temp).get(rawScore).add(q);
 				}
-				totalMatches = 0;
-				totalWords = 0;
-				rawScore = 0;
-				score = "";
 			}
-			for (String l : queryMap.keySet()) {
-				for (Double sc : queryMap.get(l).keySet()) {
-					if (queryMap.get(l).get(sc).size() > 1) {
-						Collections.sort(queryMap.get(l).get(sc), new Comparison());
-					}
+			totalMatches = 0;
+			totalWords = 0;
+			rawScore = 0;
+			score = "";
+		}
+		for (String l : queryMap.keySet()) {
+			for (Double sc : queryMap.get(l).keySet()) {
+				if (queryMap.get(l).get(sc).size() > 1) {
+					Collections.sort(queryMap.get(l).get(sc), new Comparison());
 				}
 			}
 		}
@@ -142,7 +126,7 @@ public class QueryParser {
 
 	public static double round(double score) {
 		return BigDecimal.valueOf(score)
-			.setScale(15, RoundingMode.HALF_UP)
+			.setScale(6, RoundingMode.HALF_UP)
 			.doubleValue();
 	}
 

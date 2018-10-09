@@ -49,9 +49,9 @@ public class Driver {
 			}
 			if (argMap.hasFlag("-results")) {
 				if (argMap.flagPath("-results")) {
-					TreeJSONWriter.asSearchResult(index, Paths.get(argMap.getPath("-results")));
+					TreeJSONWriter.asSearchResult(QueryParser.queryMap, Paths.get(argMap.getPath("-results")));
 				} else {
-					TreeJSONWriter.asSearchResult(index, Paths.get("results.json"));
+					TreeJSONWriter.asSearchResult(QueryParser.queryMap, Paths.get("results.json"));
 				}
 			}
 			if (argMap.hasFlag("-locations")) {
