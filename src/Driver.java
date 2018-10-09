@@ -36,7 +36,7 @@ public class Driver {
 						QueryParser.queryMap.clear();
 						if (argMap.hasFlag("-exact")) {
 							TextFileStemmer.stemQueryFile(index, Paths.get(file), exact);
-						} else {
+						} else { 
 							TextFileStemmer.stemQueryFile(index, Paths.get(file));
 						}
 					}

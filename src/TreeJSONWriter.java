@@ -4,9 +4,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -240,7 +238,7 @@ public class TreeJSONWriter {
 		}
 	}
 	
-	public static void asSearchResult(Map<String, Map<Double, List<Query>>> queryMap, Path path) {
+	public static void asSearchResult(TreeMap<String, TreeMap<Double, List<Query>>> queryMap, Path path) {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			asSearchResult(queryMap, writer, 0);
 		} catch (IOException | NullPointerException e) {
@@ -248,52 +246,47 @@ public class TreeJSONWriter {
 		}
 	}
 	
-	public static void asSearchResult(Map<String, Map<Double, List<Query>>> queryMap,
+	public static void asSearchResult(TreeMap<String, TreeMap<Double, List<Query>>> queryMap,
 			Writer writer, int level) throws IOException {
 
 		writer.write("[" + System.lineSeparator());
-		
-		Iterator<String> itr = queryMap.keySet().iterator();
-		while (itr.hasNext()) {
-			String next = itr.next().toString();
+
+		for (String itr : queryMap.keySet()) {
 			indent(level + 1, writer);
 			writer.write("{" + System.lineSeparator());
 			indent(level + 2, writer);
 			quote("queries", writer);
 			writer.write(": ");
-			quote(next, writer);
+			quote(itr, writer);
 			writer.write("," + System.lineSeparator());
 			indent(level + 2, writer);
 			quote("results", writer);
 			writer.write(": [" + System.lineSeparator());
 
-			asNestedSearch(next, queryMap, writer, level + 3);
+			asNestedSearch(itr, queryMap, writer, level + 3);
 
 			indent(level + 2, writer);
 			writer.write("]" + System.lineSeparator());
-
-			if (itr.hasNext()) {
-				indent(level + 1, writer);
-				writer.write("}," + System.lineSeparator());
-			} else {
-				indent(level + 1, writer);
+			
+			if (itr.equals(queryMap.lastKey())) {
 				writer.write("}" + System.lineSeparator());
+			} else {
+				writer.write("}," + System.lineSeparator());
 			}
 		}
 		writer.write("]");
 	}
 
-	public static void asNestedSearch(String next, Map<String, Map<Double, List<Query>>> queryMap, Writer writer, 
+	public static void asNestedSearch(String next, TreeMap<String, TreeMap<Double, List<Query>>> queryMap, Writer writer, 
 			int level) throws IOException {
 		
-		Iterator<Double> itr = queryMap.get(next).keySet().iterator();
 		int size = queryMap.get(next).keySet().size();
 		int count = 0;
 
-		while (itr.hasNext()) {
+		for (Double itr : queryMap.get(next).keySet()) {
 			boolean bracket = false;
 			count++;
-			Double temp = itr.next();
+			Double temp = itr;
 
 			int tempSize = queryMap.get(next).get(temp).size();
 			int counter = 0;

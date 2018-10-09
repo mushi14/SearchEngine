@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class QueryParser {
 
-	public static final Map<String, Map<Double, List<Query>>> queryMap = new TreeMap<>();
+	public static final TreeMap<String, TreeMap<Double, List<Query>>> queryMap = new TreeMap<>();
 	static List<String> seen = new ArrayList<>();
 
 	public static void exactSearch(InvertedIndex index, Set<String> queries) {
@@ -122,7 +121,7 @@ public class QueryParser {
 				}
 			}
 		}
-	} 
+	}
 
 	public static double round(double score) {
 		return BigDecimal.valueOf(score)
