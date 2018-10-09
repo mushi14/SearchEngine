@@ -282,7 +282,7 @@ public class TreeJSONWriter {
 		}
 		writer.write("]");
 	}
-	
+
 	public static void asNestedSearch(String next, Map<String, Map<Double, List<Query>>> queryMap, Writer writer, 
 			int level) throws IOException {
 		
