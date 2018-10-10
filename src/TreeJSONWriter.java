@@ -4,6 +4,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -238,7 +239,107 @@ public class TreeJSONWriter {
 		}
 	}
 	
-	public static void asSearchResult(TreeMap<String, TreeMap<Double, List<Query>>> queryMap, Path path) {
+//	public static void asSearchResult(TreeMap<String, TreeMap<Double, List<Query>>> queryMap, Path path) {
+//		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+//			asSearchResult(queryMap, writer, 0);
+//		} catch (IOException | NullPointerException e) {
+//			System.out.println("There was an issue finding the direcotry or file: " + path);
+//		}
+//	}
+//	
+//	public static void asSearchResult(TreeMap<String, TreeMap<Double, List<Query>>> queryMap,
+//			Writer writer, int level) throws IOException {
+//
+//		writer.write("[" + System.lineSeparator());
+//		
+//		Iterator<String> itr = queryMap.keySet().iterator();
+//		while (itr.hasNext()) {
+//			String next = itr.next().toString();
+//			indent(level + 1, writer);
+//			writer.write("{" + System.lineSeparator());
+//			indent(level + 2, writer);
+//			quote("queries", writer);
+//			writer.write(": ");
+//			quote(next, writer);
+//			writer.write("," + System.lineSeparator());
+//			indent(level + 2, writer);
+//			quote("results", writer);
+//			writer.write(": [" + System.lineSeparator());
+//
+//			asNestedSearch(next, queryMap, writer, level + 3);
+//
+//			indent(level + 2, writer);
+//			writer.write("]" + System.lineSeparator());
+//
+//			if (itr.hasNext()) {
+//				indent(level + 1, writer);
+//				writer.write("}," + System.lineSeparator());
+//			} else {
+//				indent(level + 1, writer);
+//				writer.write("}" + System.lineSeparator());
+//			}
+//		}
+//		writer.write("]");
+//	}
+//
+//	public static void asNestedSearch(String next, TreeMap<String, TreeMap<Double, List<Query>>> queryMap, Writer writer, 
+//			int level) throws IOException {
+//		
+//		Iterator<Double> itr = queryMap.get(next).keySet().iterator();
+//		int size = queryMap.get(next).keySet().size();
+//		int count = 0;
+//
+//		while (itr.hasNext()) {
+//			boolean bracket = false;
+//			count++;
+//			Double temp = itr.next();
+//
+//			int tempSize = queryMap.get(next).get(temp).size();
+//			int counter = 0;
+//			if (!queryMap.get(next).get(temp).isEmpty()) {
+//				for (Query q : queryMap.get(next).get(temp)) {
+//					counter++;
+//					indent(level, writer);
+//					writer.write("{" + System.lineSeparator());
+//					indent(level + 1, writer);
+//					quote("where", writer);
+//					writer.write(": ");
+//					quote(q.location, writer);
+//					writer.write("," + System.lineSeparator());
+//					indent(level + 1, writer);
+//					quote("count", writer);
+//					writer.write(": " + (int) q.totalMatches + "," + System.lineSeparator());
+//					indent(level + 1, writer);
+//					quote("score", writer);
+//					writer.write(": " + String.valueOf(q.score) + System.lineSeparator());
+//					indent(level, writer);
+//					
+//					if (tempSize > 1) {
+//						if (counter != tempSize) {
+//							bracket = true;
+//							writer.write("}," + System.lineSeparator());
+//						} else {
+//							if (count == size) {
+//								bracket = true;
+//								writer.write("}" + System.lineSeparator());
+//							} else {
+//								bracket = false;
+//							}
+//						}
+//					}
+//				}
+//			}
+//			if (count != size && bracket == false) {
+//				writer.write("}," + System.lineSeparator());
+//			} else if (count == size && bracket == false) {
+//				writer.write("}" + System.lineSeparator());
+//			}
+//			bracket = true;
+//		}
+//	}
+
+	
+	public static void asSearchResult(TreeMap<String, TreeMap<String, List<Query>>> queryMap, Path path) {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			asSearchResult(queryMap, writer, 0);
 		} catch (IOException | NullPointerException e) {
@@ -246,48 +347,53 @@ public class TreeJSONWriter {
 		}
 	}
 	
-	public static void asSearchResult(TreeMap<String, TreeMap<Double, List<Query>>> queryMap,
+	public static void asSearchResult(TreeMap<String, TreeMap<String, List<Query>>> queryMap,
 			Writer writer, int level) throws IOException {
 
 		writer.write("[" + System.lineSeparator());
-
-		for (String itr : queryMap.keySet()) {
+		
+		Iterator<String> itr = queryMap.keySet().iterator();
+		while (itr.hasNext()) {
+			String next = itr.next().toString();
 			indent(level + 1, writer);
 			writer.write("{" + System.lineSeparator());
 			indent(level + 2, writer);
 			quote("queries", writer);
 			writer.write(": ");
-			quote(itr, writer);
+			quote(next, writer);
 			writer.write("," + System.lineSeparator());
 			indent(level + 2, writer);
 			quote("results", writer);
 			writer.write(": [" + System.lineSeparator());
-
-			asNestedSearch(itr, queryMap, writer, level + 3);
-
+		
+			asNestedSearch(next, queryMap, writer, level + 3);
+		
 			indent(level + 2, writer);
 			writer.write("]" + System.lineSeparator());
-			
-			if (itr.equals(queryMap.lastKey())) {
-				writer.write("}" + System.lineSeparator());
-			} else {
+		
+			if (itr.hasNext()) {
+				indent(level + 1, writer);
 				writer.write("}," + System.lineSeparator());
+			} else {
+				indent(level + 1, writer);
+				writer.write("}" + System.lineSeparator());
 			}
 		}
 		writer.write("]");
 	}
+	
+	public static void asNestedSearch(String next, TreeMap<String, TreeMap<String, List<Query>>> queryMap, Writer writer, 
+	int level) throws IOException {
 
-	public static void asNestedSearch(String next, TreeMap<String, TreeMap<Double, List<Query>>> queryMap, Writer writer, 
-			int level) throws IOException {
-		
+		Iterator<String> itr = queryMap.get(next).keySet().iterator();
 		int size = queryMap.get(next).keySet().size();
 		int count = 0;
-
-		for (Double itr : queryMap.get(next).keySet()) {
+		
+		while (itr.hasNext()) {
 			boolean bracket = false;
 			count++;
-			Double temp = itr;
-
+			String temp = itr.next();
+		
 			int tempSize = queryMap.get(next).get(temp).size();
 			int counter = 0;
 			if (!queryMap.get(next).get(temp).isEmpty()) {

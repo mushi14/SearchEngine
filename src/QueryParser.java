@@ -12,7 +12,13 @@ import java.util.TreeSet;
 public class QueryParser {
 
 	public static final TreeMap<String, TreeMap<Double, List<Query>>> queryMap = new TreeMap<>();
+	public static final TreeMap<String, TreeMap<String, Query>> tempQueries = new TreeMap<>();
+	public static List<Query> tempList = new ArrayList<>();
+
+
+
 	static List<String> seen = new ArrayList<>();
+	static TreeMap<String, List<Query>> locations = new TreeMap<>();
 
 	public static void exactSearch(InvertedIndex index, Set<String> queries) {
 		String temp = String.join(" ", queries);
@@ -70,9 +76,12 @@ public class QueryParser {
 
 	public static void partialSearch(InvertedIndex index, Set<String> queries) {
 		String temp = String.join(" ", queries);
-
-		if (!queryMap.containsKey(temp)) {
-			queryMap.put(temp, new TreeMap<>(Collections.reverseOrder()));
+		
+//		if (!queryMap.containsKey(temp)) {
+//			queryMap.put(temp, new TreeMap<>(Collections.reverseOrder()));
+//		}
+		if (!tempQueries.containsKey(temp)) {
+			tempQueries.put(temp, new TreeMap<>());
 		}
 		
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
@@ -80,37 +89,28 @@ public class QueryParser {
 		double totalWords = 0;
 		double rawScore = 0;
 		String score = "";
-
+		
 		Set<String> words = new TreeSet<>();
-
+		
 		for (String query : queries) {
-			if (!index.wordStartsWith(query).isEmpty()) {
-				words.addAll(index.wordStartsWith(query));
-			}
-		}
-
-		for (String loc : index.totalLocations().keySet()) {
-			boolean contains = false;
+			words = index.wordStartsWith(query);
 			for (String word : words) {
-				if (index.get(word).containsKey(loc)) {
-					contains = true;
-					totalMatches += index.get(word, loc).size();
+				for (String loc : index.get(word).keySet()) {
+					totalMatches = index.get(word, loc).size();
 					totalWords = index.totalLocations().get(loc);
 					rawScore = totalMatches / totalWords;
 					rawScore = round(rawScore);
 					score = FORMATTER.format(totalMatches / totalWords);
-				}
-			}
-			if (contains == true) {
-				if (queryMap.get(temp).containsKey(rawScore)) {
-					Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
-					if (!queryMap.get(temp).get(rawScore).contains(q)) {
-						queryMap.get(temp).get(rawScore).add(q);
+	
+					if (tempQueries.get(temp).containsKey(loc)) {
+						if (tempQueries.get(temp).get(loc).rawScore <= rawScore) {
+							Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
+							tempQueries.get(temp).put(loc, q);
+						}
+					} else {
+						Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
+						tempQueries.get(temp).put(loc, q);
 					}
-				} else {
-					queryMap.get(temp).put(rawScore, new ArrayList<>());
-					Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
-					queryMap.get(temp).get(rawScore).add(q);
 				}
 			}
 			totalMatches = 0;
@@ -118,18 +118,84 @@ public class QueryParser {
 			rawScore = 0;
 			score = "";
 		}
-		for (String l : queryMap.keySet()) {
-			for (Double sc : queryMap.get(l).keySet()) {
-				if (queryMap.get(l).get(sc).size() > 1) {
-					Collections.sort(queryMap.get(l).get(sc), new Comparison());
-				}
-			}
+		
+
+		List<Query> tempList2 = new ArrayList<>();
+		
+		for (String loc : tempQueries.get(temp).keySet()) {
+			tempList2.add(tempQueries.get(temp).get(loc));
 		}
+	
+		Collections.sort(tempList2, new Comparison());
+		
+		tempList.addAll(tempList2);
+
 	}
+	
+	
+	
+//	public static void partialSearch(InvertedIndex index, Set<String> queries) {
+//		String temp = String.join(" ", queries);
+//
+//		if (!queryMap.containsKey(temp)) {
+//			queryMap.put(temp, new TreeMap<>(Collections.reverseOrder()));
+//		}
+//		
+//		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
+//		double totalMatches = 0;
+//		double totalWords = 0;
+//		double rawScore = 0;
+//		String score = "";
+//
+//		Set<String> words = new TreeSet<>();
+//
+//		for (String query : queries) {
+//			if (!index.wordStartsWith(query).isEmpty()) {
+//				words.addAll(index.wordStartsWith(query));
+//			}
+//		}
+//
+//		for (String loc : index.totalLocations().keySet()) {
+//			boolean contains = false;
+//			for (String word : words) {
+//				if (index.get(word).containsKey(loc)) {
+//					contains = true;
+//					totalMatches += index.get(word, loc).size();
+//					totalWords = index.totalLocations().get(loc);
+//					rawScore = totalMatches / totalWords;
+//					rawScore = round(rawScore);
+//					score = FORMATTER.format(totalMatches / totalWords);
+//				}
+//			}
+//			if (contains == true) {
+//				if (queryMap.get(temp).containsKey(rawScore)) {
+//					Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
+//					if (!queryMap.get(temp).get(rawScore).contains(q)) {
+//						queryMap.get(temp).get(rawScore).add(q);
+//					}
+//				} else {
+//					queryMap.get(temp).put(rawScore, new ArrayList<>());
+//					Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
+//					queryMap.get(temp).get(rawScore).add(q);
+//				}
+//			}
+//			totalMatches = 0;
+//			totalWords = 0;
+//			rawScore = 0;
+//			score = "";
+//		}
+//		for (String l : queryMap.keySet()) {
+//			for (Double sc : queryMap.get(l).keySet()) {
+//				if (queryMap.get(l).get(sc).size() > 1) {
+//					Collections.sort(queryMap.get(l).get(sc), new Comparison());
+//				}
+//			}
+//		}
+//	}
 
 	public static double round(double score) {
 		return BigDecimal.valueOf(score)
-			.setScale(6, RoundingMode.HALF_UP)
+			.setScale(15, RoundingMode.HALF_UP)
 			.doubleValue();
 	}
 
