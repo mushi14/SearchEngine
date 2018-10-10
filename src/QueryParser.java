@@ -13,8 +13,7 @@ public class QueryParser {
 
 	public static final TreeMap<String, TreeMap<Double, List<Query>>> queryMap = new TreeMap<>();
 	public static final TreeMap<String, TreeMap<String, Query>> tempQueries = new TreeMap<>();
-	public static List<Query> tempList = new ArrayList<>();
-
+	public static TreeMap<String, List<Query>> map = new TreeMap<>();
 
 
 	static List<String> seen = new ArrayList<>();
@@ -77,11 +76,8 @@ public class QueryParser {
 	public static void partialSearch(InvertedIndex index, Set<String> queries) {
 		String temp = String.join(" ", queries);
 		
-//		if (!queryMap.containsKey(temp)) {
-//			queryMap.put(temp, new TreeMap<>(Collections.reverseOrder()));
-//		}
-		if (!tempQueries.containsKey(temp)) {
-			tempQueries.put(temp, new TreeMap<>());
+		if (!map.containsKey(temp)) {
+			map.put(temp, new ArrayList<>());
 		}
 		
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
@@ -92,24 +88,29 @@ public class QueryParser {
 		
 		Set<String> words = new TreeSet<>();
 		
-		for (String query : queries) {
-			words = index.wordStartsWith(query);
-			for (String word : words) {
-				for (String loc : index.get(word).keySet()) {
-					totalMatches = index.get(word, loc).size();
-					totalWords = index.totalLocations().get(loc);
-					rawScore = totalMatches / totalWords;
-					rawScore = round(rawScore);
-					score = FORMATTER.format(totalMatches / totalWords);
-	
-					if (tempQueries.get(temp).containsKey(loc)) {
-						if (tempQueries.get(temp).get(loc).rawScore <= rawScore) {
+		if (!tempQueries.containsKey(temp)) {
+			tempQueries.put(temp, new TreeMap<>());
+
+			for (String query : queries) {
+				words = index.wordStartsWith(query);
+				for (String word : words) {
+					for (String loc : index.get(word).keySet()) {
+						
+						totalMatches += index.get(word, loc).size();
+						totalWords = index.totalLocations().get(loc);
+						rawScore = totalMatches / totalWords;
+						rawScore = round(rawScore);
+						score = FORMATTER.format(totalMatches / totalWords);
+		
+						if (tempQueries.get(temp).containsKey(loc)) {
+							if (tempQueries.get(temp).get(loc).rawScore <= rawScore) {
+								Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
+								tempQueries.get(temp).put(loc, q);
+							}
+						} else {
 							Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
 							tempQueries.get(temp).put(loc, q);
 						}
-					} else {
-						Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
-						tempQueries.get(temp).put(loc, q);
 					}
 				}
 			}
@@ -118,18 +119,19 @@ public class QueryParser {
 			rawScore = 0;
 			score = "";
 		}
-		
 
-		List<Query> tempList2 = new ArrayList<>();
+		List<Query> tempList = new ArrayList<>();
 		
 		for (String loc : tempQueries.get(temp).keySet()) {
-			tempList2.add(tempQueries.get(temp).get(loc));
-		}
-	
-		Collections.sort(tempList2, new Comparison());
+			tempList.add(tempQueries.get(temp).get(loc));
+			Collections.sort(tempList, new Comparison());
+		}	
 		
-		tempList.addAll(tempList2);
-
+		for (Query query : tempList) {
+			if (!map.get(temp).contains(query)) {
+				map.get(temp).add(query);
+			}
+		}
 	}
 	
 	

@@ -38,7 +38,7 @@ public class Driver {
 							TextFileStemmer.stemQueryFile(index, Paths.get(file), exact);
 						} else { 
 							TextFileStemmer.stemQueryFile(index, Paths.get(file));
-							System.out.println(QueryParser.tempList);
+							System.out.println(QueryParser.map);
 						}
 					}
 				}
