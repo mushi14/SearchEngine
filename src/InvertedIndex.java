@@ -1,3 +1,4 @@
+import java.util.Collections;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -32,6 +33,19 @@ public class InvertedIndex {
 		}
 		return new TreeMap<String, TreeSet<Integer>>(temp);
 	}
+	
+	/* TODO To avoid the copying, maybe this approach:
+	public Set<String> getLocations(String word) {
+		if (index.containsKey(word)) {
+			return Collections.unmodifiableSet(index.get(word).keySet());
+		}
+		else {
+			return Collections.EMPTY_SET;
+		}
+	}
+	
+	Do this also for getWords() that returns the index keyset safely.
+	*/
 
 	/** 
 	 * Gets the TreeSet of positions associated with the path
@@ -85,6 +99,15 @@ public class InvertedIndex {
 	public void addPosition(String word, String path, int position) {
 		index.get(word).get(path).add(position);
 	}
+	
+	/* TODO
+	 * collapse addWord, addPath, addPosition into one add method....
+	public void add(String word, String path, int position) {
+		here we check, do we need to add the word?
+		do we need to add the path?
+		do we need to add the position?
+	}
+	*/
 
 	/*
 	public void addAll(String[] words, String location)
@@ -101,7 +124,7 @@ public class InvertedIndex {
 		int position = 0;
 		for (String word : words) {
 			position++;
-			this.addPath(word, location, position);
+			this.addPath(word, location, position); // TODO Call new add method
 		}
 	}
 
@@ -174,7 +197,7 @@ public class InvertedIndex {
 	 * @return integer size of the number of paths associated with word in the map
 	 */
 	public int positions(String word, String path) {
-		if (index.containsKey(word)) {
+		if (index.containsKey(word)) { // TODO containsPath(String word, String path)
 			return index.get(word).get(path).size();
 		} else {
 			return 0;
@@ -205,6 +228,8 @@ public class InvertedIndex {
 			return false;
 		}
 	}
+	
+	// TODO public boolean containsPosition(String word, String path, int position) {
 
 	/** 
 	 * Prints in the map
@@ -213,4 +238,10 @@ public class InvertedIndex {
 	public String toString() {
 		return index.toString();
 	}
+	
+	/* TODO
+	public void writeJSON(Path path) throws IOException {
+		TreeJSONWriter.asTripleNested(this.index);
+	}
+	*/
 }
