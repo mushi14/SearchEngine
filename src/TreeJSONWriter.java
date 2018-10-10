@@ -166,6 +166,8 @@ public class TreeJSONWriter {
 		}
 	}
 
+	// TODO public static void asTripleNested(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Writer writer, int level) throws IOException {
+	
 	/**
 	 * Writes the map of String keys and WordIndex values as a pretty JSON object using the provided
 	 * {@link Writer} and indentation level.

@@ -71,10 +71,12 @@ public class TextFileStemmer {
 			int position = 1;
 			String line = br.readLine();
 			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+			
 			while(line != null) {
 				String[] words = parse(line);
 				for (String word : words) {
 					word = stemmer.stem(word).toString();
+					// TODO index.add(...) the add method will do the checking you have below
 					if (index.containsWord(word)) {
 						if (index.containsPath(word ,path.toString())) {
 							index.addPosition(word, path.toString(), position);
@@ -90,7 +92,7 @@ public class TextFileStemmer {
 				}
 				line = br.readLine();
 			}
-		} catch (NullPointerException e) {
+		} catch (NullPointerException e) { // TODO Remove the catch
 			System.out.println("There was an issue fiding the text file: " + path);
 		}
 	}
