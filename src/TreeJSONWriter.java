@@ -158,13 +158,13 @@ public class TreeJSONWriter {
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 */
-	public static void asInvertedIndex(InvertedIndex elements,
-			Path path) throws IOException {
-		try (BufferedWriter writer = Files.newBufferedWriter(path,
-				StandardCharsets.UTF_8)) {
-			asInvertedIndex(elements, writer, 0);
-		}
-	}
+//	public static void asInvertedIndex(InvertedIndex elements,
+//			Path path) throws IOException {
+//		try (BufferedWriter writer = Files.newBufferedWriter(path,
+//				StandardCharsets.UTF_8)) {
+//			asInvertedIndex(elements, writer, 0);
+//		}
+//	}
 
 	// TODO public static void asTripleNested(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Writer writer, int level) throws IOException {
 	
@@ -185,29 +185,29 @@ public class TreeJSONWriter {
 	 * @see #indent(int, Writer)
 	 * @see #quote(String, Writer)
 	 */
-	public static void asInvertedIndex(InvertedIndex elements, Writer writer, int level) throws IOException {
-		
-		writer.write("{" + System.lineSeparator());
-		
-		int size = elements.words();
-		int count = 0;
-		
-		for (String key : elements.wordsKeySet()) {
-			count++;
-			if (count != size) {
-				indent(level + 1, writer);
-				quote(key, writer);
-				writer.write(": ");
-				asPathIndex(elements.get(key), writer, level + 1);
-				writer.write("," + System.lineSeparator());
-			} else {
-				indent(level + 1, writer);
-				quote(key, writer);
-				writer.write(": ");
-				asPathIndex(elements.get(key), writer, level + 1);
-				writer.write(System.lineSeparator());
-			}
-		}
-		writer.write("}" + System.lineSeparator());
-	}
+//	public static void asInvertedIndex(InvertedIndex elements, Writer writer, int level) throws IOException {
+//		
+//		writer.write("{" + System.lineSeparator());
+//		
+//		int size = elements.words();
+//		int count = 0;
+//		
+//		for (String key : elements.wordsKeySet()) {
+//			count++;
+//			if (count != size) {
+//				indent(level + 1, writer);
+//				quote(key, writer);
+//				writer.write(": ");
+//				asPathIndex(elements.get(key), writer, level + 1);
+//				writer.write("," + System.lineSeparator());
+//			} else {
+//				indent(level + 1, writer);
+//				quote(key, writer);
+//				writer.write(": ");
+//				asPathIndex(elements.get(key), writer, level + 1);
+//				writer.write(System.lineSeparator());
+//			}
+//		}
+//		writer.write("}" + System.lineSeparator());
+//	}
 }

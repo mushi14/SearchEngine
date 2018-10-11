@@ -22,23 +22,23 @@ public class Driver {
 				if (argMap.flagPath("-path")) {
 					PathChecker.filesInPath(path, index);
 				}
-			} catch (IOException e) {
+			} catch (IOException | NullPointerException e) {
 				System.out.printf("There was an issue finding the path %s. %s is needed to build the index", path);
 			}
 		}
-		if (argMap.hasFlag("-index")) {
-			Path path = Paths.get(argMap.getPath("-index"));
-			try {
-				if (argMap.flagPath("-index")) {
-					TreeJSONWriter.asInvertedIndex(index, path);
-				} else {
-					TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-				}
-			} catch (IOException e) {
-				System.out.printf("There was a problem finding the file %s. The results of the index"
-						+ "will be printed to 'index.json'", path);
-			}
-		}
+//		if (argMap.hasFlag("-index")) {
+//			Path path = Paths.get(argMap.getPath("-index"));
+//			try {
+//				if (argMap.flagPath("-index")) {
+//					TreeJSONWriter.asInvertedIndex(index, path);
+//				} else {
+//					TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+//				}
+//			} catch (IOException | NullPointerException e) {
+//				System.out.printf("There was a problem finding the file %s. The results of the index"
+//						+ "will be printed to 'index.json'", path);
+//			}
+//		}
 		/* TODO
 		if (argMap.hasFlag("-path")) {
 			Path path = 

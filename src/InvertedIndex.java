@@ -1,4 +1,5 @@
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -11,7 +12,7 @@ public class InvertedIndex {
 	/** 
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
-	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	private final Map<String, Map<String, TreeSet<Integer>>> index;
 
 	/**
 	 *  Initializes the index.
@@ -26,12 +27,12 @@ public class InvertedIndex {
 	 * @param word word inside of the file
 	 * @return TreeMap containing path and positions of word 
 	 */
-	public TreeMap<String, TreeSet<Integer>> get(String word) {
-		TreeMap<String, TreeSet<Integer>> temp = new TreeMap<>();
+	public Map<String, Set<Integer>> getLocations(String word) {
 		if (index.containsKey(word)) {
-			temp = index.get(word);
+			return Collections.unmodifiableMap(index.get(word));
+		} else {
+			return Collections.EMPTY_MAP;
 		}
-		return new TreeMap<String, TreeSet<Integer>>(temp);
 	}
 	
 	/* TODO To avoid the copying, maybe this approach:
