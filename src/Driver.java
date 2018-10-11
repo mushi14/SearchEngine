@@ -12,33 +12,37 @@ public class Driver {
 	 * @return 0 if everything went well
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		InvertedIndex index = new InvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
 
-		if (argMap.hasFlag("-path")) {
-			Path path = Paths.get(argMap.getPath("-path"));
-			try {
-				if (argMap.flagPath("-path")) {
-					PathChecker.filesInPath(path, index);
+		if (!argMap.isEmpty()) {
+			if (argMap.hasFlag("-path")) {
+				Path path = Paths.get(argMap.getPath("-path"));
+				try {
+					if (argMap.flagPath("-path")) {
+						PathChecker.filesInPath(path, index);
+					} else {
+						System.out.println("There is not path provided. A valid path is needed to build the index.");
+					}
+				} catch (IOException | NullPointerException e) {
+					System.out.println("There was an issue finding the path. A valid path is needed to build the index");
 				}
-			} catch (IOException | NullPointerException e) {
-				System.out.printf("There was an issue finding the path %s. %s is needed to build the index", path);
+			}
+			if (argMap.hasFlag("-index")) {
+				Path path = Paths.get(argMap.getPath("-index"));
+				try {
+					if (argMap.flagPath("-index")) {
+						TreeJSONWriter.asTripleNested(index, path);
+					} else {
+						TreeJSONWriter.asTripleNested(index, Paths.get("index.json"));
+					}
+				} catch (IOException | NullPointerException e) {
+					System.out.println("There was a problem finding the file. The results of the index"
+							+ "will be printed to 'index.json'");
+				}
 			}
 		}
-//		if (argMap.hasFlag("-index")) {
-//			Path path = Paths.get(argMap.getPath("-index"));
-//			try {
-//				if (argMap.flagPath("-index")) {
-//					TreeJSONWriter.asInvertedIndex(index, path);
-//				} else {
-//					TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-//				}
-//			} catch (IOException | NullPointerException e) {
-//				System.out.printf("There was a problem finding the file %s. The results of the index"
-//						+ "will be printed to 'index.json'", path);
-//			}
-//		}
 		/* TODO
 		if (argMap.hasFlag("-path")) {
 			Path path = 

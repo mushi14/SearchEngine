@@ -27,7 +27,7 @@ public class InvertedIndex {
 	 * @param word word inside of the file
 	 * @return TreeMap containing path and positions of word 
 	 */
-	public Map<String, Set<Integer>> getLocations(String word) {
+	public Map<String, Set<Integer>> get(String word) {
 		if (index.containsKey(word)) {
 			return Collections.unmodifiableMap(index.get(word));
 		} else {
@@ -48,20 +48,20 @@ public class InvertedIndex {
 	Do this also for getWords() that returns the index keyset safely.
 	*/
 
-	/** 
-	 * Gets the TreeSet of positions associated with the path
-	 * 
-	 * @param word word inside of the file
-	 * @param path path of the file
-	 * @return TreeSet containing positions associated with the path
-	 */
-	public TreeSet<Integer> get(String word, String path) {
-		TreeSet<Integer> temp = new TreeSet<>();
-		if (index.containsKey(word)) {
-			temp = index.get(word).get(path);
-		}
-		return new TreeSet<Integer>(temp);
-	}
+//	/** 
+//	 * Gets the TreeSet of positions associated with the path
+//	 * 
+//	 * @param word word inside of the file
+//	 * @param path path of the file
+//	 * @return TreeSet containing positions associated with the path
+//	 */
+//	public TreeSet<Integer> get(String word, String path) {
+//		TreeSet<Integer> temp = new TreeSet<>();
+//		if (index.containsKey(word)) {
+//			temp = index.get(word).get(path);
+//		}
+//		return new TreeSet<Integer>(temp);
+//	}
 
 	/** 
 	 * Adds the key word to with value TreeMap of key path and value positions
