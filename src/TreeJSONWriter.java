@@ -159,7 +159,7 @@ public class TreeJSONWriter {
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 */
-	public static void asTripleNested(Map<String, Map<String, Set<Integer>>> elements,
+	public static void asTripleNested(InvertedIndex elements,
 			Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path,
 				StandardCharsets.UTF_8)) {
@@ -186,15 +186,15 @@ public class TreeJSONWriter {
 	 * @see #indent(int, Writer)
 	 * @see #quote(String, Writer)
 	 */
-	public static void asTripleNested(Map<String, Map<String, Set<Integer>>> elements, Writer writer,
+	public static void asTripleNested(InvertedIndex elements, Writer writer,
 			int level) throws IOException {
 		
 		writer.write("{" + System.lineSeparator());
 		
-		int size = elements.size();
+		int size = elements.words();
 		int count = 0;
 		
-		for (String key : elements.keySet()) {
+		for (String key : elements.wordsKeySet()) {
 			count++;
 			if (count != size) {
 				indent(level + 1, writer);

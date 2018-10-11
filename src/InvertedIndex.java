@@ -12,7 +12,7 @@ public class InvertedIndex {
 	/** 
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
-	private final Map<String, Map<String, TreeSet<Integer>>> index;
+	private final Map<String, Map<String, Set<Integer>>> index;
 
 	/**
 	 *  Initializes the index.
@@ -71,7 +71,7 @@ public class InvertedIndex {
 	 * @param position position the word appears in the file
 	 */
 	public void addWord(String word, String path, int position) {
-		TreeMap<String, TreeSet<Integer>> value = new TreeMap<>();
+		Map<String, Set<Integer>> value = new TreeMap<>();
 		value.put(path, new TreeSet<Integer>());
 		value.get(path).add(position);
 		index.put(word, value);

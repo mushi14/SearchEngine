@@ -2,7 +2,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class PathChecker {
 
@@ -19,32 +18,16 @@ public class PathChecker {
 		if (Files.isDirectory(path)) {
 			try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
 				for (Path file: filePathStream) {
-					
-					// TODO Just always call filesInPath(file)
-					/*
-					 * In the recursive call will check if file was a directory and if so open the stream
-					 * or a text file and call stemFile
-					 */
-					
-					if (Files.isRegularFile(file)) {
-						path = Paths.get(file.toString()); // TODO Remove? Use file directly
-						// TODO String name = file.toString().toLowerCase(); and then use name.endsWith(...)
-						if (file.toString().toLowerCase().endsWith(".txt") || file.toString().toLowerCase().endsWith(".text")) {
-							TextFileStemmer.stemFile(path, index);
-						}
-					} else if (Files.isDirectory(file)) {
-						path = Paths.get(file.toString()); // TODO Remove?
-						filesInPath(path, index);
-					}
+					filesInPath(file, index);
 				}
 			} catch (NullPointerException e) { // TODO Remove this catch
 				System.out.println("There was an issue fiding the directory: " + path);
 			}
 		} else if (Files.isRegularFile(path)) {
-			
-			// TODO Check if a text file and call stemFile
-			
-			TextFileStemmer.stemFile(path, index);
+			String name = path.toString();
+			if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
+				TextFileStemmer.stemFile(path, index);
+			}
 		}
 	}
 }
