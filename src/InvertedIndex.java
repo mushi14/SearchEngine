@@ -31,7 +31,7 @@ public class InvertedIndex {
 		if (index.containsKey(word)) {
 			return Collections.unmodifiableMap(index.get(word));
 		} else {
-			return Collections.EMPTY_MAP;
+			return Collections.emptyMap();
 		}
 	}
 	
@@ -135,7 +135,7 @@ public class InvertedIndex {
 	 * @return Returns a set view of all the paths
 	 */
 	public Set<String> wordsKeySet() {
-		return new TreeSet<String>(index.keySet());
+		return Collections.unmodifiableSet(index.keySet());
 	}
 
 	/**
@@ -144,28 +144,32 @@ public class InvertedIndex {
 	 * @param word word inside of the file
 	 * @return Returns a set view of all the paths
 	 */
-	public Set<String> pathsKeySet(String word) {
+	public Map<String, Set<Integer>> pathsKeySet(String word, String path) {
 		if (index.containsKey(word)) {
-			return new TreeSet<String>(index.get(word).keySet());
+			if (index.get(word).containsKey(path)) {
+				return Collections.unmodifiableMap(index.get(word));
+			} else {
+				return Collections.emptyMap();
+			}
 		} else {
-			return null;
+			return Collections.emptyMap();
 		}
 	}
 
-	/**
-	 * Shows all the positions associated with a path in the map
-	 *
-	 * @param word word inside of the file
-	 * @param path path of the file
-	 * @return Returns a set view of all the positions associated with the path
-	 */
-	public TreeSet<Integer> positionsSet(String word, String path) {
-		TreeSet<Integer> temp = new TreeSet<>();
-		if (index.containsKey(word)) {
-			temp = index.get(word).get(path);
-		}
-		return new TreeSet<Integer>(temp);
-	}
+//	/**
+//	 * Shows all the positions associated with a path in the map
+//	 *
+//	 * @param word word inside of the file
+//	 * @param path path of the file
+//	 * @return Returns a set view of all the positions associated with the path
+//	 */
+//	public TreeSet<Integer> positionsSet(String word, String path) {
+//		TreeSet<Integer> temp = new TreeSet<>();
+//		if (index.containsKey(word)) {
+//			temp = index.get(word).get(path);
+//		}
+//		return new TreeSet<Integer>(temp);
+//	}
 
 	/** 
 	 * Number of words in the the map
