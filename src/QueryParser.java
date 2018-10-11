@@ -116,9 +116,10 @@ public class QueryParser {
 		
 		for (String loc : locationsList.keySet()) {
 			tempList.add(locationsList.get(loc));
-			Collections.sort(tempList, new Comparison());
 		}	
 		
+		Collections.sort(tempList, new Comparison());
+
 		for (Query query : tempList) {
 			if (!results.get(line).contains(query)) {
 				results.get(line).add(query);
@@ -197,12 +198,18 @@ public class QueryParser {
 		
 		@Override
 		public int compare(Query o1, Query o2) {
-			if (o1.totalWords > o2.totalWords) {
+			if (o1.rawScore > o2.rawScore) {
 				return -1;
-			} else if (o1.totalWords < o2.totalWords) {
+			} else if (o1.rawScore < o2.rawScore) {
 				return 1;
 			} else {
-				return o1.location.toLowerCase().compareTo(o2.location.toLowerCase());
+				if (o1.totalWords > o2.totalWords) {
+					return -1;
+				} else if (o1.totalWords < o2.totalWords) {
+					return 1;
+				} else {
+					return o1.location.toLowerCase().compareTo(o2.location.toLowerCase());
+				}
 			}
 		}
 	}

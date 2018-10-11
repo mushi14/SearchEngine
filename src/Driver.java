@@ -34,6 +34,7 @@ public class Driver {
 				if (argMap.flagPath("-search")) {
 					for (String file : PathChecker.filesInPath(Paths.get(argMap.getPath("-search")))) {
 						QueryParser.queryMap.clear();
+						QueryParser.results.clear();
 						if (argMap.hasFlag("-exact")) {
 							TextFileStemmer.stemQueryFile(index, Paths.get(file), exact);
 						} else { 
@@ -52,6 +53,7 @@ public class Driver {
 					TreeJSONWriter.asSearchResult(QueryParser.results, Paths.get(argMap.getPath("-results")));
 				} else {
 					TreeJSONWriter.asSearchResult(QueryParser.results, Paths.get("results.json"));
+					QueryParser.results.clear();
 				}
 			}
 			if (argMap.hasFlag("-locations")) {
