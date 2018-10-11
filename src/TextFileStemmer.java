@@ -92,8 +92,6 @@ public class TextFileStemmer {
 				}
 				line = br.readLine();
 			}
-		} catch (NullPointerException e) { // TODO Remove the catch
-			System.out.println("There was an issue fiding the text file: " + path);
 		}
 	}
 }

@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Driver {
@@ -11,27 +12,37 @@ public class Driver {
 	 * @return 0 if everything went well
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		InvertedIndex index = new InvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
 
-		try {
+		if (!argMap.isEmpty()) {
 			if (argMap.hasFlag("-path")) {
-				if (argMap.flagPath("-path")) {
-					PathChecker.filesInPath(Paths.get(argMap.getPath("-path")), index);
+				Path path = Paths.get(argMap.getPath("-path"));
+				try {
+					if (argMap.flagPath("-path")) {
+						PathChecker.filesInPath(path, index);
+					} else {
+						System.out.println("There is not path provided. A valid path is needed to build the index.");
+					}
+				} catch (IOException | NullPointerException e) {
+					System.out.println("There was an issue finding the path. A valid path is needed to build the index");
 				}
 			}
-			if (argMap.hasFlag("-index")) {
-				if (argMap.flagPath("-index")) {
-					TreeJSONWriter.asInvertedIndex(index, Paths.get(argMap.getPath("-index")));
-				} else {
-					TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-				}
+//			if (argMap.hasFlag("-index")) {
+//				Path path = Paths.get(argMap.getPath("-index"));
+//				try {
+//					if (argMap.flagPath("-index")) {
+//						TreeJSONWriter.asTripleNested(index, path);
+//					} else {
+//						TreeJSONWriter.asTripleNested(index, Paths.get("index.json"));
+//					}
+//				} catch (IOException | NullPointerException e) {
+//					System.out.println("There was a problem finding the file. The results of the index"
+//							+ "will be printed to 'index.json'");
+//				}
 			}
-		} catch (IOException | NullPointerException e) {
-				System.out.println("There was an issue finding the direcotry or file: ");
 		}
-		
 		/* TODO
 		if (argMap.hasFlag("-path")) {
 			Path path = 
