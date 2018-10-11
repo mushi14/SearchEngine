@@ -38,7 +38,6 @@ public class Driver {
 							TextFileStemmer.stemQueryFile(index, Paths.get(file), exact);
 						} else { 
 							TextFileStemmer.stemQueryFile(index, Paths.get(file));
-							System.out.println(QueryParser.map);
 						}
 					}
 				}
@@ -48,13 +47,13 @@ public class Driver {
 					exact = true;
 				}
 			}
-//			if (argMap.hasFlag("-results")) {
-//				if (argMap.flagPath("-results")) {
-//					TreeJSONWriter.asSearchResult(QueryParser.tempQueries, Paths.get(argMap.getPath("-results")));
-//				} else {
-//					TreeJSONWriter.asSearchResult(QueryParser.tempQueries, Paths.get("results.json"));
-//				}
-//			}
+			if (argMap.hasFlag("-results")) {
+				if (argMap.flagPath("-results")) {
+					TreeJSONWriter.asSearchResult(QueryParser.results, Paths.get(argMap.getPath("-results")));
+				} else {
+					TreeJSONWriter.asSearchResult(QueryParser.results, Paths.get("results.json"));
+				}
+			}
 			if (argMap.hasFlag("-locations")) {
 				if (argMap.flagPath("-locations")) {
 					TreeJSONWriter.asLocations(index, Paths.get(argMap.getPath("-locations")));

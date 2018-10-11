@@ -5,19 +5,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class QueryParser {
 
 	public static final TreeMap<String, TreeMap<Double, List<Query>>> queryMap = new TreeMap<>();
-	public static final TreeMap<String, TreeMap<String, Query>> tempQueries = new TreeMap<>();
-	public static TreeMap<String, List<Query>> map = new TreeMap<>();
-
-
-	static List<String> seen = new ArrayList<>();
-	static TreeMap<String, List<Query>> locations = new TreeMap<>();
+	public static final TreeMap<String, List<Query>> results = new TreeMap<>();
 
 	public static void exactSearch(InvertedIndex index, Set<String> queries) {
 		String temp = String.join(" ", queries);
@@ -74,68 +69,65 @@ public class QueryParser {
 
 
 	public static void partialSearch(InvertedIndex index, Set<String> queries) {
-		String temp = String.join(" ", queries);
-		
-		if (!map.containsKey(temp)) {
-			map.put(temp, new ArrayList<>());
-		}
-		
+
+		String line = String.join(" ", queries);
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 		double totalMatches = 0;
 		double totalWords = 0;
 		double rawScore = 0;
 		String score = "";
-		
-		Set<String> words = new TreeSet<>();
-		
-		if (!tempQueries.containsKey(temp)) {
-			tempQueries.put(temp, new TreeMap<>());
+		Map<String, Query> locationsList = new TreeMap<>();
+
+		if (!results.containsKey(line)) {
+			results.put(line, new ArrayList<>());
 
 			for (String query : queries) {
-				words = index.wordStartsWith(query);
-				for (String word : words) {
-					for (String loc : index.get(word).keySet()) {
-						
-						totalMatches += index.get(word, loc).size();
-						totalWords = index.totalLocations().get(loc);
-						rawScore = totalMatches / totalWords;
-						rawScore = round(rawScore);
-						score = FORMATTER.format(totalMatches / totalWords);
-		
-						if (tempQueries.get(temp).containsKey(loc)) {
-							if (tempQueries.get(temp).get(loc).rawScore <= rawScore) {
+				for (String word : index.wordsKeySet()) {
+					if (word.startsWith(query)) {
+						for (String loc : index.get(word).keySet()) {
+
+							if (locationsList.containsKey(loc)) {
+								totalMatches = locationsList.get(loc).totalMatches;
+								totalMatches += index.get(word, loc).size();
+								totalWords = index.totalLocations().get(loc);
+								rawScore = totalMatches / totalWords;
+								rawScore = round(rawScore);
+								score = FORMATTER.format(totalMatches / totalWords);
+
 								Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
-								tempQueries.get(temp).put(loc, q);
+								locationsList.put(loc, q);
+							} else {
+								totalMatches = index.get(word, loc).size();
+								totalWords = index.totalLocations().get(loc);
+								rawScore = totalMatches / totalWords;
+								rawScore = round(rawScore);
+								score = FORMATTER.format(totalMatches / totalWords);
+								
+								Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
+								locationsList.put(loc, q);
 							}
-						} else {
-							Query q = new Query(loc, totalMatches, totalWords, rawScore, score);
-							tempQueries.get(temp).put(loc, q);
 						}
 					}
 				}
 			}
-			totalMatches = 0;
-			totalWords = 0;
-			rawScore = 0;
-			score = "";
 		}
 
 		List<Query> tempList = new ArrayList<>();
 		
-		for (String loc : tempQueries.get(temp).keySet()) {
-			tempList.add(tempQueries.get(temp).get(loc));
+		for (String loc : locationsList.keySet()) {
+			tempList.add(locationsList.get(loc));
 			Collections.sort(tempList, new Comparison());
 		}	
 		
 		for (Query query : tempList) {
-			if (!map.get(temp).contains(query)) {
-				map.get(temp).add(query);
+			if (!results.get(line).contains(query)) {
+				results.get(line).add(query);
 			}
 		}
 	}
-	
-	
-	
+
+
+
 //	public static void partialSearch(InvertedIndex index, Set<String> queries) {
 //		String temp = String.join(" ", queries);
 //
