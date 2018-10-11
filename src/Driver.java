@@ -29,18 +29,18 @@ public class Driver {
 					System.out.println("There was an issue finding the path. A valid path is needed to build the index");
 				}
 			}
-			if (argMap.hasFlag("-index")) {
-				Path path = Paths.get(argMap.getPath("-index"));
-				try {
-					if (argMap.flagPath("-index")) {
-						TreeJSONWriter.asTripleNested(index, path);
-					} else {
-						TreeJSONWriter.asTripleNested(index, Paths.get("index.json"));
-					}
-				} catch (IOException | NullPointerException e) {
-					System.out.println("There was a problem finding the file. The results of the index"
-							+ "will be printed to 'index.json'");
-				}
+//			if (argMap.hasFlag("-index")) {
+//				Path path = Paths.get(argMap.getPath("-index"));
+//				try {
+//					if (argMap.flagPath("-index")) {
+//						TreeJSONWriter.asTripleNested(index, path);
+//					} else {
+//						TreeJSONWriter.asTripleNested(index, Paths.get("index.json"));
+//					}
+//				} catch (IOException | NullPointerException e) {
+//					System.out.println("There was a problem finding the file. The results of the index"
+//							+ "will be printed to 'index.json'");
+//				}
 			}
 		}
 		/* TODO
