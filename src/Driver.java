@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Driver {
@@ -15,23 +16,29 @@ public class Driver {
 		InvertedIndex index = new InvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
 
-		try {
-			if (argMap.hasFlag("-path")) {
+		if (argMap.hasFlag("-path")) {
+			Path path = Paths.get(argMap.getPath("-path"));
+			try {
 				if (argMap.flagPath("-path")) {
-					PathChecker.filesInPath(Paths.get(argMap.getPath("-path")), index);
+					PathChecker.filesInPath(path, index);
 				}
+			} catch (IOException e) {
+				System.out.printf("There was an issue finding the path %s. %s is needed to build the index", path);
 			}
-			if (argMap.hasFlag("-index")) {
+		}
+		if (argMap.hasFlag("-index")) {
+			Path path = Paths.get(argMap.getPath("-index"));
+			try {
 				if (argMap.flagPath("-index")) {
-					TreeJSONWriter.asInvertedIndex(index, Paths.get(argMap.getPath("-index")));
+					TreeJSONWriter.asInvertedIndex(index, path);
 				} else {
 					TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
 				}
+			} catch (IOException e) {
+				System.out.printf("There was a problem finding the file %s. The results of the index"
+						+ "will be printed to 'index.json'", path);
 			}
-		} catch (IOException | NullPointerException e) {
-				System.out.println("There was an issue finding the direcotry or file: ");
 		}
-		
 		/* TODO
 		if (argMap.hasFlag("-path")) {
 			Path path = 
