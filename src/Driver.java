@@ -39,6 +39,7 @@ public class Driver {
 							TextFileStemmer.stemQueryFile(index, Paths.get(file), exact);
 						} else { 
 							TextFileStemmer.stemQueryFile(index, Paths.get(file));
+							index.clear();
 						}
 					}
 				}

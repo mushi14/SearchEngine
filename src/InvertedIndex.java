@@ -223,6 +223,10 @@ public class InvertedIndex {
 		}
 	}
 
+	public void clear() {
+		index.clear();
+	}
+	
 	/** 
 	 * Prints in the map
 	 */
