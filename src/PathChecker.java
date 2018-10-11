@@ -43,6 +43,7 @@ public class PathChecker {
 		return textFiles;
 	}
 	
+	
 	public static void readFiles(List<String> files, InvertedIndex index) throws IOException {
 		try {
 			for (String file : files) {

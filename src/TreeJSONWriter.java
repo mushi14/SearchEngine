@@ -157,7 +157,7 @@ public class TreeJSONWriter {
 	 * the specified file.
 	 *
 	 * @param elements the elements to convert to JSON
-	 * @param path     the path to the file write to output
+	 * @param path the path to the file write to output
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 */

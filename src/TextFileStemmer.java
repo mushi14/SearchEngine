@@ -101,6 +101,13 @@ public class TextFileStemmer {
 		}
 	}
 
+
+	/**
+	 * Calls the exactSearch on 1 line from the query file
+	 * @param index inverted index that contains the words, their locations, and their positions
+	 * @param path path of the file
+	 * @param exact boolean variable that ensures that an exact search must be performed
+	 */
 	public static void stemQueryFile(InvertedIndex index, Path path, boolean exact) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			String line = br.readLine();
@@ -122,8 +129,13 @@ public class TextFileStemmer {
 			System.out.println("There was an issue finding the query file: " + path);
 		}
 	}
-	
-	
+
+
+	/**
+	 * Calls the partialSearch on 1 line from the query file
+	 * @param index inverted index that contains the words, their locations, and their positions
+	 * @param path path of the file
+	 */
 	public static void stemQueryFile(InvertedIndex index, Path path) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			String line = br.readLine();

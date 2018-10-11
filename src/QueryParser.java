@@ -69,7 +69,6 @@ public class QueryParser {
 
 
 	public static void partialSearch(InvertedIndex index, Set<String> queries) {
-
 		String line = String.join(" ", queries);
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 		double totalMatches = 0;
@@ -78,18 +77,19 @@ public class QueryParser {
 		String score = "";
 		Map<String, Query> locationsList = new TreeMap<>();
 
+		Map<String, Integer> location = index.totalLocations();
 		if (!results.containsKey(line)) {
 			results.put(line, new ArrayList<>());
 
 			for (String query : queries) {
-				for (String word : index.wordsKeySet()) {
+				for (String word : index.index.keySet()) {
 					if (word.startsWith(query)) {
-						for (String loc : index.get(word).keySet()) {
+						for (String loc : index.index.get(word).keySet()) {
 
 							if (locationsList.containsKey(loc)) {
 								totalMatches = locationsList.get(loc).totalMatches;
-								totalMatches += index.get(word, loc).size();
-								totalWords = index.totalLocations().get(loc);
+								totalMatches += index.index.get(word).get(loc).size();
+								totalWords = location.get(loc);
 								rawScore = totalMatches / totalWords;
 								rawScore = round(rawScore);
 								score = FORMATTER.format(totalMatches / totalWords);
@@ -98,7 +98,7 @@ public class QueryParser {
 								locationsList.put(loc, q);
 							} else {
 								totalMatches = index.get(word, loc).size();
-								totalWords = index.totalLocations().get(loc);
+								totalWords = location.get(loc);
 								rawScore = totalMatches / totalWords;
 								rawScore = round(rawScore);
 								score = FORMATTER.format(totalMatches / totalWords);
@@ -121,9 +121,7 @@ public class QueryParser {
 		Collections.sort(tempList, new Comparison());
 
 		for (Query query : tempList) {
-			if (!results.get(line).contains(query)) {
-				results.get(line).add(query);
-			}
+			results.get(line).add(query);
 		}
 	}
 
@@ -208,7 +206,8 @@ public class QueryParser {
 				} else if (o1.totalWords < o2.totalWords) {
 					return 1;
 				} else {
-					return o1.location.toLowerCase().compareTo(o2.location.toLowerCase());
+//					return o1.location.toLowerCase().compareTo(o2.location.toLowerCase());
+					return o1.location.compareToIgnoreCase(o2.location);
 				}
 			}
 		}
