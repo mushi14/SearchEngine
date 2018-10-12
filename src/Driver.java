@@ -55,21 +55,14 @@ public class Driver {
 						for (String file : PathChecker.queryFiles(path)) {
 							QueryParser.results.clear();
 							if (argMap.hasFlag("-exact")) {
-								TextFileStemmer.stemQueryFile(index, Paths.get(file), exact);
-							} else { 
-								TextFileStemmer.stemQueryFile(index, Paths.get(file));
-								index.clear();
+								exact = true;
 							}
+							TextFileStemmer.stemQueryFile(index, Paths.get(file), exact);
 						}
 					}
 				} catch (IOException | NullPointerException e) {
 					System.out.println("Unable to open the query file or directory provided. A valid query or "
 							+ "directory is needed to search.");
-				}
-			}
-			if (argMap.flagPath("-exact")) {
-				if (argMap.hasFlag("-exact")) {
-					exact = true;
 				}
 			}
 			if (argMap.hasFlag("-results")) {

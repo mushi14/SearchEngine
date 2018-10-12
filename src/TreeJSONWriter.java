@@ -15,7 +15,7 @@ public class TreeJSONWriter {
 	 * Writes several tab <code>\t</code> symbols using the provided
 	 * {@link Writer}.
 	 *
-	 * @param times  the number of times to write the tab symbol
+	 * @param times the number of times to write the tab symbol
 	 * @param writer the writer to use
 	 * @throws IOException if the writer encounters any issues
 	 */
@@ -29,7 +29,7 @@ public class TreeJSONWriter {
 	 * Writes the element surrounded by quotes using the provided {@link Writer}.
 	 *
 	 * @param element the element to quote
-	 * @param writer  the writer to use
+	 * @param writer the writer to use
 	 * @throws IOException if the writer encounters any issues
 	 */
 	public static void quote(String element, Writer writer) throws IOException {
@@ -43,7 +43,7 @@ public class TreeJSONWriter {
 	 * the specified file.
 	 *
 	 * @param elements the elements to convert to JSON
-	 * @param path     the path to the file write to output
+	 * @param path the path to the file write to output
 	 * @throws IOException if the writer encounters any issues
 	 */
 	public static void asPositionArray(TreeSet<Integer> elements, Path path) {
@@ -59,8 +59,8 @@ public class TreeJSONWriter {
 	 * using the provided {@link Writer} and indentation level.
 	 *
 	 * @param elements the elements to convert to JSON
-	 * @param writer   the writer to use
-	 * @param level    the initial indentation level
+	 * @param writer the writer to use
+	 * @param level the initial indentation level
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 * @see Writer#write(String)
@@ -97,7 +97,7 @@ public class TreeJSONWriter {
 	 * the specified file.
 	 *
 	 * @param elements the elements to convert to JSON
-	 * @param path     the path to the file write to output
+	 * @param path the path to the file write to output
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 */
@@ -114,8 +114,8 @@ public class TreeJSONWriter {
 	 * {@link Writer} and indentation level.
 	 *
 	 * @param elements the elements to convert to JSON
-	 * @param writer   the writer to use
-	 * @param level    the initial indentation level
+	 * @param writer the writer to use
+	 * @param level the initial indentation level
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 * @see Writer#write(String)
@@ -174,8 +174,8 @@ public class TreeJSONWriter {
 	 * {@link Writer} and indentation level.
 	 *
 	 * @param elements the elements to convert to JSON
-	 * @param writer   the writer to use
-	 * @param level    the initial indentation level
+	 * @param writer the writer to use
+	 * @param level the initial indentation level
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 * @see Writer#write(String)
@@ -238,7 +238,16 @@ public class TreeJSONWriter {
 			System.out.println("There was an issue finding the direcotry or file: " + path);
 		}
 	}
-	
+
+	/**
+	 * Writes the map of results formatted as a pretty JSON object to
+	 * the specified file.
+	 *
+	 * @param results the elements to convert to JSON
+	 * @param path the path to the file write to output
+	 * @throws IOException if the writer encounters any issues
+	 *
+	 */
 	public static void asSearchResult(TreeMap<String, List<Query>> results, Path path) {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			asSearchResult(results, writer, 0);

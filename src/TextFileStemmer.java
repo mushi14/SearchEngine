@@ -101,9 +101,8 @@ public class TextFileStemmer {
 		}
 	}
 
-
 	/**
-	 * Calls the exactSearch on 1 line from the query file
+	 * Stems query file performing partial or exact search and stores the results accordingly
 	 * @param index inverted index that contains the words, their locations, and their positions
 	 * @param path path of the file
 	 * @param exact boolean variable that ensures that an exact search must be performed
@@ -121,35 +120,11 @@ public class TextFileStemmer {
 					queries.add(word);
 				}
 				if (!queries.isEmpty()) {
-					QueryParser.exactSearch(index, queries);
-				}
-				line = br.readLine();
-			}
-		} catch (IOException | NullPointerException e) {
-			System.out.println("There was an issue finding the query file: " + path);
-		}
-	}
-
-
-	/**
-	 * Calls the partialSearch on 1 line from the query file
-	 * @param index inverted index that contains the words, their locations, and their positions
-	 * @param path path of the file
-	 */
-	public static void stemQueryFile(InvertedIndex index, Path path) {
-		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-			String line = br.readLine();
-			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-
-			while (line != null) {
-				Set<String> queries = new TreeSet<>();
-				String[] words = parse(line);
-				for (String word : words) {
-					word = stemmer.stem(word).toString();
-					queries.add(word);
-				}
-				if (!queries.isEmpty()) {
-					QueryParser.partialSearch(index, queries);
+					if (exact == true) {
+						QueryParser.exactSearch(index, queries);
+					} else {
+						QueryParser.partialSearch(index, queries);
+					}
 				}
 				line = br.readLine();
 			}
