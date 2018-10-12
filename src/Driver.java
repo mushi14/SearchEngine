@@ -28,7 +28,8 @@ public class Driver {
 						System.out.println("There is no path provided. A valid path is needed to build the index.");
 					}
 				} catch (IOException | NullPointerException e) {
-					System.out.println("There was an issue finding the path. A valid path is needed to build the index");
+					System.out.println("There was an issue finding the path to flag '-path'"
+							+ ". A valid path is needed to build the index");
 				}
 			}
 			if (argMap.hasFlag("-index")) {
@@ -48,17 +49,22 @@ public class Driver {
 				}
 			}
 			if (argMap.hasFlag("-search")) {
-				if (argMap.flagPath("-search")) {
-					for (String file : PathChecker.filesInPath(Paths.get(argMap.getPath("-search")))) {
-						QueryParser.queryMap.clear();
-						QueryParser.results.clear();
-						if (argMap.hasFlag("-exact")) {
-							TextFileStemmer.stemQueryFile(index, Paths.get(file), exact);
-						} else { 
-							TextFileStemmer.stemQueryFile(index, Paths.get(file));
-							index.clear();
+				try {
+					if (argMap.flagPath("-search")) {
+						Path path = Paths.get(argMap.getPath("-search"));
+						for (String file : PathChecker.queryFiles(path)) {
+							QueryParser.results.clear();
+							if (argMap.hasFlag("-exact")) {
+								TextFileStemmer.stemQueryFile(index, Paths.get(file), exact);
+							} else { 
+								TextFileStemmer.stemQueryFile(index, Paths.get(file));
+								index.clear();
+							}
 						}
 					}
+				} catch (IOException | NullPointerException e) {
+					System.out.println("Unable to open the query file or directory provided. A valid query or "
+							+ "directory is needed to search.");
 				}
 			}
 			if (argMap.flagPath("-exact")) {

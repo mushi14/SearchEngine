@@ -197,17 +197,7 @@ public class InvertedIndex {
 	public boolean containsWord(String word) {
 		return index.containsKey(word);
 	}
-	
-	public Set<String> wordStartsWith(String w) {
-		Set<String> words = new TreeSet<>();
-		for (String word : index.keySet()) {
-			if (word.startsWith(w)) {
-				words.add(word) ;
-			} 
-		}
-		return words;
-	}
-	
+
 	/** Checks to see if the word contains the path
 	 * 
 	 * @param word word inside the file
@@ -223,8 +213,19 @@ public class InvertedIndex {
 		}
 	}
 
+	/**
+	 * Clears the inverted index
+	 */
 	public void clear() {
 		index.clear();
+	}
+
+	/**
+	 * Checks to see if the inverted index is empty
+	 * @return true if empty, false if not
+	 */
+	public boolean isEmpty() {
+		return index.isEmpty();
 	}
 	
 	/** 

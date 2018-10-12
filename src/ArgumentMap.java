@@ -116,4 +116,8 @@ public class ArgumentMap {
 	public String getPath(String flag) {
 		return argMap.get(flag);
 	}
+	
+	public boolean isEmpty() {
+		return argMap.isEmpty();
+	}
 }
