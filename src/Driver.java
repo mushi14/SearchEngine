@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Driver {
@@ -17,17 +18,33 @@ public class Driver {
 		ArgumentMap argMap = new ArgumentMap(args);
 		boolean exact = false;
 
-		try {
+		if (!argMap.isEmpty()) {
 			if (argMap.hasFlag("-path")) {
-				if (argMap.flagPath("-path")) {
-					PathChecker.readFiles(PathChecker.filesInPath(Paths.get(argMap.getPath("-path"))), index);
+				try {
+					Path path = Paths.get(argMap.getPath("-path"));
+					if (argMap.flagPath("-path")) {
+						PathChecker.filesInPath(path, index);
+					} else {
+						System.out.println("There is no path provided. A valid path is needed to build the index.");
+					}
+				} catch (IOException | NullPointerException e) {
+					System.out.println("There was an issue finding the path. A valid path is needed to build the index");
 				}
 			}
 			if (argMap.hasFlag("-index")) {
-				if (argMap.flagPath("-index")) {
-					TreeJSONWriter.asInvertedIndex(index, Paths.get(argMap.getPath("-index")));
-				} else {
-					TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+				try {
+					Path path = Paths.get(argMap.getPath("-index"));
+					if (argMap.flagPath("-index")) {
+						TreeJSONWriter.asInvertedIndex(index, path);
+					} else {
+						TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+					}
+				} catch (IOException | NullPointerException e) {
+					try {
+						TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+					} catch (IOException x) {
+						System.out.println("File not found, index cannot be printed.");
+					}
 				}
 			}
 			if (argMap.hasFlag("-search")) {
@@ -64,8 +81,6 @@ public class Driver {
 					TreeJSONWriter.asLocations(index, Paths.get("locations.json"));
 				}
 			}
-		} catch (IOException | NullPointerException e) {
-				System.out.println("There was an issue finding the direcotry or file: ");
 		}
 	}
 }
