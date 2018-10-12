@@ -31,6 +31,12 @@ public class PathChecker {
 		}
 	}
 
+	/**
+	 * Checks to see if the path provided for queries is a directory or file. 
+	 * @param path path to the file or directory
+	 * @return list of files valid query files
+	 * @throws IOException
+	 */
 	public static List<String> queryFiles(Path path) throws IOException {
 		List<String> files = new ArrayList<>();
 		if (Files.isDirectory(path)) {

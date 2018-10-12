@@ -13,8 +13,12 @@ public class QueryParser {
 
 	public static final TreeMap<String, List<Query>> results = new TreeMap<>();
 
+	/**
+	 * performs exact search on a line from the query file. Stores the results to results map
+	 * @param index inverted index to refer from
+	 * @param queries line of queries to compare
+	 */
 	public static void exactSearch(InvertedIndex index, Set<String> queries) {
-
 		String line = String.join(" ", queries);
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 		double totalMatches = 0;
@@ -31,7 +35,7 @@ public class QueryParser {
 					if (word.equals(query)) {
 						for (String loc : index.get(word).keySet()) {
 							if (locationsList.containsKey(loc)) {
-								totalMatches = locationsList.get(loc).totalMatches;
+								totalMatches = locationsList.get(loc).getMatches();
 								totalMatches += index.positions(word, loc);
 								totalWords = totalLocations.get(loc);
 								rawScore = totalMatches / totalWords;
@@ -67,8 +71,12 @@ public class QueryParser {
 		
 	}
 
+	/**
+	 * performs partial search on a line from the query file. Stores the results to results map
+	 * @param index inverted index to refer from
+	 * @param queries line of queries to compare
+	 */
 	public static void partialSearch(InvertedIndex index, Set<String> queries) {
-
 		String line = String.join(" ", queries);
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 		double totalMatches = 0;
@@ -85,7 +93,7 @@ public class QueryParser {
 					if (word.startsWith(query)) {
 						for (String loc : index.get(word).keySet()) {
 							if (locationsList.containsKey(loc)) {
-								totalMatches = locationsList.get(loc).totalMatches;
+								totalMatches = locationsList.get(loc).getMatches();
 								totalMatches += index.positions(word, loc);
 								totalWords = totalLocations.get(loc);
 								rawScore = totalMatches / totalWords;
@@ -120,26 +128,39 @@ public class QueryParser {
 		}
 	}
 
+	/**
+	 * Converts the score to 15 decimal points in order to better the score comparison of the results
+	 * @param score score to convert to 15 decimal point
+	 * @return score formatted with 15 decimal points
+	 */
 	public static double round(double score) {
 		return BigDecimal.valueOf(score)
 			.setScale(15, RoundingMode.HALF_UP)
 			.doubleValue();
 	}
 
+	/**
+	 * Inner class that implements the comparator interface
+	 * @author mushahidhassan
+	 */
 	static class Comparison implements Comparator<Query> {
+		/**
+		 * sorts a list of queries in descending order by their raw score, if score is the same, sorts by
+		 * total number of words in a query location, if number of words the same, then sorts alphabetically (case insensitively)
+		 */
 		@Override
 		public int compare(Query o1, Query o2) {
-			if (o1.rawScore > o2.rawScore) {
+			if (o1.getRawScore() > o2.getRawScore()) {
 				return -1;
-			} else if (o1.rawScore < o2.rawScore) {
+			} else if (o1.getRawScore() < o2.getRawScore()) {
 				return 1;
 			} else {
-				if (o1.totalWords > o2.totalWords) {
+				if (o1.getWords() > o2.getWords()) {
 					return -1;
-				} else if (o1.totalWords < o2.totalWords) {
+				} else if (o1.getWords() < o2.getWords()) {
 					return 1;
 				} else {
-					return o1.location.compareToIgnoreCase(o2.location);
+					return o1.getLocation().compareToIgnoreCase(o2.getLocation());
 				}
 			}
 		}

@@ -6,8 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class TreeJSONWriter {
 
@@ -46,7 +47,7 @@ public class TreeJSONWriter {
 	 * @param path the path to the file write to output
 	 * @throws IOException if the writer encounters any issues
 	 */
-	public static void asPositionArray(TreeSet<Integer> elements, Path path) {
+	public static void asPositionArray(Set<Integer> elements, Path path) {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			asPositionArray(elements, writer, 0);
 		} catch (IOException | NullPointerException e) {
@@ -70,7 +71,7 @@ public class TreeJSONWriter {
 	 *
 	 * @see #indent(int, Writer)
 	 */
-	public static void asPositionArray(TreeSet<Integer> elements, Writer writer, int level) throws IOException {
+	public static void asPositionArray(Set<Integer> elements, Writer writer, int level) throws IOException {
 
 		writer.write('[' + System.lineSeparator());
 		
@@ -101,7 +102,7 @@ public class TreeJSONWriter {
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 */
-	public static void asPathIndex(TreeMap<String, TreeSet<Integer>> elements, Path path) {
+	public static void asPathIndex(Map<String, Set<Integer>> elements, Path path) {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			asPathIndex(elements, writer, 0);
 		} catch (IOException | NullPointerException e) {
@@ -126,7 +127,7 @@ public class TreeJSONWriter {
 	 * @see #indent(int, Writer)
 	 * @see #quote(String, Writer)
 	 */
-	public static void asPathIndex(TreeMap<String, TreeSet<Integer>> elements, Writer writer, int level) throws IOException {
+	public static void asPathIndex(Map<String, Set<Integer>> elements, Writer writer, int level) throws IOException {
 		writer.write("{" + System.lineSeparator());
 				
 		int size = elements.keySet().size();
@@ -153,7 +154,7 @@ public class TreeJSONWriter {
 	}
 
 	/**
-	 * Writes the map of String keys and WordIndex values formatted as a pretty JSON object to
+	 * Helper method for writing the Inverted Index data structure as a pretty JSON object to
 	 * the specified file.
 	 *
 	 * @param elements the elements to convert to JSON
@@ -170,7 +171,7 @@ public class TreeJSONWriter {
 	}
 
 	/**
-	 * Writes the map of String keys and WordIndex values as a pretty JSON object using the provided
+	 * Writes the Inverted Index data structure as a pretty JSON object using the provided
 	 * {@link Writer} and indentation level.
 	 *
 	 * @param elements the elements to convert to JSON
@@ -213,6 +214,17 @@ public class TreeJSONWriter {
 	}
 
 
+	/**
+	 * Writes all the locations and the total number of words they contain from the Inverted Index data 
+	 * structure as pretty JSON object using the provided
+	 * {@link Writer} and indentation level.
+	 *
+	 * @param index the inverted index to convert to JSON
+	 * @param writer the writer to use
+	 * @param level the initial indentation level
+	 * @throws IOException if the writer encounters any issues
+	 * @throws NullPointerException if the writer encounters null as the path
+	 */
 	public static void asLocations(InvertedIndex index, Path path) {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			
@@ -235,12 +247,12 @@ public class TreeJSONWriter {
 			}
 			writer.write("}");
 		} catch (IOException | NullPointerException e) {
-			System.out.println("There was an issue finding the direcotry or file: " + path);
+			System.out.println("There was an issue finding the directory or file: " + path);
 		}
 	}
 
 	/**
-	 * Writes the map of results formatted as a pretty JSON object to
+	 * Helper method for writing the map of search results formatted as a pretty JSON object to
 	 * the specified file.
 	 *
 	 * @param results the elements to convert to JSON
@@ -256,6 +268,13 @@ public class TreeJSONWriter {
 		}
 	}
 	
+	/**
+	 * Writes the map of search results formatted as a pretty JSON object to specified file
+	 * @param results the map that contains all the search results, sorted
+	 * @param writer the writer to use
+	 * @param level the initial indentation level
+	 * @throws IOException if the writer encounters any issues
+	 */
 	public static void asSearchResult(TreeMap<String, List<Query>> results,
 			Writer writer, int level) throws IOException {
 
@@ -291,6 +310,13 @@ public class TreeJSONWriter {
 		writer.write("]");
 	}
 
+	/**
+	 * Writes the list of sorted queries from each line of the query file
+	 * @param results the map that contains all the search results, sorted
+	 * @param writer the writer to use
+	 * @param level the initial indentation level
+	 * @throws IOException if the writer encounters any issues
+	 */
 	public static void asNestedSearch(String next, TreeMap<String, List<Query>> results, Writer writer, 
 			int level) throws IOException {
 		
@@ -307,14 +333,14 @@ public class TreeJSONWriter {
 			indent(level + 1, writer);
 			quote("where", writer);
 			writer.write(": ");
-			quote(temp.location, writer);
+			quote(temp.getLocation(), writer);
 			writer.write("," + System.lineSeparator());
 			indent(level + 1, writer);
 			quote("count", writer);
-			writer.write(": " + (int) temp.totalMatches + "," + System.lineSeparator());
+			writer.write(": " + (int) temp.getMatches() + "," + System.lineSeparator());
 			indent(level + 1, writer);
 			quote("score", writer);
-			writer.write(": " + String.valueOf(temp.score) + System.lineSeparator());
+			writer.write(": " + String.valueOf(temp.getScore()) + System.lineSeparator());
 			indent(level, writer);
 			
 			if (count != size) {

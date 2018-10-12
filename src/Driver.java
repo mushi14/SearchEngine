@@ -10,13 +10,11 @@ public class Driver {
 	 *
 	 * @param args the command-line arguments to parse
 	 * @return 0 if everything went well
-	 * @throws IOException 
 	 */
 	public static void main(String[] args) {
 		
 		InvertedIndex index = new InvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
-		boolean exact = false;
 
 		if (!argMap.isEmpty()) {
 			if (argMap.hasFlag("-path")) {
@@ -54,6 +52,7 @@ public class Driver {
 						Path path = Paths.get(argMap.getPath("-search"));
 						for (String file : PathChecker.queryFiles(path)) {
 							QueryParser.results.clear();
+							boolean exact = false;
 							if (argMap.hasFlag("-exact")) {
 								exact = true;
 							}

@@ -1,3 +1,4 @@
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -11,7 +12,7 @@ public class InvertedIndex {
 	/** 
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
-	public final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 
 	/**
 	 *  Initializes the index.
@@ -19,36 +20,21 @@ public class InvertedIndex {
 	public InvertedIndex() {
 		index = new TreeMap<>();
 	}
-	
+
 	/** 
 	 * Gets the TreeMap of keys paths and values positions associated with the word
 	 * 
 	 * @param word word inside of the file
 	 * @return TreeMap containing path and positions of word 
 	 */
-	public TreeMap<String, TreeSet<Integer>> get(String word) {
-		TreeMap<String, TreeSet<Integer>> temp = new TreeMap<>();
+	public Map<String, Set<Integer>> get(String word) {
 		if (index.containsKey(word)) {
-			temp = index.get(word);
+			return Collections.unmodifiableMap(index.get(word));
+		} else {
+			return Collections.emptyMap();
 		}
-		return temp;
 	}
-	
-	/** 
-	 * Gets the TreeSet of positions associated with the path
-	 * 
-	 * @param word word inside of the file
-	 * @param location path of the file
-	 * @return TreeSet containing positions associated with the path
-	 */
-	public TreeSet<Integer> get(String word, String location) {
-		TreeSet<Integer> temp = new TreeSet<>();
-		if (index.containsKey(word)) {
-			temp = index.get(word).get(location);
-		}
-		return temp;
-	}
-	
+
 	/** 
 	 * Adds the key word to with value TreeMap of key path and value positions
 	 * 
@@ -62,7 +48,7 @@ public class InvertedIndex {
 		value.get(location).add(position);
 		index.put(word, value);
 	}
-	
+
 	/**
 	 * Adds a key path and value position to the already existing word in the TreeMap
 	 * 
@@ -87,20 +73,15 @@ public class InvertedIndex {
 		index.get(word).get(location).add(position);
 	}
 
-	/*
-	public void addAll(String[] words, String location)
-	public void addAll(String[] words, String location, int position)
-	*/
-	
 	/**
 	 * Shows all the words in the map
 	 *
 	 * @return Returns a set view of all the paths
 	 */
 	public Set<String> wordsKeySet() {
-		return index.keySet();
+		return Collections.unmodifiableSet(index.keySet());
 	}
-	
+
 	/**
 	 * Shows all the paths associated with the word in the map
 	 *
@@ -109,9 +90,9 @@ public class InvertedIndex {
 	 */
 	public Set<String> locationKeySet(String word) {
 		if (index.containsKey(word)) {
-			return index.get(word).keySet();
+			return Collections.unmodifiableSet(index.get(word).keySet());
 		} else {
-			return null;
+			return Collections.emptySet();
 		}
 	}
 	
@@ -122,12 +103,12 @@ public class InvertedIndex {
 	 * @param location path of the file
 	 * @return Returns a set view of all the positions associated with the path
 	 */
-	public TreeSet<Integer> positionsSet(String word, String location) {
-		TreeSet<Integer> temp = new TreeSet<>();
+	public Set<Integer> positionsSet(String word, String location) {
 		if (index.containsKey(word)) {
-			temp = index.get(word).get(location);
+			return Collections.unmodifiableSet(index.get(word).get(location));
+		} else {
+			return Collections.emptySet();
 		}
-		return temp;
 	}
 
 	/** 
@@ -138,10 +119,7 @@ public class InvertedIndex {
 	public int words() {
 		return index.size();
 	}
-	
-	
-	// TODO If the word doesn't exist, should return 0, but here there is a NullPointerException instead
-	// TODO Make similar fixes to avoid null pointers for all remaining methods
+
 	/** 
 	 * Number of paths associated with the word in the the map
 	 * 
@@ -172,7 +150,11 @@ public class InvertedIndex {
 			return 0;
 		}
 	}
-	
+
+	/**
+	 * Total locations of all the words and the total words they contain 
+	 * @return TreeMap of locations and their total words
+	 */
 	public Map<String, Integer> totalLocations() {
 		Map<String, Integer> locationsMap = new TreeMap<>();
 		for (String word : wordsKeySet()) {
@@ -185,7 +167,7 @@ public class InvertedIndex {
 				}
 			}
 		}
-		return locationsMap;
+		return Collections.unmodifiableMap(locationsMap);
 	}
 
 	/** Checks to see if the map contains the word
@@ -227,7 +209,7 @@ public class InvertedIndex {
 	public boolean isEmpty() {
 		return index.isEmpty();
 	}
-	
+
 	/** 
 	 * Prints in the map
 	 */
