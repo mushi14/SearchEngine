@@ -20,8 +20,6 @@ public class PathChecker {
 				for (Path file: filePathStream) {
 					filesInPath(file, index);
 				}
-			} catch (NullPointerException e) { // TODO Remove this catch
-				System.out.println("There was an issue fiding the directory: " + path);
 			}
 		} else if (Files.isRegularFile(path)) {
 			String name = path.toString();
