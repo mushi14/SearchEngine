@@ -27,7 +27,7 @@ public class TextFileStemmer {
 		cleaned = CLEAN_REGEX.matcher(cleaned).replaceAll("");
 		return cleaned.toLowerCase();
 	}
-	
+
 	/**
 	 * Splits the supplied text by whitespace. Does not perform any cleaning.
 	 *
@@ -76,19 +76,8 @@ public class TextFileStemmer {
 				String[] words = parse(line);
 				for (String word : words) {
 					word = stemmer.stem(word).toString();
-					// TODO index.add(...) the add method will do the checking you have below
-					if (index.containsWord(word)) {
-						if (index.containsPath(word ,path.toString())) {
-							index.addPosition(word, path.toString(), position);
-							position++;
-						} else {
-							index.addPath(word, path.toString(), position);
-							position++;
-						}
-					} else {
-						index.addWord(word, path.toString(), position);
-						position++;
-					}
+					index.add(word, path.toString(), position);
+					position++;
 				}
 				line = br.readLine();
 			}

@@ -4,8 +4,8 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class TreeJSONWriter {
@@ -99,7 +99,7 @@ public class TreeJSONWriter {
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 */
-	public static void asPathIndex(Map<String, Set<Integer>> elements,
+	public static void asPathIndex(TreeMap<String, TreeSet<Integer>> elements,
 			Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path,
 				StandardCharsets.UTF_8)) {
@@ -124,7 +124,7 @@ public class TreeJSONWriter {
 	 * @see #indent(int, Writer)
 	 * @see #quote(String, Writer)
 	 */
-	public static void asPathIndex(Map<String, Set<Integer>> elements, Writer writer, int level) throws IOException {
+	public static void asPathIndex(TreeMap<String, TreeSet<Integer>> elements, Writer writer, int level) throws IOException {
 		writer.write("{" + System.lineSeparator());
 				
 		int size = elements.keySet().size();
@@ -159,7 +159,7 @@ public class TreeJSONWriter {
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 */
-	public static void asTripleNested(InvertedIndex elements,
+	public static void asTripleNested(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements,
 			Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path,
 				StandardCharsets.UTF_8)) {
@@ -167,8 +167,6 @@ public class TreeJSONWriter {
 		}
 	}
 
-	// TODO public static void asTripleNested(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Writer writer, int level) throws IOException {
-	
 	/**
 	 * Writes the map of String keys and WordIndex values as a pretty JSON object using the provided
 	 * {@link Writer} and indentation level.
@@ -186,15 +184,13 @@ public class TreeJSONWriter {
 	 * @see #indent(int, Writer)
 	 * @see #quote(String, Writer)
 	 */
-	public static void asTripleNested(InvertedIndex elements, Writer writer,
+	public static void asTripleNested(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Writer writer,
 			int level) throws IOException {
-		
 		writer.write("{" + System.lineSeparator());
-		
-		int size = elements.words();
+		int size = elements.size();
 		int count = 0;
 		
-		for (String key : elements.wordsKeySet()) {
+		for (String key : elements.keySet()) {
 			count++;
 			if (count != size) {
 				indent(level + 1, writer);

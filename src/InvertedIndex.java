@@ -1,3 +1,5 @@
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +14,7 @@ public class InvertedIndex {
 	/** 
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
-	private final Map<String, Map<String, Set<Integer>>> index;
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 
 	/**
 	 *  Initializes the index.
@@ -34,88 +36,24 @@ public class InvertedIndex {
 			return Collections.emptyMap();
 		}
 	}
-	
-	/* TODO To avoid the copying, maybe this approach:
-	public Set<String> getLocations(String word) {
-		if (index.containsKey(word)) {
-			return Collections.unmodifiableSet(index.get(word).keySet());
-		}
-		else {
-			return Collections.EMPTY_SET;
-		}
-	}
-	
-	Do this also for getWords() that returns the index keyset safely.
-	*/
 
-//	/** 
-//	 * Gets the TreeSet of positions associated with the path
-//	 * 
-//	 * @param word word inside of the file
-//	 * @param path path of the file
-//	 * @return TreeSet containing positions associated with the path
-//	 */
-//	public TreeSet<Integer> get(String word, String path) {
-//		TreeSet<Integer> temp = new TreeSet<>();
-//		if (index.containsKey(word)) {
-//			temp = index.get(word).get(path);
-//		}
-//		return new TreeSet<Integer>(temp);
-//	}
-
-	/** 
-	 * Adds the key word to with value TreeMap of key path and value positions
-	 * 
-	 * @param word word inside of the file
-	 * @param path path of the file
-	 * @param position position the word appears in the file
-	 */
-	public void addWord(String word, String path, int position) {
-		Map<String, Set<Integer>> value = new TreeMap<>();
-		value.put(path, new TreeSet<Integer>());
-		value.get(path).add(position);
-		index.put(word, value);
-	}
-
-	/**
-	 * Adds a key path and value position to the already existing word in the TreeMap
-	 * 
-	 * @param word word inside of the file
-	 * @param path path of the file
-	 * @param position position the word appears in the file
-	 */
-	public void addPath(String word, String path, int position) {
-		TreeSet<Integer> value = new TreeSet<>();
-		value.add(position);
-		index.get(word).put(path, value);
-	}
-
-	/**
-	 * Adds the position in which the word appears in the path
-	 * 
-	 * @param word word inside of the file
-	 * @param path path of the file
-	 * @param position position the word appears in the file
-	 */
-	public void addPosition(String word, String path, int position) {
-		index.get(word).get(path).add(position);
-	}
-	
-	/* TODO
-	 * collapse addWord, addPath, addPosition into one add method....
 	public void add(String word, String path, int position) {
-		here we check, do we need to add the word?
-		do we need to add the path?
-		do we need to add the position?
+		if (index.containsKey(word)) {
+			if (index.get(word).containsKey(path)) {
+				if (!index.get(word).get(path).contains(position)) {
+					index.get(word).get(path).add(position);
+				}
+			} else {
+				index.get(word).put(path, new TreeSet<Integer>());
+				index.get(word).get(path).add(position);
+			}
+		} else {
+			index.put(word, new TreeMap<String, TreeSet<Integer>>());
+			index.get(word).put(path, new TreeSet<Integer>());
+			index.get(word).get(path).add(position);
+		}
 	}
-	*/
 
-	/*
-	public void addAll(String[] words, String location)
-	public void addAll(String[] words, String location, int position)
-	*
-	*
-	* Not sure about this one */
 	/**
 	 * Adds a list of words to the index given they all have the same path
 	 * @param words list of words to add
@@ -125,7 +63,7 @@ public class InvertedIndex {
 		int position = 0;
 		for (String word : words) {
 			position++;
-			this.addPath(word, location, position); // TODO Call new add method
+			this.add(word, location, position);
 		}
 	}
 
@@ -134,7 +72,7 @@ public class InvertedIndex {
 	 *
 	 * @return Returns a set view of all the paths
 	 */
-	public Set<String> wordsKeySet() {
+	public Set<String> getWords() {
 		return Collections.unmodifiableSet(index.keySet());
 	}
 
@@ -144,32 +82,32 @@ public class InvertedIndex {
 	 * @param word word inside of the file
 	 * @return Returns a set view of all the paths
 	 */
-	public Map<String, Set<Integer>> pathsKeySet(String word, String path) {
+	public Set<String> getPaths(String word) {
 		if (index.containsKey(word)) {
-			if (index.get(word).containsKey(path)) {
-				return Collections.unmodifiableMap(index.get(word));
-			} else {
-				return Collections.emptyMap();
-			}
+			return Collections.unmodifiableSet(index.get(word).keySet());
 		} else {
-			return Collections.emptyMap();
+			return Collections.emptySet();
 		}
 	}
 
-//	/**
-//	 * Shows all the positions associated with a path in the map
-//	 *
-//	 * @param word word inside of the file
-//	 * @param path path of the file
-//	 * @return Returns a set view of all the positions associated with the path
-//	 */
-//	public TreeSet<Integer> positionsSet(String word, String path) {
-//		TreeSet<Integer> temp = new TreeSet<>();
-//		if (index.containsKey(word)) {
-//			temp = index.get(word).get(path);
-//		}
-//		return new TreeSet<Integer>(temp);
-//	}
+	/**
+	 * Shows all the positions associated with a path in the map
+	 *
+	 * @param word word inside of the file
+	 * @param path path of the file
+	 * @return Returns a set view of all the positions associated with the path
+	 */
+	public Set<Integer> getPositions(String word, String path) {
+		if (containsWord(word)) {
+			if (containsPath(word, path)) {
+				return Collections.unmodifiableSet(index.get(word).get(path));
+			} else {
+				return Collections.emptySet();
+			}
+		} else {
+			return Collections.emptySet();
+		}
+	}
 
 	/** 
 	 * Number of words in the the map
@@ -187,7 +125,7 @@ public class InvertedIndex {
 	 * @return integer size of the number of paths associated with word in the map
 	 */
 	public int paths(String word) {
-		if (index.containsKey(word)) {
+		if (containsWord(word)) {
 			return index.get(word).size();
 		} else {
 			return 0;
@@ -202,8 +140,12 @@ public class InvertedIndex {
 	 * @return integer size of the number of paths associated with word in the map
 	 */
 	public int positions(String word, String path) {
-		if (index.containsKey(word)) { // TODO containsPath(String word, String path)
-			return index.get(word).get(path).size();
+		if (containsWord(word)) {
+			if (containsPath(word, path)) {
+				return index.get(word).get(path).size();
+			} else {
+				return 0;
+			}
 		} else {
 			return 0;
 		}
@@ -227,14 +169,40 @@ public class InvertedIndex {
 	 * @return true if word contains the path
 	 */
 	public boolean containsPath(String word, String path) {
-		if (index.containsKey(word)) {
+		if (containsWord(word)) {
 			return index.get(word).containsKey(path);
 		} else {
 			return false;
 		}
 	}
-	
-	// TODO public boolean containsPosition(String word, String path, int position) {
+
+	/**
+	 * Checks to see if the specified word from the path contains the position
+	 * @param word word from the file
+	 * @param path file path the word is in
+	 * @param position specific position the word occurs in the file path
+	 * @return returns true if position exists in the path, false otherwise
+	 */
+	public boolean containsPosition(String word, String path, int position) {
+		if (containsWord(word)) {
+			if (containsPath(word, path)) {
+				return index.get(word).get(path).contains(position);
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Writes the index to the file path in pretty json format
+	 * @param path path to the file to write to
+	 * @throws IOException in case there's any problem finding the file
+	 */
+	public void writeJSON(Path path) throws IOException {
+		TreeJSONWriter.asTripleNested(this.index, path);
+	}
 
 	/** 
 	 * Prints in the map
@@ -243,10 +211,4 @@ public class InvertedIndex {
 	public String toString() {
 		return index.toString();
 	}
-	
-	/* TODO
-	public void writeJSON(Path path) throws IOException {
-		TreeJSONWriter.asTripleNested(this.index);
-	}
-	*/
 }

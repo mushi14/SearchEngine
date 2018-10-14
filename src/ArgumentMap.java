@@ -46,7 +46,6 @@ public class ArgumentMap {
 				}
 			} 
 		}
-		
 		// TODO See if you can simplify (not a big deal if not)
 	}
 
@@ -112,8 +111,11 @@ public class ArgumentMap {
 	public String getPath(String flag) {
 		return argMap.get(flag);
 	}
-	
-	
+
+	/**
+	 * Checks to see if the arguments map is empty
+	 * @return returns true if empty, false if not
+	 */
 	public boolean isEmpty() {
 		return argMap.isEmpty();
 	}
