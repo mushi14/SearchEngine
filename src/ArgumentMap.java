@@ -44,7 +44,17 @@ public class ArgumentMap {
 				} else {
 					argMap.put(args[i], null);
 				}
+			}
+			/* TODO
+			if (isFlag(args[i])) {
+				if ((i + 1) < args.length && !isFlag(args[i + 1])) {
+					argMap.put(args[i], args[i + 1]);
+					i++;
+				} else {
+					argMap.put(args[i], null);
+				}
 			} 
+			*/
 		}
 		// TODO See if you can simplify (not a big deal if not)
 		// Not sure how to simplify this further

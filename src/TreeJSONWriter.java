@@ -130,6 +130,7 @@ public class TreeJSONWriter {
 		int size = elements.keySet().size();
 		int count = 0;
 		
+		// TODO if (!elements.isEmpty()) {
 		for (String key : elements.keySet()) {
 			count++;
 			if (count != size) {
@@ -190,6 +191,7 @@ public class TreeJSONWriter {
 		int size = elements.size();
 		int count = 0;
 		
+		// TODO if (!elements.isEmpty()) {
 		for (String key : elements.keySet()) {
 			count++;
 			if (count != size) {

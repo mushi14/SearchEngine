@@ -29,15 +29,17 @@ public class Driver {
 					System.out.println("There was an issue finding the path. A valid path is needed to build the index.");
 				}
 			}
+			
 			if (argMap.hasFlag("-index")) {
 				try {
 					Path path = Paths.get(argMap.getPath("-index"));
 					if (argMap.flagPath("-index")) {
-						index.writeJSON(path);;
+						index.writeJSON(path);
 					} else {
 						index.writeJSON(Paths.get("index.json"));
 					}
 				} catch (IOException | NullPointerException e) {
+					// TODO See if the fix to TreeJSONWriter lets you delete this try/catch
 					try {
 						index.writeJSON(Paths.get("index.json"));
 					} catch (IOException x) {
