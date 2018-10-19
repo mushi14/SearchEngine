@@ -214,42 +214,42 @@ public class TreeJSONWriter {
 	}
 
 
-	/**
-	 * Writes all the locations and the total number of words they contain from the Inverted Index data 
-	 * structure as pretty JSON object using the provided
-	 * {@link Writer} and indentation level.
-	 *
-	 * @param index the inverted index to convert to JSON
-	 * @param writer the writer to use
-	 * @param level the initial indentation level
-	 * @throws IOException if the writer encounters any issues
-	 * @throws NullPointerException if the writer encounters null as the path
-	 */
-	public static void asLocations(InvertedIndex index, Path path) {
-		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-			
-			int level = 0;
-			writer.write("{" + System.lineSeparator());
-			int size = index.totalLocations().size();
-			int count = 0;
-			
-			for (String location : index.totalLocations().keySet()) {
-				count++;
-				if (count != size) {
-					indent(level + 1, writer);
-					quote(location, writer);
-					writer.write(": " + index.totalLocations().get(location) + ", " + System.lineSeparator());
-				} else {
-					indent(level + 1, writer);
-					quote(location, writer);
-					writer.write(": " + index.totalLocations().get(location) + System.lineSeparator());
-				}
-			}
-			writer.write("}");
-		} catch (IOException | NullPointerException e) {
-			System.out.println("There was an issue finding the directory or file: " + path);
-		}
-	}
+//	/**
+//	 * Writes all the locations and the total number of words they contain from the Inverted Index data 
+//	 * structure as pretty JSON object using the provided
+//	 * {@link Writer} and indentation level.
+//	 *
+//	 * @param index the inverted index to convert to JSON
+//	 * @param writer the writer to use
+//	 * @param level the initial indentation level
+//	 * @throws IOException if the writer encounters any issues
+//	 * @throws NullPointerException if the writer encounters null as the path
+//	 */
+//	public static void asLocations(InvertedIndex index, Path path) {
+//		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+//			
+//			int level = 0;
+//			writer.write("{" + System.lineSeparator());
+//			int size = index.totalLocations().size();
+//			int count = 0;
+//			
+//			for (String location : index.totalLocations().keySet()) {
+//				count++;
+//				if (count != size) {
+//					indent(level + 1, writer);
+//					quote(location, writer);
+//					writer.write(": " + index.totalLocations().get(location) + ", " + System.lineSeparator());
+//				} else {
+//					indent(level + 1, writer);
+//					quote(location, writer);
+//					writer.write(": " + index.totalLocations().get(location) + System.lineSeparator());
+//				}
+//			}
+//			writer.write("}");
+//		} catch (IOException | NullPointerException e) {
+//			System.out.println("There was an issue finding the directory or file: " + path);
+//		}
+//	}
 
 	/**
 	 * Helper method for writing the map of search results formatted as a pretty JSON object to
