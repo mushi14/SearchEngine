@@ -26,26 +26,28 @@ public class Driver {
 						System.out.println("There is no path provided. A valid path is needed to build the index.");
 					}
 				} catch (IOException | NullPointerException e) {
-					System.out.println("There was an issue finding the path to flag '-path'"
-							+ ". A valid path is needed to build the index");
+					System.out.println("There was an issue finding the path. A valid path is needed to build the index.");
 				}
 			}
+
 			if (argMap.hasFlag("-index")) {
 				try {
 					Path path = Paths.get(argMap.getPath("-index"));
 					if (argMap.flagPath("-index")) {
-						TreeJSONWriter.asInvertedIndex(index, path);
+						index.writeJSON(path);
 					} else {
-						TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
+						index.writeJSON(Paths.get("index.json"));
 					}
 				} catch (IOException | NullPointerException e) {
-					try {
-						TreeJSONWriter.asInvertedIndex(index, Paths.get("index.json"));
-					} catch (IOException x) {
-						System.out.println("File not found, index cannot be printed.");
-					}
+					// TODO See if the fix to TreeJSONWriter lets you delete this try/catch
+//					try {
+//						index.writeJSON(Paths.get("index.json"));
+//					} catch (IOException x) {
+						System.out.println("File not found, index cannot be printed in json format.");
+//					}
 				}
 			}
+
 			if (argMap.hasFlag("-search")) {
 				try {
 					if (argMap.flagPath("-search")) {
@@ -64,6 +66,7 @@ public class Driver {
 							+ "directory is needed to search.");
 				}
 			}
+
 			if (argMap.hasFlag("-results")) {
 				if (argMap.flagPath("-results")) {
 					TreeJSONWriter.asSearchResult(QueryParser.results, Paths.get(argMap.getPath("-results")));
@@ -72,6 +75,7 @@ public class Driver {
 					QueryParser.results.clear();
 				}
 			}
+
 			if (argMap.hasFlag("-locations")) {
 				if (argMap.flagPath("-locations")) {
 					TreeJSONWriter.asLocations(index, Paths.get(argMap.getPath("-locations")));
