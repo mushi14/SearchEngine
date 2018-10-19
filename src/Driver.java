@@ -39,12 +39,12 @@ public class Driver {
 						index.writeJSON(Paths.get("index.json"));
 					}
 				} catch (IOException | NullPointerException e) {
+					System.out.println("File not found, index cannot be printed in json format.");
 					// TODO See if the fix to TreeJSONWriter lets you delete this try/catch
-					try {
-						index.writeJSON(Paths.get("index.json"));
-					} catch (IOException x) {
-						System.out.println("File not found, index cannot be printed in json format.");
-					}
+//					try {
+//						index.writeJSON(Paths.get("index.json"));
+//					} catch (IOException x) {
+//					}
 				}
 			}
 		}

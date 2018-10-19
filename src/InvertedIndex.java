@@ -38,10 +38,10 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * TODO
-	 * @param word
-	 * @param path
-	 * @param position
+	 * Adds the word, its location, and its position to the index. 
+	 * @param word word inside of the file
+	 * @param path location of the file
+	 * @param position the position of the word in the file
 	 */
 	public void add(String word, String path, int position) {
 		if (index.containsKey(word)) {
@@ -146,12 +146,8 @@ public class InvertedIndex {
 	 * @return integer size of the number of paths associated with word in the map
 	 */
 	public int positions(String word, String path) {
-		if (containsWord(word)) { // TODO Can remove this one
-			if (containsPath(word, path)) {
-				return index.get(word).get(path).size();
-			} else {
-				return 0;
-			}
+		if (containsPath(word, path)) {
+			return index.get(word).get(path).size();
 		} else {
 			return 0;
 		}
@@ -190,12 +186,8 @@ public class InvertedIndex {
 	 * @return returns true if position exists in the path, false otherwise
 	 */
 	public boolean containsPosition(String word, String path, int position) {
-		if (containsWord(word)) { // TODO Can remove?
-			if (containsPath(word, path)) {
-				return index.get(word).get(path).contains(position);
-			} else {
-				return false;
-			}
+		if (containsPath(word, path)) {
+			return index.get(word).get(path).contains(position);
 		} else {
 			return false;
 		}

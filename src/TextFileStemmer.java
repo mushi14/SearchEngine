@@ -71,12 +71,12 @@ public class TextFileStemmer {
 			int position = 1;
 			String line = br.readLine();
 			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-			// TODO String name = path.toString(); and reuse name in the add below
+			String name = path.toString();
 			while(line != null) {
 				String[] words = parse(line);
 				for (String word : words) {
 					word = stemmer.stem(word).toString();
-					index.add(word, path.toString(), position);
+					index.add(word, name, position);
 					position++;
 				}
 				line = br.readLine();
