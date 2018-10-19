@@ -4,7 +4,7 @@ import java.util.Map;
 public class ArgumentMap {
 
 	private final Map<String, String> argMap;
-	
+
 	/**
 	 * Initializes this argument map.
 	 */
@@ -34,13 +34,9 @@ public class ArgumentMap {
 	public void parse(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
-				if ((i + 1) < args.length) {
-					if (!isFlag(args[i + 1])) {
-						argMap.put(args[i], args[i + 1]);
-						i++;
-					} else {
-						argMap.put(args[i], null);
-					}
+				if ((i + 1) < args.length && !isFlag(args[i + 1])) {
+					argMap.put(args[i], args[i + 1]);
+					i++;
 				} else {
 					argMap.put(args[i], null);
 				}
@@ -48,17 +44,11 @@ public class ArgumentMap {
 		}
 	}
 
-	/**
-	 * Determines whether the argument is a flag. Flags start with a dash "-"
-	 * character, followed by at least one other non-whitespace character.
-	 *
-	 * @param arg the argument to test if its a flag
-	 * @return {@code true} if the argument is a flag
-	 *
-	 * @see String#startsWith(String)
-	 * @see String#trim()
-	 * @see String#isEmpty()
-	 * @see String#length()
+	/** 
+	 * Checks to see if argument passed is a valid flag or not 
+	 * 
+	 * @param arg argument from the command line
+	 * @return true if the argument is -path or -index
 	 */
 	public static boolean isFlag(String arg) {
 		try {
@@ -74,7 +64,7 @@ public class ArgumentMap {
 			}
 		} catch (NullPointerException e) {
 			return false;
-		}
+		}	
 	}
 
 	/**
@@ -116,7 +106,11 @@ public class ArgumentMap {
 	public String getPath(String flag) {
 		return argMap.get(flag);
 	}
-	
+
+	/**
+	 * Checks to see if the arguments map is empty
+	 * @return returns true if empty, false if not
+	 */
 	public boolean isEmpty() {
 		return argMap.isEmpty();
 	}
