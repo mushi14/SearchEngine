@@ -60,7 +60,7 @@ public class Driver {
 						}
 					}
 				} catch (IOException | NullPointerException e) {
-					System.out.println("Unable to open the query file or directory provided. A valid query or "
+					System.out.println("Unable to open the query file or directory provided. A valid query file or "
 							+ "directory is needed to search.");
 				}
 			}
