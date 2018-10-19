@@ -37,6 +37,12 @@ public class InvertedIndex {
 		}
 	}
 
+	/**
+	 * TODO
+	 * @param word
+	 * @param path
+	 * @param position
+	 */
 	public void add(String word, String path, int position) {
 		if (index.containsKey(word)) {
 			if (index.get(word).containsKey(path)) {
@@ -140,7 +146,7 @@ public class InvertedIndex {
 	 * @return integer size of the number of paths associated with word in the map
 	 */
 	public int positions(String word, String path) {
-		if (containsWord(word)) {
+		if (containsWord(word)) { // TODO Can remove this one
 			if (containsPath(word, path)) {
 				return index.get(word).get(path).size();
 			} else {
@@ -184,7 +190,7 @@ public class InvertedIndex {
 	 * @return returns true if position exists in the path, false otherwise
 	 */
 	public boolean containsPosition(String word, String path, int position) {
-		if (containsWord(word)) {
+		if (containsWord(word)) { // TODO Can remove?
 			if (containsPath(word, path)) {
 				return index.get(word).get(path).contains(position);
 			} else {
