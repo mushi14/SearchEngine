@@ -34,9 +34,9 @@ public class Driver {
 				try {
 					Path path = Paths.get(argMap.getPath("-index"));
 					if (argMap.flagPath("-index")) {
-						index.writeJSON(path);
+						index.writeIndexJSON(path);
 					} else {
-						index.writeJSON(Paths.get("index.json"));
+						index.writeIndexJSON(Paths.get("index.json"));
 					}
 				} catch (IOException | NullPointerException e) {
 					// TODO See if the fix to TreeJSONWriter lets you delete this try/catch
@@ -48,41 +48,47 @@ public class Driver {
 				}
 			}
 
-//			if (argMap.hasFlag("-search")) {
-//				try {
-//					if (argMap.flagPath("-search")) {
-//						Path path = Paths.get(argMap.getPath("-search"));
-//						for (String file : PathChecker.queryFiles(path)) {
-//							QueryParser.results.clear();
-//							boolean exact = false;
-//							if (argMap.hasFlag("-exact")) {
-//								exact = true;
-//							}
-//							TextFileStemmer.stemQueryFile(index, Paths.get(file), exact);
-//						}
-//					}
-//				} catch (IOException | NullPointerException e) {
-//					System.out.println("Unable to open the query file or directory provided. A valid query file or "
-//							+ "directory is needed to search.");
-//				}
-//			}
-//
-//			if (argMap.hasFlag("-results")) {
-//				if (argMap.flagPath("-results")) {
-//					TreeJSONWriter.asSearchResult(QueryParser.results, Paths.get(argMap.getPath("-results")));
-//				} else {
-//					TreeJSONWriter.asSearchResult(QueryParser.results, Paths.get("results.json"));
-//					QueryParser.results.clear();
-//				}
-//			}
-//
-//			if (argMap.hasFlag("-locations")) {
-//				if (argMap.flagPath("-locations")) {
-//					TreeJSONWriter.asLocations(index, Paths.get(argMap.getPath("-locations")));
-//				} else {
-//					TreeJSONWriter.asLocations(index, Paths.get("locations.json"));
-//				}
-//			}
+			if (argMap.hasFlag("-search")) {
+				try {
+					if (argMap.flagPath("-search")) {
+						Path path = Paths.get(argMap.getPath("-search"));
+						for (String file : PathChecker.queryFiles(path)) {
+							QueryParser.results.clear();
+							boolean exact = false;
+							if (argMap.hasFlag("-exact")) {
+								exact = true;
+							}
+							TextFileStemmer.stemQueryFile(index, Paths.get(file), exact);
+						}
+					}
+				} catch (IOException | NullPointerException e) {
+					System.out.println("Unable to open the query file or directory provided. A valid query file or "
+							+ "directory is needed to search.");
+				}
+			}
+
+			if (argMap.hasFlag("-results")) {
+				if (argMap.flagPath("-results")) {
+					Path path = Paths.get(argMap.getPath("-results"));
+					TreeJSONWriter.asSearchResult(QueryParser.results, path);
+				} else {
+					TreeJSONWriter.asSearchResult(QueryParser.results, Paths.get("results.json"));
+					QueryParser.results.clear();
+				}
+			}
+
+			if (argMap.hasFlag("-locations")) {
+				try {
+					if (argMap.flagPath("-locations")) {
+						Path path = Paths.get(argMap.getPath("-locations"));
+						index.writeLocationsJSON(path);
+					} else {
+						index.writeLocationsJSON(Paths.get("locations.json"));
+					}
+				} catch (IOException | NullPointerException e) {
+						System.out.println("File not found, locations cannot be printed in json format.");
+				}
+			}
 		}
 	}
 }

@@ -31,7 +31,7 @@ public class QueryParser {
 		if (!results.containsKey(line)) {
 			results.put(line, new ArrayList<>());
 			for (String query : queries) {
-				for (String word : index.wordsKeySet()) {
+				for (String word : index.getWords()) {
 					if (word.equals(query)) {
 						for (String loc : index.get(word).keySet()) {
 							if (locationsList.containsKey(loc)) {
@@ -89,7 +89,7 @@ public class QueryParser {
 		if (!results.containsKey(line)) {
 			results.put(line, new ArrayList<>());
 			for (String query : queries) {
-				for (String word : index.wordsKeySet()) {
+				for (String word : index.getWords()) {
 					if (word.startsWith(query)) {
 						for (String loc : index.get(word).keySet()) {
 							if (locationsList.containsKey(loc)) {

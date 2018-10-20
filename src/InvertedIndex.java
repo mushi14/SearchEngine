@@ -14,6 +14,7 @@ public class InvertedIndex {
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	private final Map<String, Integer> locationsMap = new TreeMap<>();
 
 	/**
 	 *  Initializes the index.
@@ -157,7 +158,6 @@ public class InvertedIndex {
 	 * @return TreeMap of locations and their total words
 	 */
 	public Map<String, Integer> totalLocations() {
-		Map<String, Integer> locationsMap = new TreeMap<>();
 		for (String word : getWords()) {
 			for (String path : getPaths(word)) {
 				if (!locationsMap.containsKey(path)) {
@@ -216,8 +216,29 @@ public class InvertedIndex {
 	 * @param path path to the file to write to
 	 * @throws IOException in case there's any problem finding the file
 	 */
-	public void writeJSON(Path path) throws IOException {
+	public void writeIndexJSON(Path path) throws IOException {
 		TreeJSONWriter.asTripleNested(this.index, path);
+	}
+
+	/**
+	 * Writes the lcoations to the file path in pretty json format
+	 * @param path path to the file to write to
+	 * @throws IOException in case there's any problem finding the file
+	 */
+	public void writeLocationsJSON(Path path) throws IOException {
+		Map<String, Integer> locationsMap = new TreeMap<>();
+		for (String word : getWords()) {
+			for (String p : getPaths(word)) {
+				if (!locationsMap.containsKey(p)) {
+					locationsMap.put(p, positions(word, p));
+				} else {
+					int value = locationsMap.get(p) + positions(word, p);
+					locationsMap.replace(p, value);
+				}
+			}
+		}
+
+		TreeJSONWriter.asLocations(locationsMap, path);
 	}
 
 	/** 
