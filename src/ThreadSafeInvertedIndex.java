@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -194,6 +197,79 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 		lock.lockReadOnly();
 		try {
 			return super.containsPosition(word, path, position);
+		} finally {
+			lock.unlockReadOnly();
+		}
+	}
+
+	/**
+	 * Writes the index to the file path in pretty json format
+	 * @param path path to the file to write to
+	 * @throws IOException in case there's any problem finding the file
+	 */
+	public void writeIndexJSON(Path path) throws IOException {
+		lock.lockReadWrite();;
+		try {
+			super.writeIndexJSON(path);
+		} finally {
+			lock.unlockReadWrite();;
+		}
+	}
+
+	/**
+	 * Writes the locations to the file path in pretty json format
+	 * @param path path to the file to write to
+	 * @throws IOException in case there's any problem finding the file
+	 */
+	public void writeLocationsJSON(Path path) throws IOException {
+		lock.lockReadWrite();;
+		try {
+			super.writeLocationsJSON(path);
+		} finally {
+			lock.unlockReadWrite();;
+		}
+	}
+
+	/**
+	 * Writes the search results to the file path in pretty json format
+	 * @param path path to the file to write to
+	 * @throws IOException in case there's any problem finding the file
+	 */
+	public void writeSearchResultsJSON(Map<String, List<Search>> results, Path path) throws IOException {
+		lock.lockReadWrite();;
+		try {
+			super.writeSearchResultsJSON(results, path);;
+		} finally {
+			lock.unlockReadWrite();;
+		}
+	}
+
+	/**
+	 * performs exact search on a line from the query file. Stores the results to results map
+	 * @param results map containing key-line and value-Search to refer from
+	 * @param queries line of queries to compare
+	 */
+//	public void exactSearch(Map<String, List<Search>> results, Set<String> queries) {
+//		
+//	}
+
+	/**
+	 * performs partial search on a line from the query file. Stores the results to results map
+	 * @param results map containing key-line and value-Search to refer from
+	 * @param queries line of queries to compare
+	 */
+//	public void partialSearch(Map<String, List<Search>> results, Set<String> queries) {
+//		
+//	}
+
+	/** 
+	 * Prints in the inverted index
+	 */
+	@Override
+	public String toString() {
+		lock.lockReadOnly();
+		try {
+			return super.toString();
 		} finally {
 			lock.unlockReadOnly();
 		}
