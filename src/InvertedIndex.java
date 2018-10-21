@@ -346,6 +346,7 @@ public class InvertedIndex {
 				}
 			}
 		}
+
 		List<Search> tempList = new ArrayList<>();
 		for (String loc : locationsList.keySet()) {
 			tempList.add(locationsList.get(loc));

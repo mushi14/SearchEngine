@@ -74,7 +74,7 @@ public class TreeJSONWriter {
 	public static void asPositionArray(Set<Integer> elements, Writer writer, int level) throws IOException {
 
 		writer.write('[' + System.lineSeparator());
-		
+
 		if (!elements.isEmpty()) {
 			int size = elements.size();
 			int count = 0;
@@ -132,7 +132,7 @@ public class TreeJSONWriter {
 				
 		int size = elements.keySet().size();
 		int count = 0;
-		
+
 		if (!elements.isEmpty()) {
 			for (String key : elements.keySet()) {
 				count++;
@@ -281,7 +281,7 @@ public class TreeJSONWriter {
 			Writer writer, int level) throws IOException {
 
 		writer.write("[" + System.lineSeparator());
-		
+
 		Iterator<String> itr = results.keySet().iterator();
 		while (itr.hasNext()) {
 			String next = itr.next().toString();
@@ -321,7 +321,7 @@ public class TreeJSONWriter {
 	 */
 	public static void asNestedSearch(String next, Map<String, List<Search>> results, Writer writer, 
 			int level) throws IOException {
-		
+
 		Iterator<Search> itr = results.get(next).iterator();
 		int size = results.get(next).size();
 		int count = 0;
@@ -344,7 +344,7 @@ public class TreeJSONWriter {
 			quote("score", writer);
 			writer.write(": " + String.valueOf(temp.getScore()) + System.lineSeparator());
 			indent(level, writer);
-			
+
 			if (count != size) {
 				writer.write("}," + System.lineSeparator());
 			} else {

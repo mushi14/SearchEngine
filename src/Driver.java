@@ -23,7 +23,7 @@ public class Driver {
 		if (!argMap.isEmpty()) {
 			if (argMap.hasFlag("-path")) {
 				try {
-					Path path = Paths.get(argMap.getPath("-path"));
+					Path path = argMap.getPath("-path");
 					if (argMap.flagPath("-path")) {
 						PathChecker.filesInPath(path, index);
 					} else {
@@ -36,26 +36,21 @@ public class Driver {
 
 			if (argMap.hasFlag("-index")) {
 				try {
-					Path path = Paths.get(argMap.getPath("-index"));
+					Path path = argMap.getPath("-index");
 					if (argMap.flagPath("-index")) {
 						index.writeIndexJSON(path);
 					} else {
 						index.writeIndexJSON(Paths.get("index.json"));
 					}
 				} catch (IOException | NullPointerException e) {
-					// TODO See if the fix to TreeJSONWriter lets you delete this try/catch
-//					try {
-//						index.writeJSON(Paths.get("index.json"));
-//					} catch (IOException x) {
 						System.out.println("File not found, index cannot be printed in json format.");
-//					}
 				}
 			}
 
 			if (argMap.hasFlag("-search")) {
 				try {
 					if (argMap.flagPath("-search")) {
-						Path path = Paths.get(argMap.getPath("-search"));
+						Path path = argMap.getPath("-search");
 						for (String f : PathChecker.queryFiles(path)) {
 							Path file = Paths.get(f);
 							results.clear();
@@ -75,7 +70,7 @@ public class Driver {
 			if (argMap.hasFlag("-results")) {
 				try {
 					if (argMap.flagPath("-results")) {
-						Path path = Paths.get(argMap.getPath("-results"));
+						Path path = argMap.getPath("-results");
 						index.writeSearchResultsJSON(results, path);
 						results.clear();
 					} else {
@@ -90,7 +85,7 @@ public class Driver {
 			if (argMap.hasFlag("-locations")) {
 				try {
 					if (argMap.flagPath("-locations")) {
-						Path path = Paths.get(argMap.getPath("-locations"));
+						Path path = argMap.getPath("-locations");
 						index.writeLocationsJSON(path);
 					} else {
 						index.writeLocationsJSON(Paths.get("locations.json"));
