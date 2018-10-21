@@ -245,7 +245,7 @@ public class InvertedIndex {
 
 	/**
 	 * performs exact search on a line from the query file. Stores the results to results map
-	 * @param index inverted index to refer from
+	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
 	 */
 	public void exactSearch(Map<String, List<Search>> results, Set<String> queries) {
@@ -302,7 +302,7 @@ public class InvertedIndex {
 
 	/**
 	 * performs partial search on a line from the query file. Stores the results to results map
-	 * @param index inverted index to refer from
+	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
 	 */
 	public void partialSearch(Map<String, List<Search>> results, Set<String> queries) {
