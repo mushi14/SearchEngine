@@ -262,7 +262,7 @@ public class TreeJSONWriter {
 	 * @throws IOException if the writer encounters any issues
 	 *
 	 */
-	public static void asSearchResult(TreeMap<String, List<Search>> results, Path path) {
+	public static void asSearchResult(Map<String, List<Search>> results, Path path) {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			asSearchResult(results, writer, 0);
 		} catch (IOException | NullPointerException e) {
@@ -277,7 +277,7 @@ public class TreeJSONWriter {
 	 * @param level the initial indentation level
 	 * @throws IOException if the writer encounters any issues
 	 */
-	public static void asSearchResult(TreeMap<String, List<Search>> results,
+	public static void asSearchResult(Map<String, List<Search>> results,
 			Writer writer, int level) throws IOException {
 
 		writer.write("[" + System.lineSeparator());
@@ -319,7 +319,7 @@ public class TreeJSONWriter {
 	 * @param level the initial indentation level
 	 * @throws IOException if the writer encounters any issues
 	 */
-	public static void asNestedSearch(String next, TreeMap<String, List<Search>> results, Writer writer, 
+	public static void asNestedSearch(String next, Map<String, List<Search>> results, Writer writer, 
 			int level) throws IOException {
 		
 		Iterator<Search> itr = results.get(next).iterator();

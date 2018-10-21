@@ -17,7 +17,6 @@ public class InvertedIndex {
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	public static final TreeMap<String, List<Search>> results = new TreeMap<>();
 	private Map<String, Integer> locationsMap;
 
 	/**
@@ -231,18 +230,12 @@ public class InvertedIndex {
 	 * @throws IOException in case there's any problem finding the file
 	 */
 	public void writeLocationsJSON(Path path) throws IOException {
-		Map<String, Integer> locationsMap = new TreeMap<>();
-		for (String word : getWords()) {
-			for (String p : getPaths(word)) {
-				if (!locationsMap.containsKey(p)) {
-					locationsMap.put(p, positions(word, p));
-				} else {
-					int value = locationsMap.get(p) + positions(word, p);
-					locationsMap.replace(p, value);
-				}
-			}
-		}
-		TreeJSONWriter.asLocations(locationsMap, path);
+		Map<String, Integer> totalLocations = totalLocations();
+		TreeJSONWriter.asLocations(totalLocations, path);
+	}
+
+	public void writeSearchResultsJSON(Map<String, List<Search>> results, Path path) throws IOException {
+		TreeJSONWriter.asSearchResult(results, path);
 	}
 
 	/**
@@ -250,7 +243,7 @@ public class InvertedIndex {
 	 * @param index inverted index to refer from
 	 * @param queries line of queries to compare
 	 */
-	public void exactSearch(Set<String> queries) {
+	public void exactSearch(Map<String, List<Search>> results, Set<String> queries) {
 		String line = String.join(" ", queries);
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 		double totalMatches = 0;
@@ -307,7 +300,7 @@ public class InvertedIndex {
 	 * @param index inverted index to refer from
 	 * @param queries line of queries to compare
 	 */
-	public void partialSearch(Set<String> queries) {
+	public void partialSearch(Map<String, List<Search>> results, Set<String> queries) {
 		String line = String.join(" ", queries);
 		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
 		double totalMatches = 0;

@@ -1,6 +1,9 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Driver {
 
@@ -15,6 +18,7 @@ public class Driver {
 		
 		InvertedIndex index = new InvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
+		Map<String, List<Search>> results = new TreeMap<>();
 
 		if (!argMap.isEmpty()) {
 			if (argMap.hasFlag("-path")) {
@@ -52,13 +56,14 @@ public class Driver {
 				try {
 					if (argMap.flagPath("-search")) {
 						Path path = Paths.get(argMap.getPath("-search"));
-						for (String file : PathChecker.queryFiles(path)) {
-							InvertedIndex.results.clear();
+						for (String f : PathChecker.queryFiles(path)) {
+							Path file = Paths.get(f);
+							results.clear();
 							boolean exact = false;
 							if (argMap.hasFlag("-exact")) {
 								exact = true;
 							}
-							TextFileStemmer.stemQueryFile(index, Paths.get(file), exact);
+							results = TextFileStemmer.stemQueryFile(index, file, exact);
 						}
 					}
 				} catch (IOException | NullPointerException e) {
@@ -68,12 +73,17 @@ public class Driver {
 			}
 
 			if (argMap.hasFlag("-results")) {
-				if (argMap.flagPath("-results")) {
-					Path path = Paths.get(argMap.getPath("-results"));
-					TreeJSONWriter.asSearchResult(InvertedIndex.results, path);
-				} else {
-					TreeJSONWriter.asSearchResult(InvertedIndex.results, Paths.get("results.json"));
-					InvertedIndex.results.clear();
+				try {
+					if (argMap.flagPath("-results")) {
+						Path path = Paths.get(argMap.getPath("-results"));
+						index.writeSearchResultsJSON(results, path);
+						results.clear();
+					} else {
+						index.writeSearchResultsJSON(results, Paths.get("results.json"));
+						results.clear();
+					}
+				} catch (IOException | NullPointerException e) {
+					System.out.println("File not found, search results cannot be printed in json format.");
 				}
 			}
 
