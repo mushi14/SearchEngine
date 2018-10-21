@@ -53,7 +53,7 @@ public class Driver {
 					if (argMap.flagPath("-search")) {
 						Path path = Paths.get(argMap.getPath("-search"));
 						for (String file : PathChecker.queryFiles(path)) {
-							QueryParser.results.clear();
+							InvertedIndex.results.clear();
 							boolean exact = false;
 							if (argMap.hasFlag("-exact")) {
 								exact = true;
@@ -70,10 +70,10 @@ public class Driver {
 			if (argMap.hasFlag("-results")) {
 				if (argMap.flagPath("-results")) {
 					Path path = Paths.get(argMap.getPath("-results"));
-					TreeJSONWriter.asSearchResult(QueryParser.results, path);
+					TreeJSONWriter.asSearchResult(InvertedIndex.results, path);
 				} else {
-					TreeJSONWriter.asSearchResult(QueryParser.results, Paths.get("results.json"));
-					QueryParser.results.clear();
+					TreeJSONWriter.asSearchResult(InvertedIndex.results, Paths.get("results.json"));
+					InvertedIndex.results.clear();
 				}
 			}
 

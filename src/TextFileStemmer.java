@@ -107,9 +107,9 @@ public class TextFileStemmer {
 				}
 				if (!queries.isEmpty()) {
 					if (exact == true) {
-						QueryParser.exactSearch(index, queries);
+						index.exactSearch(queries);
 					} else {
-						QueryParser.partialSearch(index, queries);
+						index.partialSearch(queries);
 					}
 				}
 				line = br.readLine();
