@@ -4,12 +4,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
+project2
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+master
 import java.util.regex.Pattern;
 
 import opennlp.tools.stemmer.Stemmer;
@@ -84,6 +87,7 @@ public class TextFileStemmer {
 					word = stemmer.stem(word).toString();
 					index.add(word, name, position);
 					position++;
+project2
 				}
 				line = br.readLine();
 			}
@@ -124,6 +128,11 @@ public class TextFileStemmer {
 		} catch (IOException | NullPointerException e) {
 			System.out.println("There was an issue finding the query file: " + path);
 			return Collections.emptyMap();
+
+				}
+				line = br.readLine();
+			}
+master
 		}
 	}
 }

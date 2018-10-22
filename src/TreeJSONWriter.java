@@ -4,9 +4,12 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+project2
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+master
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -132,7 +135,11 @@ public class TreeJSONWriter {
 				
 		int size = elements.keySet().size();
 		int count = 0;
+project2
 
+
+		
+master
 		if (!elements.isEmpty()) {
 			for (String key : elements.keySet()) {
 				count++;
@@ -211,6 +218,7 @@ public class TreeJSONWriter {
 					asPathIndex(elements.get(key), writer, level + 1);
 					writer.write(System.lineSeparator());
 				}
+project2
 			}
 		}
 		writer.write("}" + System.lineSeparator());
@@ -349,6 +357,8 @@ public class TreeJSONWriter {
 				writer.write("}," + System.lineSeparator());
 			} else {
 				writer.write("}" + System.lineSeparator());
+
+master
 			}
 		}
 	}
