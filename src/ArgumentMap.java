@@ -1,8 +1,5 @@
-project2
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-master
 import java.util.HashMap;
 import java.util.Map;
 
