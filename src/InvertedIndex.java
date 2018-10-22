@@ -1,13 +1,9 @@
 import java.io.IOException;
 import java.nio.file.Path;
-project2
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import java.util.Collections;
-master
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -17,18 +13,11 @@ import java.util.TreeSet;
  * Data structure to store file paths and the word positions.
  */
 public class InvertedIndex {
-project2
-
-
-master
 	/** 
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-project2
 	private Map<String, Integer> locationsMap;
-
-master
 
 	/**
 	 *  Initializes the index.
@@ -167,7 +156,6 @@ master
 		}
 	}
 
-project2
 	/**
 	 * Total locations of all the words and the total words they contain 
 	 * @return TreeMap of locations and their total words
@@ -187,8 +175,6 @@ project2
 		return Collections.unmodifiableMap(locationsMap);
 	}
 
-
-master
 	/** 
 	 * Checks to see if the map contains the word
 	 * 
@@ -234,7 +220,6 @@ master
 	 * @param path path to the file to write to
 	 * @throws IOException in case there's any problem finding the file
 	 */
-project2
 	public void writeIndexJSON(Path path) throws IOException {
 		TreeJSONWriter.asTripleNested(this.index, path);
 	}
@@ -375,14 +360,6 @@ project2
 
 	/** 
 	 * Prints in the inverted index
-
-	public void writeJSON(Path path) throws IOException {
-		TreeJSONWriter.asTripleNested(this.index, path);
-	}
-
-	/** 
-	 * Prints in the map
-master
 	 */
 	@Override
 	public String toString() {
