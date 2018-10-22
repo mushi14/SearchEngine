@@ -4,6 +4,12 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+project2
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+master
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -14,7 +20,7 @@ public class TreeJSONWriter {
 	 * Writes several tab <code>\t</code> symbols using the provided
 	 * {@link Writer}.
 	 *
-	 * @param times  the number of times to write the tab symbol
+	 * @param times the number of times to write the tab symbol
 	 * @param writer the writer to use
 	 * @throws IOException if the writer encounters any issues
 	 */
@@ -28,7 +34,7 @@ public class TreeJSONWriter {
 	 * Writes the element surrounded by quotes using the provided {@link Writer}.
 	 *
 	 * @param element the element to quote
-	 * @param writer  the writer to use
+	 * @param writer the writer to use
 	 * @throws IOException if the writer encounters any issues
 	 */
 	public static void quote(String element, Writer writer) throws IOException {
@@ -71,7 +77,7 @@ public class TreeJSONWriter {
 	public static void asPositionArray(Set<Integer> elements, Writer writer, int level) throws IOException {
 
 		writer.write('[' + System.lineSeparator());
-		
+
 		if (!elements.isEmpty()) {
 			int size = elements.size();
 			int count = 0;
@@ -129,7 +135,11 @@ public class TreeJSONWriter {
 				
 		int size = elements.keySet().size();
 		int count = 0;
+project2
+
+
 		
+master
 		if (!elements.isEmpty()) {
 			for (String key : elements.keySet()) {
 				count++;
@@ -208,8 +218,148 @@ public class TreeJSONWriter {
 					asPathIndex(elements.get(key), writer, level + 1);
 					writer.write(System.lineSeparator());
 				}
+project2
 			}
 		}
 		writer.write("}" + System.lineSeparator());
+	}
+
+	/**
+	 * Writes all the locations and the total number of words they contain from the Inverted Index data 
+	 * structure as pretty JSON object using the provided
+	 * {@link Writer} and indentation level.
+	 *
+	 * @param elements the inverted index to convert to JSON
+	 * @param writer the writer to use
+	 * @param level the initial indentation level
+	 * @throws IOException if the writer encounters any issues
+	 * @throws NullPointerException if the writer encounters null as the path
+	 */
+	public static void asLocations(Map<String, Integer> locationsMap, Path path) {
+		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+
+			int level = 0;
+			writer.write("{" + System.lineSeparator());
+			int size = locationsMap.size();
+			int count = 0;
+
+			for (String location : locationsMap.keySet()) {
+				count++;
+				if (count != size) {
+					indent(level + 1, writer);
+					quote(location, writer);
+					writer.write(": " + locationsMap.get(location) + ", " + System.lineSeparator());
+				} else {
+					indent(level + 1, writer);
+					quote(location, writer);
+					writer.write(": " + locationsMap.get(location) + System.lineSeparator());
+				}
+			}
+			writer.write("}");
+		} catch (IOException | NullPointerException e) {
+			System.out.println("There was an issue finding the directory or file: " + path);
+		}
+	}
+
+	/**
+	 * Helper method for writing the map of search results formatted as a pretty JSON object to
+	 * the specified file.
+	 *
+	 * @param results the elements to convert to JSON
+	 * @param path the path to the file write to output
+	 * @throws IOException if the writer encounters any issues
+	 *
+	 */
+	public static void asSearchResult(Map<String, List<Search>> results, Path path) {
+		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+			asSearchResult(results, writer, 0);
+		} catch (IOException | NullPointerException e) {
+			System.out.println("There was an issue finding the direcotry or file: " + path);
+		}
+	}
+
+	/**
+	 * Writes the map of search results formatted as a pretty JSON object to specified file
+	 * @param results the map that contains all the search results, sorted
+	 * @param writer the writer to use
+	 * @param level the initial indentation level
+	 * @throws IOException if the writer encounters any issues
+	 */
+	public static void asSearchResult(Map<String, List<Search>> results,
+			Writer writer, int level) throws IOException {
+
+		writer.write("[" + System.lineSeparator());
+
+		Iterator<String> itr = results.keySet().iterator();
+		while (itr.hasNext()) {
+			String next = itr.next().toString();
+			indent(level + 1, writer);
+			writer.write("{" + System.lineSeparator());
+			indent(level + 2, writer);
+			quote("queries", writer);
+			writer.write(": ");
+			quote(next, writer);
+			writer.write("," + System.lineSeparator());
+			indent(level + 2, writer);
+			quote("results", writer);
+			writer.write(": [" + System.lineSeparator());
+
+			asNestedSearch(next, results, writer, level + 3);
+
+			indent(level + 2, writer);
+			writer.write("]" + System.lineSeparator());
+
+			if (itr.hasNext()) {
+				indent(level + 1, writer);
+				writer.write("}," + System.lineSeparator());
+			} else {
+				indent(level + 1, writer);
+				writer.write("}" + System.lineSeparator());
+			}
+		}
+		writer.write("]");
+	}
+
+	/**
+	 * Writes the list of sorted queries from each line of the query file
+	 * @param results the map that contains all the search results, sorted
+	 * @param writer the writer to use
+	 * @param level the initial indentation level
+	 * @throws IOException if the writer encounters any issues
+	 */
+	public static void asNestedSearch(String next, Map<String, List<Search>> results, Writer writer, 
+			int level) throws IOException {
+
+		Iterator<Search> itr = results.get(next).iterator();
+		int size = results.get(next).size();
+		int count = 0;
+
+		while (itr.hasNext()) {
+			count++;
+			Search temp = itr.next();
+
+			indent(level, writer);
+			writer.write("{" + System.lineSeparator());
+			indent(level + 1, writer);
+			quote("where", writer);
+			writer.write(": ");
+			quote(temp.getLocation(), writer);
+			writer.write("," + System.lineSeparator());
+			indent(level + 1, writer);
+			quote("count", writer);
+			writer.write(": " + (int) temp.getMatches() + "," + System.lineSeparator());
+			indent(level + 1, writer);
+			quote("score", writer);
+			writer.write(": " + String.valueOf(temp.getScore()) + System.lineSeparator());
+			indent(level, writer);
+
+			if (count != size) {
+				writer.write("}," + System.lineSeparator());
+			} else {
+				writer.write("}" + System.lineSeparator());
+
+master
+			}
+		}
 	}
 }

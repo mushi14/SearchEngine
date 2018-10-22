@@ -2,6 +2,11 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+project2
+import java.util.ArrayList;
+import java.util.List;
+
+master
 
 public class PathChecker {
 
@@ -22,10 +27,41 @@ public class PathChecker {
 				}
 			}
 		} else if (Files.isRegularFile(path)) {
+project2
+			String name = path.toString();
+			if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
+
 			String name = path.toString().toLowerCase();
 			if (name.endsWith(".txt") || name.endsWith(".text")) {
+master
 				TextFileStemmer.stemFile(path, index);
 			}
 		}
 	}
+project2
+
+	/**
+	 * Checks to see if the path provided for queries is a directory or file. 
+	 * @param path path to the file or directory
+	 * @return list of files valid query files
+	 * @throws IOException
+	 */
+	public static List<String> queryFiles(Path path) throws IOException {
+		List<String> files = new ArrayList<>();
+		if (Files.isDirectory(path)) {
+			try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
+				for (Path file: filePathStream) {
+					queryFiles(file);
+				}
+			}
+		} else if (Files.isRegularFile(path)) {
+			String name = path.toString();
+			if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
+				files.add(name);
+			}
+		}
+		return files;
+	}
+
+master
 }

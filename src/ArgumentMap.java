@@ -1,3 +1,8 @@
+project2
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+master
 import java.util.HashMap;
 import java.util.Map;
 
@@ -103,8 +108,19 @@ public class ArgumentMap {
 	 * @return the value to which the specified flag is mapped, or {@code null} if
 	 *         there is no mapping for the flag
 	 */
+project2
+	public Path getPath(String flag) {
+		Path path;
+		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
+			path = Paths.get(argMap.get(flag));
+		} else {
+			path = null;
+		}
+		return path;
+
 	public String getPath(String flag) {
 		return argMap.get(flag);
+master
 	}
 
 	/**
