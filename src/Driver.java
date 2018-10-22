@@ -15,6 +15,7 @@ public class Driver {
 	 * @return 0 if everything went well
 	 */
 	public static void main(String[] args) {
+		
 		InvertedIndex index = new InvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
 		Map<String, List<Search>> results = new TreeMap<>();
@@ -22,9 +23,8 @@ public class Driver {
 		if (!argMap.isEmpty()) {
 			if (argMap.hasFlag("-path")) {
 				try {
-
 					Path path = argMap.getPath("-path");
-			if (argMap.flagPath("-path")) {
+					if (argMap.flagPath("-path")) {
 						PathChecker.filesInPath(path, index);
 					} else {
 						System.out.println("There is no path provided. A valid path is needed to build the index.");
