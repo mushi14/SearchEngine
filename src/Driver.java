@@ -15,25 +15,16 @@ public class Driver {
 	 * @return 0 if everything went well
 	 */
 	public static void main(String[] args) {
-project2
-		
 		InvertedIndex index = new InvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
 		Map<String, List<Search>> results = new TreeMap<>();
 
-		InvertedIndex index = new InvertedIndex();
-		ArgumentMap argMap = new ArgumentMap(args);
-master
-
 		if (!argMap.isEmpty()) {
 			if (argMap.hasFlag("-path")) {
 				try {
-project2
-					Path path = argMap.getPath("-path");
 
-					Path path = Paths.get(argMap.getPath("-path"));
-master
-					if (argMap.flagPath("-path")) {
+					Path path = argMap.getPath("-path");
+			if (argMap.flagPath("-path")) {
 						PathChecker.filesInPath(path, index);
 					} else {
 						System.out.println("There is no path provided. A valid path is needed to build the index.");
@@ -42,7 +33,6 @@ master
 					System.out.println("There was an issue finding the path. A valid path is needed to build the index.");
 				}
 			}
-project2
 
 			if (argMap.hasFlag("-index")) {
 				try {
@@ -102,24 +92,6 @@ project2
 					}
 				} catch (IOException | NullPointerException e) {
 						System.out.println("File not found, locations cannot be printed in json format.");
-
-			
-			if (argMap.hasFlag("-index")) {
-				try {
-					Path path = Paths.get(argMap.getPath("-index"));
-					if (argMap.flagPath("-index")) {
-						index.writeJSON(path);
-					} else {
-						index.writeJSON(Paths.get("index.json"));
-					}
-				} catch (IOException | NullPointerException e) {
-					// TODO See if the fix to TreeJSONWriter lets you delete this try/catch
-//					try {
-//						index.writeJSON(Paths.get("index.json"));
-//					} catch (IOException x) {
-						System.out.println("File not found, index cannot be printed in json format.");
-//					}
-master
 				}
 			}
 		}
