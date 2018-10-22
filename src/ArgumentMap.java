@@ -105,7 +105,6 @@ public class ArgumentMap {
 	 * @return the value to which the specified flag is mapped, or {@code null} if
 	 *         there is no mapping for the flag
 	 */
-project2
 	public Path getPath(String flag) {
 		Path path;
 		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
@@ -114,10 +113,6 @@ project2
 			path = null;
 		}
 		return path;
-
-	public String getPath(String flag) {
-		return argMap.get(flag);
-master
 	}
 
 	/**
