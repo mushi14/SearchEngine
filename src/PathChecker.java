@@ -22,8 +22,8 @@ public class PathChecker {
 				}
 			}
 		} else if (Files.isRegularFile(path)) {
-			String name = path.toString(); // TODO toLowerCase here to avoid calling twice
-			if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
+			String name = path.toString().toLowerCase();
+			if (name.endsWith(".txt") || name.endsWith(".text")) {
 				TextFileStemmer.stemFile(path, index);
 			}
 		}

@@ -71,7 +71,7 @@ public class TreeJSONWriter {
 	public static void asPositionArray(Set<Integer> elements, Writer writer, int level) throws IOException {
 
 		writer.write('[' + System.lineSeparator());
-		
+
 		if (!elements.isEmpty()) {
 			int size = elements.size();
 			int count = 0;
@@ -126,26 +126,27 @@ public class TreeJSONWriter {
 	 */
 	public static void asPathIndex(TreeMap<String, TreeSet<Integer>> elements, Writer writer, int level) throws IOException {
 		writer.write("{" + System.lineSeparator());
-				
+
 		int size = elements.keySet().size();
 		int count = 0;
-		
-		// TODO if (!elements.isEmpty()) {
-		for (String key : elements.keySet()) {
-			count++;
-			if (count != size) {
-				indent(level + 1, writer);
-				quote(key, writer);
-				writer.write(": ");
-				asPositionArray(elements.get(key), writer, level + 1);
-				writer.write("," + System.lineSeparator());
-			} else {
-				indent(level + 1, writer);
-				quote(key, writer);
-				writer.write(": ");
-				asPositionArray(elements.get(key), writer, level + 1);
-				writer.write(System.lineSeparator());
-			}	
+
+		if (!elements.isEmpty()) {
+			for (String key : elements.keySet()) {
+				count++;
+				if (count != size) {
+					indent(level + 1, writer);
+					quote(key, writer);
+					writer.write(": ");
+					asPositionArray(elements.get(key), writer, level + 1);
+					writer.write("," + System.lineSeparator());
+				} else {
+					indent(level + 1, writer);
+					quote(key, writer);
+					writer.write(": ");
+					asPositionArray(elements.get(key), writer, level + 1);
+					writer.write(System.lineSeparator());
+				}	
+			}
 		}
 		indent(level, writer);
 		writer.write("}");
@@ -190,22 +191,23 @@ public class TreeJSONWriter {
 		writer.write("{" + System.lineSeparator());
 		int size = elements.size();
 		int count = 0;
-		
-		// TODO if (!elements.isEmpty()) {
-		for (String key : elements.keySet()) {
-			count++;
-			if (count != size) {
-				indent(level + 1, writer);
-				quote(key, writer);
-				writer.write(": ");
-				asPathIndex(elements.get(key), writer, level + 1);
-				writer.write("," + System.lineSeparator());
-			} else {
-				indent(level + 1, writer);
-				quote(key, writer);
-				writer.write(": ");
-				asPathIndex(elements.get(key), writer, level + 1);
-				writer.write(System.lineSeparator());
+
+		if (!elements.isEmpty()) {
+			for (String key : elements.keySet()) {
+				count++;
+				if (count != size) {
+					indent(level + 1, writer);
+					quote(key, writer);
+					writer.write(": ");
+					asPathIndex(elements.get(key), writer, level + 1);
+					writer.write("," + System.lineSeparator());
+				} else {
+					indent(level + 1, writer);
+					quote(key, writer);
+					writer.write(": ");
+					asPathIndex(elements.get(key), writer, level + 1);
+					writer.write(System.lineSeparator());
+				}
 			}
 		}
 		writer.write("}" + System.lineSeparator());

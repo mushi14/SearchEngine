@@ -146,12 +146,8 @@ public class InvertedIndex {
 	 * @return integer size of the number of paths associated with word in the map
 	 */
 	public int positions(String word, String path) {
-		if (containsWord(word)) { // TODO Can remove this one
-			if (containsPath(word, path)) {
-				return index.get(word).get(path).size();
-			} else {
-				return 0;
-			}
+		if (containsPath(word, path)) {
+			return index.get(word).get(path).size();
 		} else {
 			return 0;
 		}
@@ -190,12 +186,8 @@ public class InvertedIndex {
 	 * @return returns true if position exists in the path, false otherwise
 	 */
 	public boolean containsPosition(String word, String path, int position) {
-		if (containsWord(word)) { // TODO Can remove?
-			if (containsPath(word, path)) {
-				return index.get(word).get(path).contains(position);
-			} else {
-				return false;
-			}
+		if (containsPath(word, path)) {
+			return index.get(word).get(path).contains(position);
 		} else {
 			return false;
 		}
@@ -206,7 +198,7 @@ public class InvertedIndex {
 	 * @param path path to the file to write to
 	 * @throws IOException in case there's any problem finding the file
 	 */
-	public void writeJSON(Path path) throws IOException {
+	public void writeIndexJSON(Path path) throws IOException {
 		TreeJSONWriter.asTripleNested(this.index, path);
 	}
 

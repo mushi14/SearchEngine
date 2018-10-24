@@ -1,3 +1,5 @@
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,19 +36,6 @@ public class ArgumentMap {
 	public void parse(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
-				if ((i + 1) < args.length) {
-					if (!isFlag(args[i + 1])) {
-						argMap.put(args[i], args[i + 1]);
-						i++;
-					} else {
-						argMap.put(args[i], null);
-					}
-				} else {
-					argMap.put(args[i], null);
-				}
-			}
-			/* TODO
-			if (isFlag(args[i])) {
 				if ((i + 1) < args.length && !isFlag(args[i + 1])) {
 					argMap.put(args[i], args[i + 1]);
 					i++;
@@ -54,10 +43,7 @@ public class ArgumentMap {
 					argMap.put(args[i], null);
 				}
 			} 
-			*/
 		}
-		// TODO See if you can simplify (not a big deal if not)
-		// Not sure how to simplify this further
 	}
 
 	/** 
@@ -119,8 +105,14 @@ public class ArgumentMap {
 	 * @return the value to which the specified flag is mapped, or {@code null} if
 	 *         there is no mapping for the flag
 	 */
-	public String getPath(String flag) {
-		return argMap.get(flag);
+	public Path getPath(String flag) {
+		Path path;
+		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
+			path = Paths.get(argMap.get(flag));
+		} else {
+			path = null;
+		}
+		return path;
 	}
 
 	/**
