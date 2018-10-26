@@ -42,7 +42,7 @@ public class ArgumentMap {
 				} else {
 					argMap.put(args[i], null);
 				}
-			} 
+			}
 		}
 	}
 
@@ -55,18 +55,14 @@ public class ArgumentMap {
 	public static boolean isFlag(String arg) {
 		try {
 			arg = arg.trim();
-			if (arg.length() >= 2) {
-				if (arg.charAt(0) == '-' && arg.charAt(1) != ' ') {
-					return true;
-				} else {
-					return false;
-				}
+			if (arg.charAt(0) == '-' && arg.charAt(1) != ' ') {
+				return true;
 			} else {
 				return false;
 			}
 		} catch (NullPointerException e) {
 			return false;
-		}	
+		}
 	}
 
 	/**
