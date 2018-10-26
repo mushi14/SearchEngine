@@ -151,9 +151,14 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * Total locations of all the words and the total words they contain 
 	 * @return TreeMap of locations and their total words
 	 */
-//	public Map<String, Integer> totalLocations() {
-//		
-//	}
+	public Map<String, Integer> totalLocations() {
+		lock.lockReadWrite();
+		try {
+			return super.totalLocations();
+		} finally {
+			lock.unlockReadWrite();
+		}
+	}
 
 	/** 
 	 * Checks to see if the map contains the word
@@ -249,18 +254,28 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
 	 */
-//	public void exactSearch(Map<String, List<Search>> results, Set<String> queries) {
-//		
-//	}
+	public void exactSearch(Map<String, List<Search>> results, Set<String> queries) {
+		lock.lockReadWrite();;
+		try {
+			super.exactSearch(results, queries);
+		} finally {
+			lock.unlockReadWrite();
+		}
+	}
 
 	/**
 	 * performs partial search on a line from the query file. Stores the results to results map
 	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
 	 */
-//	public void partialSearch(Map<String, List<Search>> results, Set<String> queries) {
-//		
-//	}
+	public void partialSearch(Map<String, List<Search>> results, Set<String> queries) {
+		lock.lockReadWrite();
+		try {
+			super.partialSearch(results, queries);
+		} finally {
+			lock.unlockReadWrite();
+		}
+	}
 
 	/** 
 	 * Prints in the inverted index
