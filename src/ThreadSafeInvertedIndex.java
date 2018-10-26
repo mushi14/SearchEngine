@@ -19,6 +19,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param word word inside of the file
 	 * @return TreeMap containing path and positions of word 
 	 */
+	@Override
 	public Map<String, Set<Integer>> get(String word) {
 		lock.lockReadOnly();
 		try {
@@ -34,6 +35,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param path location of the file
 	 * @param position the position of the word in the file
 	 */
+	@Override
 	public void add(String word, String path, int position) {
 		lock.lockReadWrite();
 		try {
@@ -48,6 +50,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param words list of words to add
 	 * @param location path of the file
 	 */
+	@Override
 	public void addAll(String[] words, String location) {
 		lock.lockReadWrite();
 		try {
@@ -62,6 +65,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 *
 	 * @return Returns a set view of all the paths
 	 */
+	@Override
 	public Set<String> getWords() {
 		lock.lockReadOnly();
 		try {
@@ -77,6 +81,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param word word inside of the file
 	 * @return Returns a set view of all the paths
 	 */
+	@Override
 	public Set<String> getPaths(String word) {
 		lock.lockReadOnly();
 		try {
@@ -93,6 +98,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param path path of the file
 	 * @return Returns a set view of all the positions associated with the path
 	 */
+	@Override
 	public Set<Integer> getPositions(String word, String path) {
 		lock.lockReadOnly();
 		try {
@@ -107,6 +113,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * 
 	 * @return integer size of the number of words in the map
 	 */
+	@Override
 	public int words() {
 		lock.lockReadOnly();
 		try {
@@ -122,6 +129,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param word word inside of the file
 	 * @return integer size of the number of paths associated with word in the map
 	 */
+	@Override
 	public int paths(String word) {
 		lock.lockReadOnly();
 		try {
@@ -138,6 +146,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param path path of the file
 	 * @return integer size of the number of paths associated with word in the map
 	 */
+	@Override
 	public int positions(String word, String path) {
 		lock.lockReadOnly();
 		try {
@@ -151,6 +160,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * Total locations of all the words and the total words they contain 
 	 * @return TreeMap of locations and their total words
 	 */
+	@Override
 	public Map<String, Integer> totalLocations() {
 		lock.lockReadWrite();
 		try {
@@ -166,6 +176,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param word word inside the file
 	 * @return true if map contains the word
 	 */
+	@Override
 	public boolean containsWord(String word) {
 		lock.lockReadOnly();
 		try {
@@ -182,6 +193,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param path path of the file
 	 * @return true if word contains the path
 	 */
+	@Override
 	public boolean containsPath(String word, String path) {
 		lock.lockReadOnly();
 		try {
@@ -198,6 +210,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param position specific position the word occurs in the file path
 	 * @return returns true if position exists in the path, false otherwise
 	 */
+	@Override
 	public boolean containsPosition(String word, String path, int position) {
 		lock.lockReadOnly();
 		try {
@@ -212,6 +225,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param path path to the file to write to
 	 * @throws IOException in case there's any problem finding the file
 	 */
+	@Override
 	public void writeIndexJSON(Path path) throws IOException {
 		lock.lockReadWrite();;
 		try {
@@ -226,6 +240,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param path path to the file to write to
 	 * @throws IOException in case there's any problem finding the file
 	 */
+	@Override
 	public void writeLocationsJSON(Path path) throws IOException {
 		lock.lockReadWrite();;
 		try {
@@ -240,6 +255,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param path path to the file to write to
 	 * @throws IOException in case there's any problem finding the file
 	 */
+	@Override
 	public void writeSearchResultsJSON(Map<String, List<Search>> results, Path path) throws IOException {
 		lock.lockReadWrite();;
 		try {
@@ -254,6 +270,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
 	 */
+	@Override
 	public void exactSearch(Map<String, List<Search>> results, Set<String> queries) {
 		lock.lockReadWrite();;
 		try {
@@ -268,6 +285,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
 	 */
+	@Override
 	public void partialSearch(Map<String, List<Search>> results, Set<String> queries) {
 		lock.lockReadWrite();
 		try {
