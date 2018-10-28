@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 public class WorkQueue {
 
-	Logger logger = LogManager.getRootLogger();
+	Logger logger = LogManager.getLogger();
 
 	private final ThreadPool[] workers;
 	private final LinkedList<Runnable> queue;

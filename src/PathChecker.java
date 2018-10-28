@@ -53,17 +53,4 @@ public class PathChecker {
 		}
 		return files;
 	}
-
-	public class FilesWorker implements Runnable {
-
-		private Path file;
-		public FilesWorker(Path path) {
-			this.file = path;
-		}
-
-		@Override
-		public void run() {
-			
-		}
-	}
 }
