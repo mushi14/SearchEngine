@@ -9,7 +9,7 @@
 
 		<File name="FileLog" fileName="debug.log" append="false">
 			<PatternLayout>
-				<Pattern>[%date{HH:mm:ss:SSS} %-5level{lowerCase=true}] %thread: %message%n</Pattern>
+				<Pattern>[%date{mm:ss:SSS} %-5level{lowerCase=true}] %thread: %message%n</Pattern>
 			</PatternLayout>
 		</File>
 	</Appenders>

@@ -10,53 +10,90 @@ import org.apache.logging.log4j.Logger;
 
 public class MultithreadedPathChecker {
 
-	Logger logger = LogManager.getLogger();
+	Logger logger = LogManager.getLogger(getClass());
 
-	private final Set<String> paths;
-	ThreadSafeInvertedIndex index = new ThreadSafeInvertedIndex();
+	public final Set<Path> paths;
+	private final WorkQueue queue;
+	private int pending;
+	public final ThreadSafeInvertedIndex threadSafeIndex;
 
-	private MultithreadedPathChecker() {
-		paths = new HashSet<>();
+	public MultithreadedPathChecker(Path path, int threads, ThreadSafeInvertedIndex threadSafeIndex) {
+		this.paths = new HashSet<>();
+		this.queue = new WorkQueue(threads);
+		this.pending = 0;
+		this.threadSafeIndex = threadSafeIndex;
+		parse(path, threadSafeIndex);
+		this.queue.shutdown();
 	}
 
-	private void parse(Path path) {
-		Thread worker = new FilesWorker(path);
-		worker.start();
+	public void parse(Path path, ThreadSafeInvertedIndex threadSafeIndex) {
+		queue.execute(new FilesTask(path));
+		finish();
 	}
 
-	private class FilesWorker extends Thread {
+	private synchronized void incrementPending() {
+		pending++;
+	}
+
+	private synchronized void decrementPending() {
+		pending--;
+
+		if (pending == 0) {
+			this.notifyAll();
+		}
+	}
+
+	private synchronized void finish() {
+		try {
+			while (pending > 0) {
+				this.wait();
+				logger.debug("woke up with pending at {}", pending);
+			}
+			logger.debug("Worker done!");
+		} catch (InterruptedException e) {
+			logger.debug(e.getMessage(), e);
+		}
+	}
+
+	private class  FilesTask implements Runnable {
 
 		private Path path;
 
-		public FilesWorker(Path path) {
+		public FilesTask(Path path) {
 			this.path = path;
-			logger.debug("Worker for {} created", path);
+			incrementPending();
+			logger.debug("Worker for {} CREATED", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
 		}
 
 		@Override
 		public void run() {
+			Set<Path> temp = new HashSet<>();
+
 			try {
 				if (Files.isDirectory(path)) {
 					try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
 						for (Path file: filePathStream) {
-							paths.add(file.toString());
-							Thread worker = new FilesWorker(file);
-							worker.start();
-							logger.debug("New worker created and started for {}", file);
+							queue.execute(new FilesTask(file));
 						}
 					}
 				} else if (Files.isRegularFile(path)) {
 					String name = path.toString();
 					if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
-						paths.add(path.toString());
-//						TextFileStemmer.stemFile(path, index);
+						temp.add(path);
+						logger.debug("Adding {} to index", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
+						TextFileStemmer.stemFile(path, threadSafeIndex);
 					}
+				}
+
+				synchronized (paths) {
+					paths.addAll(temp);
 				}
 			} catch (IOException e) {
 				logger.debug(e.getMessage(), e);
 			}
 
-			logger.debug("Worker for {} finished", path);
+			decrementPending();
+			logger.debug("Worker for {} FINISHED", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
 		}
 	}
 }

@@ -17,15 +17,31 @@ public class Driver {
 	public static void main(String[] args) {
 		
 		InvertedIndex index = new InvertedIndex();
+		ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();;
 		ArgumentMap argMap = new ArgumentMap(args);
 		Map<String, List<Search>> results = new TreeMap<>();
+		boolean multithreaded = false;
+		int threads = 5;
 
 		if (!argMap.isEmpty()) {
+			if (argMap.hasFlag("-threads")) {
+				multithreaded = true;
+				if (argMap.flagPath("-threads")) {
+					threads = argMap.getThreads("-threads");
+				}
+			}
+
 			if (argMap.hasFlag("-path")) {
 				try {
 					Path path = argMap.getPath("-path");
 					if (argMap.flagPath("-path")) {
-						PathChecker.filesInPath(path, index);
+						if (multithreaded == true) {
+							MultithreadedPathChecker workers = new MultithreadedPathChecker(path, threads, threadSafeIndex);
+//							System.out.println("multithread: " + workers.paths);
+//							System.out.println(workers.threadSafeIndex.toString());
+						} else {
+							PathChecker.filesInPath(path, index);
+						}
 					} else {
 						System.out.println("There is no path provided. A valid path is needed to build the index.");
 					}
@@ -38,9 +54,17 @@ public class Driver {
 				try {
 					Path path = argMap.getPath("-index");
 					if (argMap.flagPath("-index")) {
-						index.writeIndexJSON(path);
+						if (multithreaded == true) {
+							threadSafeIndex.writeIndexJSON(path);
+						} else {
+							index.writeIndexJSON(path);
+						}
 					} else {
-						index.writeIndexJSON(Paths.get("index.json"));
+						if (multithreaded == true) {
+							threadSafeIndex.writeIndexJSON(Paths.get("index.json"));
+						} else {
+							index.writeIndexJSON(Paths.get("index.json"));
+						}
 					}
 				} catch (IOException | NullPointerException e) {
 						System.out.println("File not found, index cannot be printed in json format.");

@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class ArgumentMap {
 
-	private final Map<String, String> argMap;
+	public final Map<String, String> argMap;
 
 	/**
 	 * Initializes this argument map.
@@ -113,6 +113,16 @@ public class ArgumentMap {
 			path = null;
 		}
 		return path;
+	}
+
+	public int getThreads(String flag) {
+		int threads;
+		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
+			threads = Integer.valueOf(argMap.get(flag));
+		} else {
+			threads = 5;
+		}
+		return threads;
 	}
 
 	/**

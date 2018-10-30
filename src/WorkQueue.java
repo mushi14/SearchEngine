@@ -1,4 +1,4 @@
-import java.util.LinkedList;
+ import java.util.LinkedList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +31,7 @@ public class WorkQueue {
 	public void shutdown() {
 		shutdown = true;
 		synchronized (queue) {
-			notifyAll();
+			queue.notifyAll();
 		}
 	}
 

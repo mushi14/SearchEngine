@@ -1,0 +1,5 @@
+[19:26:939 debug] main: Worker for /simple/hello.txt CREATED
+[19:26:943 debug] Thread-0: Adding /simple/hello.txt to index
+[19:26:976 debug] Thread-0: Worker for /simple/hello.txt FINISHED
+[19:26:976 debug] main: woke up with pending at 0
+[19:26:977 debug] main: Worker done!
