@@ -29,12 +29,16 @@ public class MultithreadedPathChecker {
 	public void parse(Path path) {
 		try {
 			if (Files.isRegularFile(path)) {
-				queue.execute(new FilesTask(path));
-				finish();
+				String name = path.toString();
+				if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
+					queue.execute(new FilesTask(path));
+					finish();
+				}
 			} else if (Files.isDirectory(path)) {
 				try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
 					for (Path file: filePathStream) {
 						parse(file);
+//						queue.execute(new FilesTask(path));
 					}
 				}
 			}
@@ -74,25 +78,22 @@ public class MultithreadedPathChecker {
 		public FilesTask(Path path) {
 			this.path = path;
 			incrementPending();
-//			logger.debug("Worker for {} CREATED", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
+			logger.debug("Worker for {} CREATED", path.toString().substring(path.toString().lastIndexOf("text", path.toString().length())));
 		}
 
 		@Override
 		public void run() {
 			try {
-				String name = path.toString();
-				if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
-	//				logger.debug("Adding {} to index", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
-					synchronized (threadSafeIndex) {
-						TextFileStemmer.stemFile(path, threadSafeIndex);
-					}
+				synchronized (threadSafeIndex) {
+					logger.debug("Adding {} to index", path.toString().substring(path.toString().lastIndexOf("text", path.toString().length())));
+					TextFileStemmer.stemFile(path, threadSafeIndex);
 				}
 			} catch (IOException e) {
 				logger.debug(e.getMessage(), e);
 			}
 
 			decrementPending();
-//			logger.debug("Worker for {} FINISHED", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
+			logger.debug("Worker for {} FINISHED", path.toString().substring(path.toString().lastIndexOf("text", path.toString().length())));
 		}
 	}
 }

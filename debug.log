@@ -1,5 +1,65 @@
-[19:26:939 debug] main: Worker for /simple/hello.txt CREATED
-[19:26:943 debug] Thread-0: Adding /simple/hello.txt to index
-[19:26:976 debug] Thread-0: Worker for /simple/hello.txt FINISHED
-[19:26:976 debug] main: woke up with pending at 0
-[19:26:977 debug] main: Worker done!
+[54:41:022 debug] main: Worker for text/simple/symbols.txt CREATED
+[54:41:027 debug] Thread-0: Adding text/simple/symbols.txt to index
+[54:41:074 debug] main: woke up with pending at 0
+[54:41:074 debug] Thread-0: Worker for text/simple/symbols.txt FINISHED
+[54:41:075 debug] main: Worker done!
+[54:41:076 debug] main: Worker for text/simple/empty.txt CREATED
+[54:41:076 debug] Thread-4: Adding text/simple/empty.txt to index
+[54:41:077 debug] Thread-4: Worker for text/simple/empty.txt FINISHED
+[54:41:077 debug] main: woke up with pending at 0
+[54:41:078 debug] main: Worker done!
+[54:41:078 debug] main: Worker for text/simple/.txt/hidden.txt CREATED
+[54:41:078 debug] Thread-0: Adding text/simple/.txt/hidden.txt to index
+[54:41:079 debug] Thread-0: Worker for text/simple/.txt/hidden.txt FINISHED
+[54:41:079 debug] main: woke up with pending at 0
+[54:41:080 debug] main: Worker done!
+[54:41:080 debug] main: Worker for text/simple/position.teXt CREATED
+[54:41:081 debug] Thread-4: Adding text/simple/position.teXt to index
+[54:41:084 debug] Thread-4: Worker for text/simple/position.teXt FINISHED
+[54:41:084 debug] main: woke up with pending at 0
+[54:41:084 debug] main: Worker done!
+[54:41:085 debug] main: Worker for text CREATED
+[54:41:085 debug] Thread-0: Adding text to index
+[54:41:087 debug] Thread-0: Worker for text FINISHED
+[54:41:087 debug] main: woke up with pending at 0
+[54:41:087 debug] main: Worker done!
+[54:41:087 debug] main: Worker for text/simple/digits.txt CREATED
+[54:41:088 debug] Thread-4: Adding text/simple/digits.txt to index
+[54:41:089 debug] Thread-4: Worker for text/simple/digits.txt FINISHED
+[54:41:089 debug] main: woke up with pending at 0
+[54:41:090 debug] main: Worker done!
+[54:41:090 debug] main: Worker for text/simple/capital_extension.TXT CREATED
+[54:41:090 debug] Thread-0: Adding text/simple/capital_extension.TXT to index
+[54:41:092 debug] main: woke up with pending at 0
+[54:41:092 debug] Thread-0: Worker for text/simple/capital_extension.TXT FINISHED
+[54:41:092 debug] main: Worker done!
+[54:41:093 debug] main: Worker for text CREATED
+[54:41:093 debug] Thread-4: Adding text to index
+[54:41:096 debug] Thread-4: Worker for text FINISHED
+[54:41:096 debug] main: woke up with pending at 0
+[54:41:097 debug] main: Worker done!
+[54:41:098 debug] main: Worker for text/simple/a/b/c/d/subdir.txt CREATED
+[54:41:098 debug] Thread-0: Adding text/simple/a/b/c/d/subdir.txt to index
+[54:41:099 debug] Thread-0: Worker for text/simple/a/b/c/d/subdir.txt FINISHED
+[54:41:100 debug] main: woke up with pending at 0
+[54:41:100 debug] main: Worker done!
+[54:41:101 debug] main: Worker for text/simple/words.tExT CREATED
+[54:41:102 debug] Thread-4: Adding text/simple/words.tExT to index
+[54:41:105 debug] Thread-4: Worker for text/simple/words.tExT FINISHED
+[54:41:105 debug] main: woke up with pending at 0
+[54:41:105 debug] main: Worker done!
+[54:41:106 debug] main: Worker for text CREATED
+[54:41:106 debug] Thread-0: Adding text to index
+[54:41:108 debug] Thread-0: Worker for text FINISHED
+[54:41:108 debug] main: woke up with pending at 0
+[54:41:109 debug] main: Worker done!
+[54:41:109 debug] main: Worker for text/simple/hello.txt CREATED
+[54:41:109 debug] Thread-4: Adding text/simple/hello.txt to index
+[54:41:110 debug] Thread-4: Worker for text/simple/hello.txt FINISHED
+[54:41:111 debug] main: woke up with pending at 0
+[54:41:111 debug] main: Worker done!
+[54:41:111 debug] main: Worker for text/simple/capitals.txt CREATED
+[54:41:111 debug] Thread-0: Adding text/simple/capitals.txt to index
+[54:41:112 debug] Thread-0: Worker for text/simple/capitals.txt FINISHED
+[54:41:113 debug] main: woke up with pending at 0
+[54:41:114 debug] main: Worker done!
