@@ -17,7 +17,7 @@ public class InvertedIndex {
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	private Map<String, Integer> locationsMap;
+	private Map<String, Integer> locationsMap; // TODO final
 
 	/**
 	 *  Initializes the index.
@@ -26,6 +26,7 @@ public class InvertedIndex {
 		index = new TreeMap<>();
 	}
 
+	// TODO Remove
 	/** 
 	 * Gets the TreeMap of keys paths and values positions associated with the word
 	 * 
@@ -61,6 +62,17 @@ public class InvertedIndex {
 			index.get(word).put(path, new TreeSet<Integer>());
 			index.get(word).get(path).add(position);
 		}
+		
+		/* TODO
+		index.putIfAbsent(word, new TreeMap<String, TreeSet<Integer>>());
+		index.get(word).putIfAbsent(path, new TreeSet<Integer>());
+		index.get(word).get(path).add(position);
+		*/
+		
+		/*
+		 * TODO Update the location map here every time you add.
+		 * (increase the count for that location by one)
+		 */
 	}
 
 	/**
@@ -156,6 +168,7 @@ public class InvertedIndex {
 		}
 	}
 
+	// TODO Remove
 	/**
 	 * Total locations of all the words and the total words they contain 
 	 * @return TreeMap of locations and their total words
@@ -231,7 +244,7 @@ public class InvertedIndex {
 	 */
 	public void writeLocationsJSON(Path path) throws IOException {
 		Map<String, Integer> totalLocations = totalLocations();
-		TreeJSONWriter.asLocations(totalLocations, path);
+		TreeJSONWriter.asLocations(totalLocations, path); // TODO locationsMap
 	}
 
 	/**
@@ -243,6 +256,11 @@ public class InvertedIndex {
 		TreeJSONWriter.asSearchResult(results, path);
 	}
 
+	/*
+	 * TODO
+	 * public List<Search> exactSearch(Set<String> queries)
+	 */
+	
 	/**
 	 * Performs exact search on a line from the query file. Stores the results to results map
 	 * @param results map containing key-line and value-Search to refer from
@@ -256,7 +274,7 @@ public class InvertedIndex {
 		double rawScore = 0;
 		String score = "";
 
-		Map<String, Search> locationsList = new TreeMap<>();
+		Map<String, Search> locationsList = new TreeMap<>(); // TODO HashMap
 		Map<String, Integer> totalLocations = totalLocations();
 		if (!results.containsKey(line)) {
 			results.put(line, new ArrayList<>());
@@ -280,14 +298,18 @@ public class InvertedIndex {
 								rawScore = totalMatches / totalWords;
 								rawScore = Search.round(rawScore);
 								score = FORMATTER.format(totalMatches / totalWords);
-
+								// TODO Better variable names
 								Search q = new Search(loc, totalMatches, totalWords, rawScore, score);
 								locationsList.put(loc, q);
+								
+								// TODO resultList.add(q);
 							}
 						}
 					}
 				}
 			}
+			
+			// TODO separate loop... can embed (see above)
 			List<Search> tempList = new ArrayList<>();
 			for (String loc : locationsList.keySet()) {
 				tempList.add(locationsList.get(loc));

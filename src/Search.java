@@ -2,14 +2,18 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Comparator;
 
+// TODO public class Search implements Comparable<Search>
 public class Search {
 
-	private String location;
-	private double totalMatches;
-	private double totalWords;
+	private String location;			// TODO final
+	private double totalMatches;		// TODO int
+	private double totalWords;			// TODO int, final
 	private double rawScore;
 	private String score;
 
+	
+	// TODO public Search(String location, int matches, int total)
+	// TODO calculate the score based on matches / total
 	/**
 	 * Constructor for the Query class
 	 * @param loc location that the query word is found in
@@ -57,15 +61,23 @@ public class Search {
 	public double getRawScore() {
 		return rawScore;
 	}
+	
+	/* TODO
+	public void updateMatches(int count) {
+		add to the current count
+		recalculate the score
+	}*/
 
 	/**
 	 * Gets the rounded score of the results in the location
 	 * @return rounded score
 	 */
 	public String getScore() {
+		// TODO DecimalFormatter code should go here
 		return score;
 	}
 
+	// TODO Remove?
 	/**
 	 * Converts the score to 15 decimal points in order to better the score comparison of the results
 	 * @param score score to convert to 15 decimal point
@@ -77,6 +89,7 @@ public class Search {
 			.doubleValue();
 	}
 
+	// TODO Remove...
 	/**
 	 * Inner class that implements the comparator interface
 	 * @author mushahidhassan
@@ -103,6 +116,12 @@ public class Search {
 			}
 		}
 	}
+	
+	/* TODO
+	public int compareTo(Search other) {
+		
+	}
+	*/
 
 	/**
 	 * Overridden toString method
