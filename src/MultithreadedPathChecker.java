@@ -23,22 +23,24 @@ public class MultithreadedPathChecker {
 		this.pending = 0;
 		this.threadSafeIndex = threadSafeIndex;
 		parse(path);
+		finish();
 		this.queue.shutdown();
 	}
 
 	public void parse(Path path) {
+//		logger.debug("Starting worker {} CREATED", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
+//		queue.execute(new FilesTask(path));
 		try {
 			if (Files.isRegularFile(path)) {
 				String name = path.toString();
 				if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
+//					logger.debug("Worker for {} CREATED", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
 					queue.execute(new FilesTask(path));
-					finish();
 				}
 			} else if (Files.isDirectory(path)) {
 				try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
 					for (Path file: filePathStream) {
 						parse(file);
-//						queue.execute(new FilesTask(path));
 					}
 				}
 			}
@@ -78,22 +80,34 @@ public class MultithreadedPathChecker {
 		public FilesTask(Path path) {
 			this.path = path;
 			incrementPending();
-			logger.debug("Worker for {} CREATED", path.toString().substring(path.toString().lastIndexOf("text", path.toString().length())));
 		}
 
 		@Override
 		public void run() {
 			try {
-				synchronized (threadSafeIndex) {
-					logger.debug("Adding {} to index", path.toString().substring(path.toString().lastIndexOf("text", path.toString().length())));
-					TextFileStemmer.stemFile(path, threadSafeIndex);
-				}
+//				if (Files.isRegularFile(path)) {
+//					String name = path.toString();
+//					if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
+//						logger.debug("Worker for {} CREATED", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
+						synchronized (threadSafeIndex) {
+//							logger.debug("Adding {} to index", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
+							TextFileStemmer.stemFile(path, threadSafeIndex);
+						}
+//					}
+//				} else if (Files.isDirectory(path)) {
+//					try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
+//						for (Path file: filePathStream) {
+////							parse(file);
+//							queue.execute(new FilesTask(file));
+//						}
+//					}
+//				}
 			} catch (IOException e) {
 				logger.debug(e.getMessage(), e);
 			}
 
 			decrementPending();
-			logger.debug("Worker for {} FINISHED", path.toString().substring(path.toString().lastIndexOf("text", path.toString().length())));
+//			logger.debug("Worker for {} FINISHED", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
 		}
 	}
 }
