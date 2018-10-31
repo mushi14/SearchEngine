@@ -24,6 +24,7 @@ public class Driver {
 		int threads = 5;
 
 		if (!argMap.isEmpty()) {
+
 			if (argMap.hasFlag("-threads")) {
 				multithreaded = true;
 				if (argMap.flagPath("-threads")) {
@@ -37,6 +38,7 @@ public class Driver {
 					if (argMap.flagPath("-path")) {
 						if (multithreaded == true) {
 							MultithreadedPathChecker workers = new MultithreadedPathChecker(path, threads, threadSafeIndex);
+							threadSafeIndex = workers.threadSafeIndex;
 //							System.out.println("multithread: " + workers.paths);
 //							System.out.println(workers.threadSafeIndex.toString());
 						} else {
