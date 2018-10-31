@@ -67,7 +67,7 @@ public class MultithreadedPathChecker {
 		}
 	}
 
-	private class  FilesTask implements Runnable {
+	private class FilesTask implements Runnable {
 		private Path path;
 
 		public FilesTask(Path path) {
