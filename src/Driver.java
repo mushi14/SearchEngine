@@ -17,7 +17,7 @@ public class Driver {
 	public static void main(String[] args) {
 		
 		InvertedIndex index = new InvertedIndex();
-		ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();;
+		ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
 		Map<String, List<Search>> results = new TreeMap<>();
 		boolean multithreaded = false;
@@ -40,7 +40,6 @@ public class Driver {
 							MultithreadedPathChecker workers = new MultithreadedPathChecker(path, threads, threadSafeIndex);
 							threadSafeIndex = workers.threadSafeIndex;
 //							System.out.println("multithread: " + threadSafeIndex);
-//							System.out.println(workers.threadSafeIndex.toString());
 						} else {
 							PathChecker.filesInPath(path, index);
 						}

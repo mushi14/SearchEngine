@@ -55,7 +55,7 @@ public class Search {
 	 * @return raw score
 	 */
 	public double getRawScore() {
-		return rawScore;
+		return round(rawScore);
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class Search {
 	 * @param score score to convert to 15 decimal point
 	 * @return score formatted with 15 decimal points
 	 */
-	public static double round(double score) {
+	public double round(double score) {
 		return BigDecimal.valueOf(score)
 			.setScale(15, RoundingMode.HALF_UP)
 			.doubleValue();
@@ -81,7 +81,7 @@ public class Search {
 	 * Inner class that implements the comparator interface
 	 * @author mushahidhassan
 	 */
-	static class Comparison implements Comparator<Search> {
+	public static class Comparison implements Comparator<Search> {
 		/**
 		 * sorts a list of queries in descending order by their raw score, if score is the same, sorts by
 		 * total number of words in a query location, if number of words the same, then sorts alphabetically (case insensitively)

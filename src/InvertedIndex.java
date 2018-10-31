@@ -269,7 +269,6 @@ public class InvertedIndex {
 								totalMatches += positions(word, loc);
 								totalWords = totalLocations.get(loc);
 								rawScore = totalMatches / totalWords;
-								rawScore = Search.round(rawScore);
 								score = FORMATTER.format(totalMatches / totalWords);
 
 								Search q = new Search(loc, totalMatches, totalWords, rawScore, score);
@@ -278,7 +277,6 @@ public class InvertedIndex {
 								totalMatches = positions(word, loc);
 								totalWords = totalLocations.get(loc);
 								rawScore = totalMatches / totalWords;
-								rawScore = Search.round(rawScore);
 								score = FORMATTER.format(totalMatches / totalWords);
 
 								Search q = new Search(loc, totalMatches, totalWords, rawScore, score);
@@ -326,7 +324,6 @@ public class InvertedIndex {
 								totalMatches += positions(word, loc);
 								totalWords = totalLocations.get(loc);
 								rawScore = totalMatches / totalWords;
-								rawScore = Search.round(rawScore);
 								score = FORMATTER.format(totalMatches / totalWords);
 
 								Search q = new Search(loc, totalMatches, totalWords, rawScore, score);
@@ -335,7 +332,6 @@ public class InvertedIndex {
 								totalMatches = positions(word, loc);
 								totalWords = totalLocations.get(loc);
 								rawScore = totalMatches / totalWords;
-								rawScore = Search.round(rawScore);
 								score = FORMATTER.format(totalMatches / totalWords);
 
 								Search q = new Search(loc, totalMatches, totalWords, rawScore, score);
