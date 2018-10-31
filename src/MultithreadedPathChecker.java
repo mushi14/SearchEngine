@@ -28,8 +28,6 @@ public class MultithreadedPathChecker {
 	}
 
 	public void parse(Path path) {
-//		logger.debug("Starting worker {} CREATED", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
-//		queue.execute(new FilesTask(path));
 		try {
 			if (Files.isRegularFile(path)) {
 				String name = path.toString();
@@ -85,23 +83,10 @@ public class MultithreadedPathChecker {
 		@Override
 		public void run() {
 			try {
-//				if (Files.isRegularFile(path)) {
-//					String name = path.toString();
-//					if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
-//						logger.debug("Worker for {} CREATED", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
-						synchronized (threadSafeIndex) {
-//							logger.debug("Adding {} to index", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
-							TextFileStemmer.stemFile(path, threadSafeIndex);
-						}
-//					}
-//				} else if (Files.isDirectory(path)) {
-//					try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
-//						for (Path file: filePathStream) {
-////							parse(file);
-//							queue.execute(new FilesTask(file));
-//						}
-//					}
-//				}
+				synchronized (threadSafeIndex) {
+	//				logger.debug("Adding {} to index", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
+					TextFileStemmer.stemFile(path, threadSafeIndex);
+				}
 			} catch (IOException e) {
 				logger.debug(e.getMessage(), e);
 			}
