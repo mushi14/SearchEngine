@@ -34,12 +34,11 @@ public class Driver {
 
 			if (argMap.hasFlag("-path")) {
 				try {
-					Path path = argMap.getPath("-path");
 					if (argMap.flagPath("-path")) {
+						Path path = argMap.getPath("-path");
 						if (multithreaded == true) {
 							MultithreadedPathChecker workers = new MultithreadedPathChecker(path, threads, threadSafeIndex);
 							threadSafeIndex = workers.threadSafeIndex;
-//							System.out.println("multithread: " + threadSafeIndex);
 						} else {
 							PathChecker.filesInPath(path, index);
 						}
@@ -53,8 +52,8 @@ public class Driver {
 
 			if (argMap.hasFlag("-index")) {
 				try {
-					Path path = argMap.getPath("-index");
 					if (argMap.flagPath("-index")) {
+						Path path = argMap.getPath("-index");
 						if (multithreaded == true) {
 							threadSafeIndex.writeIndexJSON(path);
 						} else {

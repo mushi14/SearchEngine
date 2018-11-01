@@ -78,10 +78,8 @@ public class MultithreadedPathChecker {
 		@Override
 		public void run() {
 			try {
-//				synchronized (threadSafeIndex) {
-//					logger.debug("Adding {} to index", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
-					TextFileStemmer.stemFile(path, threadSafeIndex);
-//				}
+//				logger.debug("Adding {} to index", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
+				TextFileStemmer.stemFile(path, threadSafeIndex);
 			} catch (IOException e) {
 				logger.debug(e.getMessage(), e);
 			}

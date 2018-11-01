@@ -46,7 +46,7 @@ public class WorkQueue {
 						try {
 							queue.wait();
 						} catch (InterruptedException e) {
-//							logger.log();
+							logger.debug(e.getMessage(), e);
 						}
 					}
 
@@ -60,7 +60,7 @@ public class WorkQueue {
 				try {
 					r.run();
 				} catch (RuntimeException e) {
-//					logger.log();
+					logger.debug(e.getMessage(), e);
 				}
 			}
 		}

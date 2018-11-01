@@ -80,20 +80,4 @@ public class ThreadSafeSearch extends Search{
 			lock.unlockReadOnly();
 		}
 	}
-
-	/**
-	 * Converts the score to 15 decimal points in order to better the score comparison of the results
-	 * @param score score to convert to 15 decimal point
-	 * @return score formatted with 15 decimal points
-	 */
-	public double round(double score) {
-		lock.lockReadWrite();
-		try {
-			return super.round(score);
-		} finally {
-			lock.unlockReadWrite();
-		}
-	}
-
-	
 }

@@ -1,5 +1,3 @@
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Comparator;
 
 public class Search {
@@ -55,7 +53,7 @@ public class Search {
 	 * @return raw score
 	 */
 	public double getRawScore() {
-		return round(rawScore);
+		return rawScore;
 	}
 
 	/**
@@ -64,17 +62,6 @@ public class Search {
 	 */
 	public String getScore() {
 		return score;
-	}
-
-	/**
-	 * Converts the score to 15 decimal points in order to better the score comparison of the results
-	 * @param score score to convert to 15 decimal point
-	 * @return score formatted with 15 decimal points
-	 */
-	public double round(double score) {
-		return BigDecimal.valueOf(score)
-			.setScale(15, RoundingMode.HALF_UP)
-			.doubleValue();
 	}
 
 	/**

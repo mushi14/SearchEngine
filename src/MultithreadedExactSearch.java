@@ -24,6 +24,7 @@ public class MultithreadedExactSearch {
 
 	private void search(Set<String> queries) {
 		queue.execute(new LineSearch(queries));
+//		logger.debug("NEW TASK for search on {}", queries);
 	}
 
 	private void incrementPending() {
@@ -61,8 +62,10 @@ public class MultithreadedExactSearch {
 
 		@Override
 		public void run() {
+//			logger.debug("PERFORMING search on {}", queries);
 			threadSafeIndex.exactSearch(results, queries);
 			decrementPending();
+//			logger.debug("DONE with search on {}", queries);
 		}
 	}
 }
