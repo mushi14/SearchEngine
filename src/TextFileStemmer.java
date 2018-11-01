@@ -90,6 +90,9 @@ public class TextFileStemmer {
 		}
 	}
 
+	/*
+	 * TODO Move this to a QueryFileParser class
+	 */
 	/**
 	 * Stems query file performing partial or exact search and stores the results accordingly
 	 * @param index inverted index that contains the words, their locations, and their positions
