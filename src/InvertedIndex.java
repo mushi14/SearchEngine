@@ -3,6 +3,7 @@ import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,13 +18,14 @@ public class InvertedIndex {
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	private Map<String, Integer> locationsMap; // TODO final
+	private final Map<String, Integer> locationsMap; // TODO final
 
 	/**
 	 *  Initializes the index.
 	 */
 	public InvertedIndex() {
 		index = new TreeMap<>();
+		locationsMap = new HashMap<>();
 	}
 
 	// TODO Remove
