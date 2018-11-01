@@ -47,17 +47,11 @@ public class InvertedIndex {
 			index.get(word).put(path, new TreeSet<Integer>());
 			index.get(word).get(path).add(position);
 		}
-
 		/* TODO
 		index.putIfAbsent(word, new TreeMap<String, TreeSet<Integer>>());
 		index.get(word).putIfAbsent(path, new TreeSet<Integer>());
 		index.get(word).get(path).add(position);
 		*/
-		
-		/*
-		 * TODO Update the location map here every time you add.
-		 * (increase the count for that location by one)
-		 */
 	}
 
 	/**
@@ -153,26 +147,6 @@ public class InvertedIndex {
 		}
 	}
 
-//	// TODO Remove
-//	/**
-//	 * Total locations of all the words and the total words they contain 
-//	 * @return TreeMap of locations and their total words
-//	 */
-//	public Map<String, Integer> totalLocations() {
-//		locationsMap = new TreeMap<>();
-//		for (String word : getWords()) {
-//			for (String path : getPaths(word)) {
-//				if (!locationsMap.containsKey(path)) {
-//					locationsMap.put(path, positions(word, path));
-//				} else {
-//					int value = locationsMap.get(path) + positions(word, path);
-//					locationsMap.replace(path, value);
-//				}
-//			}
-//		}
-//		return Collections.unmodifiableMap(locationsMap);
-//	}
-
 	/** 
 	 * Checks to see if the map contains the word
 	 * 
@@ -259,7 +233,7 @@ public class InvertedIndex {
 		String score = "";
 
 		Map<String, Search> locationsList = new TreeMap<>(); // TODO HashMap
-		Map<String, Integer> totalLocations = totalLocations();
+		Map<String, Integer> totalLocations = locationsMap;
 		if (!results.containsKey(line)) {
 			results.put(line, new ArrayList<>());
 			for (String query : queries) {
@@ -318,7 +292,7 @@ public class InvertedIndex {
 		String score = "";
 
 		Map<String, Search> locationsList = new TreeMap<>();
-		Map<String, Integer> totalLocations = totalLocations();
+		Map<String, Integer> totalLocations = locationsMap;
 		if (!results.containsKey(line)) {
 			results.put(line, new ArrayList<>());
 			for (String query : queries) {
