@@ -25,7 +25,7 @@ public class ReadWriteLock {
 	}
 
 	public synchronized void lockReadWrite() {
-		while (writers > 0 && readers > 0) {
+		while (writers > 0 || readers > 0) {
 			try {
 				this.wait();
 			} catch (InterruptedException e) {
