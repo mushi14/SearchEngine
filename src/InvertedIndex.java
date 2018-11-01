@@ -18,7 +18,7 @@ public class InvertedIndex {
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	private final Map<String, Integer> locationsMap; // TODO final
+	private final Map<String, Integer> locationsMap;
 
 	/**
 	 *  Initializes the index.
@@ -26,21 +26,6 @@ public class InvertedIndex {
 	public InvertedIndex() {
 		index = new TreeMap<>();
 		locationsMap = new HashMap<>();
-	}
-
-	// TODO Remove
-	/** 
-	 * Gets the TreeMap of keys paths and values positions associated with the word
-	 * 
-	 * @param word word inside of the file
-	 * @return TreeMap containing path and positions of word 
-	 */
-	public Map<String, Set<Integer>> get(String word) {
-		if (index.containsKey(word)) {
-			return Collections.unmodifiableMap(index.get(word));
-		} else {
-			return Collections.emptyMap();
-		}
 	}
 
 	/**
@@ -52,11 +37,9 @@ public class InvertedIndex {
 	public void add(String word, String path, int position) {
 		if (index.containsKey(word)) {
 			if (index.get(word).containsKey(path)) {
-				if (!index.get(word).get(path).contains(position)) {
-					index.get(word).get(path).add(position);
-				}
+				index.get(word).get(path).add(position);
 			} else {
-				index.get(word).put(path, new TreeSet<Integer>());
+				index.get(word).putIfAbsent(path, new TreeSet<Integer>());
 				index.get(word).get(path).add(position);
 			}
 		} else {
@@ -64,7 +47,7 @@ public class InvertedIndex {
 			index.get(word).put(path, new TreeSet<Integer>());
 			index.get(word).get(path).add(position);
 		}
-		
+
 		/* TODO
 		index.putIfAbsent(word, new TreeMap<String, TreeSet<Integer>>());
 		index.get(word).putIfAbsent(path, new TreeSet<Integer>());
@@ -170,25 +153,25 @@ public class InvertedIndex {
 		}
 	}
 
-	// TODO Remove
-	/**
-	 * Total locations of all the words and the total words they contain 
-	 * @return TreeMap of locations and their total words
-	 */
-	public Map<String, Integer> totalLocations() {
-		locationsMap = new TreeMap<>();
-		for (String word : getWords()) {
-			for (String path : getPaths(word)) {
-				if (!locationsMap.containsKey(path)) {
-					locationsMap.put(path, positions(word, path));
-				} else {
-					int value = locationsMap.get(path) + positions(word, path);
-					locationsMap.replace(path, value);
-				}
-			}
-		}
-		return Collections.unmodifiableMap(locationsMap);
-	}
+//	// TODO Remove
+//	/**
+//	 * Total locations of all the words and the total words they contain 
+//	 * @return TreeMap of locations and their total words
+//	 */
+//	public Map<String, Integer> totalLocations() {
+//		locationsMap = new TreeMap<>();
+//		for (String word : getWords()) {
+//			for (String path : getPaths(word)) {
+//				if (!locationsMap.containsKey(path)) {
+//					locationsMap.put(path, positions(word, path));
+//				} else {
+//					int value = locationsMap.get(path) + positions(word, path);
+//					locationsMap.replace(path, value);
+//				}
+//			}
+//		}
+//		return Collections.unmodifiableMap(locationsMap);
+//	}
 
 	/** 
 	 * Checks to see if the map contains the word
@@ -245,8 +228,7 @@ public class InvertedIndex {
 	 * @throws IOException in case there's any problem finding the file
 	 */
 	public void writeLocationsJSON(Path path) throws IOException {
-		Map<String, Integer> totalLocations = totalLocations();
-		TreeJSONWriter.asLocations(totalLocations, path); // TODO locationsMap
+		TreeJSONWriter.asLocations(locationsMap, path);
 	}
 
 	/**
@@ -283,13 +265,12 @@ public class InvertedIndex {
 			for (String query : queries) {
 				for (String word : getWords()) {
 					if (word.equals(query)) {
-						for (String loc : get(word).keySet()) {
+						for (String loc : getPaths(word)) {
 							if (locationsList.containsKey(loc)) {
 								totalMatches = locationsList.get(loc).getMatches();
 								totalMatches += positions(word, loc);
 								totalWords = totalLocations.get(loc);
 								rawScore = totalMatches / totalWords;
-								rawScore = Search.round(rawScore);
 								score = FORMATTER.format(totalMatches / totalWords);
 
 								Search q = new Search(loc, totalMatches, totalWords, rawScore, score);
@@ -298,7 +279,6 @@ public class InvertedIndex {
 								totalMatches = positions(word, loc);
 								totalWords = totalLocations.get(loc);
 								rawScore = totalMatches / totalWords;
-								rawScore = Search.round(rawScore);
 								score = FORMATTER.format(totalMatches / totalWords);
 								// TODO Better variable names
 								Search q = new Search(loc, totalMatches, totalWords, rawScore, score);
@@ -344,13 +324,12 @@ public class InvertedIndex {
 			for (String query : queries) {
 				for (String word : getWords()) {
 					if (word.startsWith(query)) {
-						for (String loc : index.get(word).keySet()) {
+						for (String loc : getPaths(word)) {
 							if (locationsList.containsKey(loc)) {
 								totalMatches = locationsList.get(loc).getMatches();
 								totalMatches += positions(word, loc);
 								totalWords = totalLocations.get(loc);
 								rawScore = totalMatches / totalWords;
-								rawScore = Search.round(rawScore);
 								score = FORMATTER.format(totalMatches / totalWords);
 
 								Search q = new Search(loc, totalMatches, totalWords, rawScore, score);
@@ -359,7 +338,6 @@ public class InvertedIndex {
 								totalMatches = positions(word, loc);
 								totalWords = totalLocations.get(loc);
 								rawScore = totalMatches / totalWords;
-								rawScore = Search.round(rawScore);
 								score = FORMATTER.format(totalMatches / totalWords);
 
 								Search q = new Search(loc, totalMatches, totalWords, rawScore, score);

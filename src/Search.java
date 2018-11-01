@@ -1,5 +1,3 @@
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Comparator;
 
 // TODO public class Search implements Comparable<Search>
@@ -75,18 +73,6 @@ public class Search {
 	public String getScore() {
 		// TODO DecimalFormatter code should go here
 		return score;
-	}
-
-	// TODO Remove?
-	/**
-	 * Converts the score to 15 decimal points in order to better the score comparison of the results
-	 * @param score score to convert to 15 decimal point
-	 * @return score formatted with 15 decimal points
-	 */
-	public static double round(double score) {
-		return BigDecimal.valueOf(score)
-			.setScale(15, RoundingMode.HALF_UP)
-			.doubleValue();
 	}
 
 	// TODO Remove...
