@@ -3,7 +3,6 @@ import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +24,7 @@ public class InvertedIndex {
 	 */
 	public InvertedIndex() {
 		index = new TreeMap<>();
-		locationsMap = new HashMap<>();
+		locationsMap = new TreeMap<>();
 	}
 
 	/**
@@ -47,11 +46,23 @@ public class InvertedIndex {
 			index.get(word).put(path, new TreeSet<Integer>());
 			index.get(word).get(path).add(position);
 		}
+
+		if (locationsMap.containsKey(path)) {
+			locationsMap.put(path, locationsMap.get(path) + 1);
+		} else {
+			locationsMap.put(path, 1);
+		}
+
 		/* TODO
 		index.putIfAbsent(word, new TreeMap<String, TreeSet<Integer>>());
 		index.get(word).putIfAbsent(path, new TreeSet<Integer>());
 		index.get(word).get(path).add(position);
 		*/
+
+		/*
+		 * TODO Update the location map here every time you add.
+		 * (increase the count for that location by one)
+		 */
 	}
 
 	/**

@@ -58,7 +58,7 @@ public class Driver {
 							if (argMap.hasFlag("-exact")) {
 								exact = true;
 							}
-							results = TextFileStemmer.stemQueryFile(index, file, exact);
+							TextFileStemmer.stemQueryFile(results, index, file, exact);
 						}
 					}
 				} catch (IOException | NullPointerException e) {
