@@ -1,2 +1,14 @@
-[26:23:419 debug] main: woke up with pending at 0
-[26:23:426 debug] main: Worker done!
+[30:24:526 debug] main: CONSTRUCTOR CALLED
+[30:24:533 debug] main: NEW TASK for search on [ant]
+[30:24:533 debug] Thread-5: PERFORMING search on [ant]
+[30:24:534 debug] main: NEW TASK for search on [eight, nine, seven]
+[30:24:534 debug] Thread-9: PERFORMING search on [eight, nine, seven]
+[30:24:534 debug] main: NEW TASK for search on [hello, world]
+[30:24:534 debug] Thread-6: PERFORMING search on [hello, world]
+[30:24:535 debug] main: NEW TASK for search on [hello, world]
+[30:24:535 debug] Thread-8: PERFORMING search on [hello, world]
+[30:24:535 debug] main: NEW TASK for search on [cardin]
+[30:24:535 debug] Thread-7: PERFORMING search on [cardin]
+[30:24:535 debug] main: NEW TASK for search on [aar, alpaca, eleph]
+[30:24:535 debug] main: NEW TASK for search on [capybara, hidden]
+[30:24:536 debug] main: NEW TASK for search on [antelop, observ]

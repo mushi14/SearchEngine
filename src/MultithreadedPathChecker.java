@@ -15,6 +15,7 @@ public class MultithreadedPathChecker {
 	private int pending;
 
 	public MultithreadedPathChecker(Path path, int threads, ThreadSafeInvertedIndex threadSafeIndex) {
+//		logger.debug("NEW CONSTRUCTOR CALLED");
 		this.threadSafeIndex = threadSafeIndex;
 		this.queue = new WorkQueue(threads);
 		this.pending = 0;
@@ -59,9 +60,9 @@ public class MultithreadedPathChecker {
 		try {
 			while (pending > 0) {
 				this.wait();
-				logger.debug("woke up with pending at {}", pending);
+//				logger.debug("woke up with pending at {}", pending);
 			}
-			logger.debug("Worker done!");
+//			logger.debug("Worker done!");
 		} catch (InterruptedException e) {
 			logger.debug(e.getMessage(), e);
 		}

@@ -9,12 +9,16 @@ public class MultithreadedExactSearch {
 
 	Logger logger = LogManager.getLogger(getClass());
 
+	public final ThreadSafeInvertedIndex threadSafeIndex;
 	public final Map<String, List<Search>> results;
 	private final WorkQueue queue;
 	private int pending;
 
-	public MultithreadedExactSearch(Map<String, List<Search>> results, int threads, Set<String> queries) {
+	public MultithreadedExactSearch(ThreadSafeInvertedIndex threadSafeIndex, Map<String, List<Search>> results, 
+			int threads, List<Set<String>> queries) {
+		logger.debug("CONSTRUCTOR CALLED");
 		this.results = results;
+		this.threadSafeIndex = threadSafeIndex;
 		this.queue = new WorkQueue(threads);
 		this.pending = 0;
 		this.search(queries);
@@ -22,9 +26,11 @@ public class MultithreadedExactSearch {
 		this.queue.shutdown();
 	}
 
-	private void search(Set<String> queries) {
-		queue.execute(new QueryLineSearch(queries));
-//		logger.debug("NEW TASK for search on {}", queries);
+	public void search(List<Set<String>> queries) {
+		for (Set<String> set : queries) {
+			queue.execute(new QueryLineSearch(set));
+			logger.debug("NEW TASK for search on {}", set);
+		}
 	}
 
 	private void incrementPending() {
@@ -39,7 +45,7 @@ public class MultithreadedExactSearch {
 		}
 	}
 
-	private void finish() {
+	private synchronized void finish() {
 		try {
 			while (pending > 0) {
 				this.wait();
@@ -52,7 +58,6 @@ public class MultithreadedExactSearch {
 	}
 
 	private class QueryLineSearch implements Runnable {
-		ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 		Set<String> queries;
 
 		public QueryLineSearch(Set<String> queries) {
@@ -62,10 +67,10 @@ public class MultithreadedExactSearch {
 
 		@Override
 		public void run() {
-//			logger.debug("PERFORMING search on {}", queries);
+			logger.debug("PERFORMING search on {}", queries);
 			threadSafeIndex.exactSearch(results, queries);
+			logger.debug("DONE with search on {}", queries);
 			decrementPending();
-//			logger.debug("DONE with search on {}", queries);
 		}
 	}
 }

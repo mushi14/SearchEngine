@@ -272,7 +272,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public void exactSearch(Map<String, List<Search>> results, Set<String> queries) {
-		lock.lockReadWrite();;
+		lock.lockReadWrite();
 		try {
 			super.exactSearch(results, queries);
 		} finally {

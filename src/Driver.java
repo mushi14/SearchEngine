@@ -71,7 +71,6 @@ public class Driver {
 				}
 			}
 
-
 			if (argMap.hasFlag("-search")) {
 				try {
 					if (argMap.flagPath("-search")) {
@@ -83,8 +82,9 @@ public class Driver {
 							if (argMap.hasFlag("-exact")) {
 								exact = true;
 							}
-							System.out.println("hi");
-							results = qParse.stemQueryFile(threadSafeIndex, exact);
+							MultithreadedExactSearch exactSearch;
+//							results = qParse.multithreadQueryFile(threadSafeIndex, exact, threads);
+							System.out.println(qParse.multithreadQueryFile(threadSafeIndex, exact, threads));
 						} else {
 							Path path = argMap.getPath("-search");
 							QueryFileParser qParse = new QueryFileParser(path);
