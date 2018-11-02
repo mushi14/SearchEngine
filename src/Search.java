@@ -1,15 +1,16 @@
+import java.text.DecimalFormat;
 import java.util.Comparator;
 
 // TODO public class Search implements Comparable<Search>
-public class Search {
+public class Search implements Comparable<Search> {
 
-	private String location;			// TODO final
-	private double totalMatches;		// TODO int
-	private double totalWords;			// TODO int, final
+	private final String location;
+	private int totalMatches;
+	private final int totalWords;
 	private double rawScore;
 	private String score;
+	DecimalFormat FORMATTER;
 
-	
 	// TODO public Search(String location, int matches, int total)
 	// TODO calculate the score based on matches / total
 	/**
@@ -20,12 +21,12 @@ public class Search {
 	 * @param rs raw score of the location
 	 * @param sc rounded score of the location
 	 */
-	public Search(String loc, double matches, double words, double rs, String sc) {
+	public Search(String loc, int matches, int words, double rs) {
 		this.location = loc;
 		this.totalMatches = matches;
 		this.totalWords = words;
 		this.rawScore = rs;
-		this.score = sc;
+		this.FORMATTER = new DecimalFormat("0.000000");
 	}
 
 	/**
@@ -40,7 +41,7 @@ public class Search {
 	 * Gets the total matches of the location
 	 * @return total number of matches in the location
 	 */
-	public double getMatches() {
+	public int getMatches() {
 		return totalMatches;
 	}
 
@@ -48,7 +49,7 @@ public class Search {
 	 * Gets the total words of the location
 	 * @return total words in the location
 	 */
-	public double getWords() {
+	public int getWords() {
 		return totalWords;
 	}
 
@@ -72,6 +73,7 @@ public class Search {
 	 */
 	public String getScore() {
 		// TODO DecimalFormatter code should go here
+		score = FORMATTER.format(totalMatches / totalWords);
 		return score;
 	}
 
@@ -115,5 +117,11 @@ public class Search {
 	@Override
 	public String toString() {
 		return "Location: " + location + " Score: " + score + " Matches: " + totalMatches + " Words: " + totalWords;
+	}
+
+	@Override
+	public int compareTo(Search o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
