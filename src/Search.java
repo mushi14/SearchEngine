@@ -2,14 +2,14 @@ import java.text.DecimalFormat;
 import java.util.Comparator;
 
 // TODO public class Search implements Comparable<Search>
-public class Search implements Comparable<Search> {
+public class Search {
 
-	private final String location;
-	private int totalMatches;
-	private final int totalWords;
+	private DecimalFormat FORMATTER;
+	private final String location;			// TODO final
+	private int totalMatches;		// TODO int
+	private final int totalWords;			// TODO int, final
 	private double rawScore;
 	private String score;
-	DecimalFormat FORMATTER;
 
 	// TODO public Search(String location, int matches, int total)
 	// TODO calculate the score based on matches / total
@@ -21,12 +21,11 @@ public class Search implements Comparable<Search> {
 	 * @param rs raw score of the location
 	 * @param sc rounded score of the location
 	 */
-	public Search(String loc, int matches, int words, double rs) {
+	public Search(String loc, int matches, int words) {
+		FORMATTER = new DecimalFormat("0.000000"); 
 		this.location = loc;
 		this.totalMatches = matches;
 		this.totalWords = words;
-		this.rawScore = rs;
-		this.FORMATTER = new DecimalFormat("0.000000");
 	}
 
 	/**
@@ -58,14 +57,15 @@ public class Search implements Comparable<Search> {
 	 * @return raw score
 	 */
 	public double getRawScore() {
+		this.rawScore = Double.valueOf(this.totalMatches) / Double.valueOf(this.totalWords);
 		return rawScore;
 	}
 	
-	/* TODO
-	public void updateMatches(int count) {
-		add to the current count
-		recalculate the score
-	}*/
+	public void updateMatches(int matches) {
+		this.totalMatches = matches;
+		/*add to the current count
+		recalculate the score */
+	}
 
 	/**
 	 * Gets the rounded score of the results in the location
@@ -73,7 +73,7 @@ public class Search implements Comparable<Search> {
 	 */
 	public String getScore() {
 		// TODO DecimalFormatter code should go here
-		score = FORMATTER.format(totalMatches / totalWords);
+		this.score = FORMATTER.format(this.rawScore);
 		return score;
 	}
 
@@ -117,11 +117,5 @@ public class Search implements Comparable<Search> {
 	@Override
 	public String toString() {
 		return "Location: " + location + " Score: " + score + " Matches: " + totalMatches + " Words: " + totalWords;
-	}
-
-	@Override
-	public int compareTo(Search o) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 }
