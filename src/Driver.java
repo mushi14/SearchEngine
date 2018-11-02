@@ -71,21 +71,32 @@ public class Driver {
 				}
 			}
 
+
 			if (argMap.hasFlag("-search")) {
 				try {
 					if (argMap.flagPath("-search")) {
-						Path path = argMap.getPath("-search");
-						for (String f : PathChecker.queryFiles(path)) {
-							Path file = Paths.get(f);
+						if (multithreaded == true) {
+							Path path = argMap.getPath("-search");
+							QueryFileParser qParse = new QueryFileParser(path);
 							results.clear();
 							boolean exact = false;
 							if (argMap.hasFlag("-exact")) {
 								exact = true;
 							}
-							results = TextFileStemmer.stemQueryFile(index, file, exact);
+							System.out.println("hi");
+							results = qParse.stemQueryFile(threadSafeIndex, exact);
+						} else {
+							Path path = argMap.getPath("-search");
+							QueryFileParser qParse = new QueryFileParser(path);
+							results.clear();
+							boolean exact = false;
+							if (argMap.hasFlag("-exact")) {
+								exact = true;
+							}
+							results = qParse.stemQueryFile(index, exact);
 						}
 					}
-				} catch (IOException | NullPointerException e) {
+				} catch (NullPointerException e) {
 					System.out.println("Unable to open the query file or directory provided. A valid query file or "
 							+ "directory is needed to search.");
 				}

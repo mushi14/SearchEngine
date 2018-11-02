@@ -23,7 +23,7 @@ public class MultithreadedExactSearch {
 	}
 
 	private void search(Set<String> queries) {
-		queue.execute(new LineSearch(queries));
+		queue.execute(new QueryLineSearch(queries));
 //		logger.debug("NEW TASK for search on {}", queries);
 	}
 
@@ -51,11 +51,11 @@ public class MultithreadedExactSearch {
 		}
 	}
 
-	private class LineSearch implements Runnable {
+	private class QueryLineSearch implements Runnable {
 		ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 		Set<String> queries;
 
-		public LineSearch(Set<String> queries) {
+		public QueryLineSearch(Set<String> queries) {
 			this.queries = queries;
 			incrementPending();
 		}
