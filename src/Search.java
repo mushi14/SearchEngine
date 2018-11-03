@@ -120,6 +120,6 @@ public class Search {
 	 */
 	@Override
 	public String toString() {
-		return "Location: " + location + " Score: " + score + " Matches: " + totalMatches + " Words: " + totalWords;
+		return "Location: " + location + " Score: " + this.getScore() + " Matches: " + totalMatches + " Words: " + totalWords;
 	}
 }

@@ -17,15 +17,18 @@ public class QueryFileParser {
 
 	private final Map<String, List<Search>> results;
 	private final InvertedIndex index;
+	private final ThreadSafeInvertedIndex threadSafeInvertedIndex;
 
 	/** 
 	 * Constructor for QueryFileParser
 	 * @param results Map of results to store the search data in
 	 * @param index inverted index to retrive the information from
 	 */
-	public QueryFileParser(Map<String, List<Search>> results, InvertedIndex index) {
+	public QueryFileParser(Map<String, List<Search>> results, InvertedIndex index, 
+			ThreadSafeInvertedIndex threadSafeInvertedIndex) {
 		this.results = results;
 		this.index = index;
+		this.threadSafeInvertedIndex = threadSafeInvertedIndex;
 	}
 
 	/**
@@ -79,47 +82,48 @@ public class QueryFileParser {
 		}
 	}
 
-//	/**
-//	 * Stems query file performing partial or exact search and stores the results accordingly
-//	 * @param index inverted index that contains the words, their locations, and their positions
-//	 * @param path path of the file
-//	 * @param exact boolean variable that ensures that an exact search must be performed
-//	 */
-//	public Map<String, List<Search>> multithreadQueryFile(ThreadSafeInvertedIndex index, boolean exact, 
-//			int threads) {
-//		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-//			String line = br.readLine();
-//			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-//			List<Set<String>> temp = new ArrayList<>();
-//			Map<String, List<Search>> results = new TreeMap<>();
-//
-//			while (line != null) {
-//				Set<String> queries = new TreeSet<>();
-//				String[] words = TextFileStemmer.parse(line);
-//				for (String word : words) {
-//					word = stemmer.stem(word).toString();
-//					queries.add(word);
-//				}
-//				if (!queries.isEmpty()) {
-//					if (exact == true) {
-//						temp.add(queries);
-//					} else {
-////						index.partialSearch(results, queries);
-//					}
-//				}
-//				line = br.readLine();
-//			}
-//			
-//			MultithreadedExactSearch exactSearch = new MultithreadedExactSearch(index, results, threads, temp);
-////			System.out.println(exactSearch.results);
-//			
-//			return results;
-//
-//		} catch (IOException | NullPointerException e) {
-//			System.out.println("There was an issue finding the query file: " + path);
-//			return Collections.emptyMap();
-//		}
-//	}
+	/**
+	 * Stems query file performing partial or exact search and stores the results accordingly
+	 * @param index inverted index that contains the words, their locations, and their positions
+	 * @param path path of the file
+	 * @param exact boolean variable that ensures that an exact search must be performed
+	 */
+	public Map<String, List<Search>> multithreadQueryFile(Path path, boolean exact, int threads) {
+		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+			String line = br.readLine();
+			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+			List<Set<String>> queries = new ArrayList<Set<String>>();
+
+			while (line != null) {
+				Set<String> temp = new TreeSet<>();
+				String[] words = TextFileStemmer.parse(line);
+
+				for (String word : words) {
+					word = stemmer.stem(word).toString();
+					temp.add(word);
+				}
+
+				queries.add(temp);
+				line = br.readLine();
+			}
+
+			if (!queries.isEmpty()) {
+				if (exact == true) {
+					MultithreadedExactSearch exactSearch = new MultithreadedExactSearch(threadSafeInvertedIndex, 
+							results, threads, queries);
+				} else {
+//					MultithreadedPartialSearch exactSearch = new MultithreadedPartialSearch(threadSafeInvertedIndex, 
+//							results, threads, queries);			
+				}
+			}
+
+			return results;
+
+		} catch (IOException | NullPointerException e) {
+			System.out.println("There was an issue finding the query file: " + path);
+			return Collections.emptyMap();
+		}
+	}
 
 	/**
 	 * Writes the search results to the file path in pretty json format

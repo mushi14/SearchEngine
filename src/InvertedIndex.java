@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /** 
  * Data structure to store file paths and the word positions.
  */
@@ -16,8 +19,9 @@ public class InvertedIndex {
 	/** 
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
-	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	private final Map<String, Integer> locationsMap;
+	public final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	public final Map<String, Integer> locationsMap;
+	Logger logger = LogManager.getLogger(getClass());
 
 	/**
 	 *  Initializes the index.
@@ -218,20 +222,28 @@ public class InvertedIndex {
 		List<Search> resultsList = new ArrayList<>();
 
 		for (String query : queries) {
-			for (String word : getWords()) {
+			for (String word : index.keySet()) {
+//				logger.debug("In inverted index in the nested for loop of words {}", word);
 				if (word.equals(query)) {
-					for (String loc : getPaths(word)) {
+//					logger.debug("yes {}", word);
+					for (String loc : index.get(word).keySet()) {
+//						logger.debug("location: {}", loc);
 						if (locationsList.containsKey(loc)) {
 							totalMatches = locationsList.get(loc).getMatches();
-							totalMatches += positions(word, loc);
+							totalMatches += index.get(word).get(loc).size();
 
 							locationsList.get(loc).calculate(totalMatches);
+//							logger.debug("This is the score {}", locationsList.get(loc).getScore());
 						} else {
-							totalMatches = positions(word, loc);
+//							logger.debug("YESSUM");
+							totalMatches = index.get(word).get(loc).size();
 							totalWords = locationsMap.get(loc);
 
+//							logger.debug("total matches: {} total words: {}", totalMatches, totalWords);
 							Search newQuery = new Search(loc, totalMatches, totalWords);
 							newQuery.calculate(totalMatches);
+							
+//							logger.debug("This is the score {}", newQuery.getScore());
 							locationsList.put(loc, newQuery);
 
 							resultsList.add(newQuery);
