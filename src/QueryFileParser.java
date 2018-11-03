@@ -15,10 +15,17 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class QueryFileParser {
 
-	private Path path;
+	private final Map<String, List<Search>> results;
+	private final InvertedIndex index;
 
-	public QueryFileParser(Path path) {
-		this.path = path;
+	/** 
+	 * Constructor for QueryFileParser
+	 * @param results Map of results to store the search data in
+	 * @param index inverted index to retrive the information from
+	 */
+	public QueryFileParser(Map<String, List<Search>> results, InvertedIndex index) {
+		this.results = results;
+		this.index = index;
 	}
 
 	/**
