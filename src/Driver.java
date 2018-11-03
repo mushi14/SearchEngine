@@ -83,8 +83,8 @@ public class Driver {
 								exact = true;
 							}
 							MultithreadedExactSearch exactSearch;
-//							results = qParse.multithreadQueryFile(threadSafeIndex, exact, threads);
-							System.out.println(qParse.multithreadQueryFile(threadSafeIndex, exact, threads));
+							results = qParse.multithreadQueryFile(threadSafeIndex, exact, threads);
+							System.out.println(results);
 						} else {
 							Path path = argMap.getPath("-search");
 							QueryFileParser qParse = new QueryFileParser(path);

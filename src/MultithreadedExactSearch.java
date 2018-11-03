@@ -35,10 +35,12 @@ public class MultithreadedExactSearch {
 
 	private void incrementPending() {
 		pending++;
+		logger.debug("Incrementing pending to {}", pending);
 	}
 
 	private void decrementPending() {
 		pending--;
+		logger.debug("Incrementing pending to {}", pending);
 
 		if (pending == 0) {
 			this.notifyAll();
@@ -69,8 +71,8 @@ public class MultithreadedExactSearch {
 		public void run() {
 			logger.debug("PERFORMING search on {}", queries);
 			threadSafeIndex.exactSearch(results, queries);
-			logger.debug("DONE with search on {}", queries);
 			decrementPending();
+			logger.debug("DONE with search on {}", queries);
 		}
 	}
 }

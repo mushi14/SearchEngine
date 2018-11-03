@@ -83,15 +83,16 @@ public class QueryFileParser {
 					if (exact == true) {
 						temp.add(queries);
 					} else {
-						index.partialSearch(results, queries);
+//						index.partialSearch(results, queries);
 					}
 				}
 				line = br.readLine();
 			}
 			
 			MultithreadedExactSearch exactSearch = new MultithreadedExactSearch(index, results, threads, temp);
-
-			return exactSearch.results;
+//			System.out.println(exactSearch.results);
+			
+			return results;
 
 		} catch (IOException | NullPointerException e) {
 			System.out.println("There was an issue finding the query file: " + path);
