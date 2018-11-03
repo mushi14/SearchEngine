@@ -1,8 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Path;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +17,7 @@ public class InvertedIndex {
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	private Map<String, Integer> locationsMap;
+	private final Map<String, Integer> locationsMap;
 
 	/**
 	 *  Initializes the index.
@@ -25,20 +25,6 @@ public class InvertedIndex {
 	public InvertedIndex() {
 		index = new TreeMap<>();
 		locationsMap = new TreeMap<>();
-	}
-
-	/** 
-	 * Gets the TreeMap of keys paths and values positions associated with the word
-	 * 
-	 * @param word word inside of the file
-	 * @return TreeMap containing path and positions of word 
-	 */
-	public Map<String, Set<Integer>> get(String word) {
-		if (index.containsKey(word)) {
-			return Collections.unmodifiableMap(index.get(word));
-		} else {
-			return Collections.emptyMap();
-		}
 	}
 
 	/**
@@ -50,11 +36,9 @@ public class InvertedIndex {
 	public void add(String word, String path, int position) {
 		if (index.containsKey(word)) {
 			if (index.get(word).containsKey(path)) {
-				if (!index.get(word).get(path).contains(position)) {
-					index.get(word).get(path).add(position);
-				}
+				index.get(word).get(path).add(position);
 			} else {
-				index.get(word).put(path, new TreeSet<Integer>());
+				index.get(word).putIfAbsent(path, new TreeSet<Integer>());
 				index.get(word).get(path).add(position);
 			}
 		} else {
@@ -217,129 +201,88 @@ public class InvertedIndex {
 	 * @param path path to the file to write to
 	 * @throws IOException in case there's any problem finding the file
 	 */
-	public void writeLocationsJSON(Path path) throws IOException {
-//		Map<String, Integer> totalLocations = totalLocations();
+	public void writeLocJSON(Path path) throws IOException {
 		TreeJSONWriter.asLocations(locationsMap, path);
 	}
 
 	/**
-	 * Writes the search results to the file path in pretty json format
-	 * @param path path to the file to write to
-	 * @throws IOException in case there's any problem finding the file
-	 */
-	public void writeSearchResultsJSON(Map<String, List<Search>> results, Path path) throws IOException {
-		TreeJSONWriter.asSearchResult(results, path);
-	}
-
-	/**
-	 * performs exact search on a line from the query file. Stores the results to results map
+	 * Performs exact search on a line from the query file. Stores the results to results map
 	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
 	 */
-	public void exactSearch(Map<String, List<Search>> results, Set<String> queries) {
-		String line = String.join(" ", queries);
-		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
-		double totalMatches = 0;
-		double totalWords = 0;
-		double rawScore = 0;
-		String score = "";
+	public List<Search> exactSearch(Set<String> queries) {
+		int totalMatches = 0;
+		int totalWords = 0;
 
-		Map<String, Search> locationsList = new TreeMap<>();
-//		Map<String, Integer> totalLocations = totalLocations();
-		if (!results.containsKey(line)) {
-			results.put(line, new ArrayList<>());
-			for (String query : queries) {
-				for (String word : getWords()) {
-					if (word.equals(query)) {
-						for (String loc : get(word).keySet()) {
-							if (locationsList.containsKey(loc)) {
-								totalMatches = locationsList.get(loc).getMatches();
-								totalMatches += positions(word, loc);
-								totalWords = locationsMap.get(loc);
-								rawScore = totalMatches / totalWords;
-								score = FORMATTER.format(totalMatches / totalWords);
+		Map<String, Search> locationsList = new HashMap<>();
+		List<Search> resultsList = new ArrayList<>();
 
-								Search q = new Search(loc, totalMatches, totalWords, rawScore, score);
-								locationsList.put(loc, q);
-							} else {
-								totalMatches = positions(word, loc);
-								totalWords = locationsMap.get(loc);
-								rawScore = totalMatches / totalWords;
-								score = FORMATTER.format(totalMatches / totalWords);
+		for (String query : queries) {
+			for (String word : getWords()) {
+				if (word.equals(query)) {
+					for (String loc : getPaths(word)) {
+						if (locationsList.containsKey(loc)) {
+							totalMatches = locationsList.get(loc).getMatches();
+							totalMatches += positions(word, loc);
 
-								Search q = new Search(loc, totalMatches, totalWords, rawScore, score);
-								locationsList.put(loc, q);
-							}
-						}
-					}
-				}
-			}
-			List<Search> tempList = new ArrayList<>();
-			for (String loc : locationsList.keySet()) {
-				tempList.add(locationsList.get(loc));
-			}
-			Collections.sort(tempList, new Search.Comparison());
+							locationsList.get(loc).calculate(totalMatches);
+						} else {
+							totalMatches = positions(word, loc);
+							totalWords = locationsMap.get(loc);
 
-			for (Search query : tempList) {
-				results.get(line).add(query);
-			}
-		}
-	}
+							Search newQuery = new Search(loc, totalMatches, totalWords);
+							newQuery.calculate(totalMatches);
+							locationsList.put(loc, newQuery);
 
-	/**
-	 * performs partial search on a line from the query file. Stores the results to results map
-	 * @param results map containing key-line and value-Search to refer from
-	 * @param queries line of queries to compare
-	 */
-	public void partialSearch(Map<String, List<Search>> results, Set<String> queries) {
-		String line = String.join(" ", queries);
-		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
-		double totalMatches = 0;
-		double totalWords = 0;
-		double rawScore = 0;
-		String score = "";
-
-		Map<String, Search> locationsList = new TreeMap<>();
-//		Map<String, Integer> totalLocations = totalLocations();
-		if (!results.containsKey(line)) {
-			results.put(line, new ArrayList<>());
-			for (String query : queries) {
-				for (String word : getWords()) {
-					if (word.startsWith(query)) {
-						for (String loc : index.get(word).keySet()) {
-							if (locationsList.containsKey(loc)) {
-								totalMatches = locationsList.get(loc).getMatches();
-								totalMatches += positions(word, loc);
-								totalWords = locationsMap.get(loc);
-								rawScore = totalMatches / totalWords;
-								score = FORMATTER.format(totalMatches / totalWords);
-
-								Search q = new Search(loc, totalMatches, totalWords, rawScore, score);
-								locationsList.put(loc, q);
-							} else {
-								totalMatches = positions(word, loc);
-								totalWords = locationsMap.get(loc);
-								rawScore = totalMatches / totalWords;
-								score = FORMATTER.format(totalMatches / totalWords);
-
-								Search q = new Search(loc, totalMatches, totalWords, rawScore, score);
-								locationsList.put(loc, q);
-							}
+							resultsList.add(newQuery);
 						}
 					}
 				}
 			}
 		}
 
-		List<Search> tempList = new ArrayList<>();
-		for (String loc : locationsList.keySet()) {
-			tempList.add(locationsList.get(loc));
-		}
-		Collections.sort(tempList, new Search.Comparison());
+		Collections.sort(resultsList, new Search.Comparison());
+		return resultsList;
+	}
 
-		for (Search query : tempList) {
-			results.get(line).add(query);
+	/**
+	 * Performs partial search on a line from the query file. Stores the results to results map
+	 * @param results map containing key-line and value-Search to refer from
+	 * @param queries line of queries to compare
+	 */
+	public List<Search> partialSearch(Set<String> queries) {
+		int totalMatches = 0;
+		int totalWords = 0;
+
+		Map<String, Search> locationsList = new HashMap<>();
+		List<Search> resultsList = new ArrayList<>();
+
+		for (String query : queries) {
+			for (String word : getWords()) {
+				if (word.startsWith(query)) {
+					for (String loc : getPaths(word)) {
+						if (locationsList.containsKey(loc)) {
+							totalMatches = locationsList.get(loc).getMatches();
+							totalMatches += positions(word, loc);
+
+							locationsList.get(loc).calculate(totalMatches);
+						} else {
+							totalMatches = positions(word, loc);
+							totalWords = locationsMap.get(loc);
+
+							Search newQuery = new Search(loc, totalMatches, totalWords);
+							newQuery.calculate(totalMatches);
+							locationsList.put(loc, newQuery);
+
+							resultsList.add(newQuery);
+						}
+					}
+				}
+			}
 		}
+
+		Collections.sort(resultsList, new Search.Comparison());
+		return resultsList;
 	}
 
 	/** 
