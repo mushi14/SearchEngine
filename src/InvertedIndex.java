@@ -224,63 +224,47 @@ public class InvertedIndex {
 	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
 	 */
-//	public void exactSearch(Map<String, List<Search>> results, Set<String> queries) {
-//		String line = String.join(" ", queries);
-//		DecimalFormat FORMATTER = new DecimalFormat("0.000000");
-//		int totalMatches = 0;
-//		int totalWords = 0;
-//		double rawScore = 0;
-//		String score = "";
-//
-//		Map<String, Search> locationsList = new HashMap<>();
-//		List<Search> resultsList = new ArrayList<>();
-//
-//		if (!results.containsKey(line)) {
-//			results.put(line, new ArrayList<>());
-//			for (String query : queries) {
-//				for (String word : getWords()) {
-//					if (word.equals(query)) {
-//						for (String loc : getPaths(word)) {
-//							if (locationsList.containsKey(loc)) {
-//								totalMatches = locationsList.get(loc).getMatches();
-//								totalMatches += positions(word, loc);
-//								totalWords = locationsMap.get(loc);
-//								rawScore = Double.valueOf(totalMatches) / Double.valueOf(totalWords);
-//								score = FORMATTER.format(rawScore);
-////								Search newQuery = new Search(loc, totalMatches, totalWords, rawScore, score);
-////								locationsList.put(loc, newQuery);
-//								locationsList.get(loc).updateMatches(totalMatches);
-//
-//							} else {
-//								totalMatches = positions(word, loc);
-//								totalWords = locationsMap.get(loc);
-//								rawScore = Double.valueOf(totalMatches) / Double.valueOf(totalWords);
-//								score = FORMATTER.format(rawScore);
-//								Search newQuery = new Search(loc, totalMatches, totalWords, rawScore, score);
-//								locationsList.put(loc, newQuery);
-//
-//								// TODO resultList.add(q);
-//								resultsList.add(newQuery);
-//							}
-//						}
-//					}
-//				}
-//			}
-//			
-//			// TODO separate loop... can embed (see above)
-////			for (String loc : locationsList.keySet()) {
-////				resultsList.add(locationsList.get(loc));
-////			}
-//			Collections.sort(resultsList, new Search.Comparison());
-//
-////			for (Search q : resultsList) {
-////				System.out.println(q);
-////			}
-//			for (Search query : resultsList) {
-//				results.get(line).add(query);
-//			}
-//		}
-//	}
+	public void exactSearch(Map<String, List<Search>> results, Set<String> queries) {
+		String line = String.join(" ", queries);
+		int totalMatches = 0;
+		int totalWords = 0;
+
+		Map<String, Search> locationsList = new HashMap<>();
+		List<Search> resultsList = new ArrayList<>();
+
+		if (!results.containsKey(line)) {
+			results.put(line, new ArrayList<>());
+			for (String query : queries) {
+				for (String word : getWords()) {
+					if (word.equals(query)) {
+						for (String loc : getPaths(word)) {
+							if (locationsList.containsKey(loc)) {
+								totalMatches = locationsList.get(loc).getMatches();
+								totalMatches += positions(word, loc);
+
+								locationsList.get(loc).calculate(totalMatches);
+							} else {
+								totalMatches = positions(word, loc);
+								totalWords = locationsMap.get(loc);
+
+								Search newQuery = new Search(loc, totalMatches, totalWords);
+								newQuery.calculate(totalMatches);
+								locationsList.put(loc, newQuery);
+
+								resultsList.add(newQuery);
+							}
+						}
+					}
+				}
+			}
+
+			Collections.sort(resultsList, new Search.Comparison());
+
+			for (Search query : resultsList) {
+				results.get(line).add(query);
+			}
+		}
+	}
 
 	/**
 	 * Performs partial search on a line from the query file. Stores the results to results map
@@ -293,6 +277,8 @@ public class InvertedIndex {
 		int totalWords = 0;
 
 		Map<String, Search> locationsList = new HashMap<>();
+		List<Search> resultsList = new ArrayList<>();
+
 		if (!results.containsKey(line)) {
 			results.put(line, new ArrayList<>());
 			for (String query : queries) {
@@ -303,15 +289,16 @@ public class InvertedIndex {
 								totalMatches = locationsList.get(loc).getMatches();
 								totalMatches += positions(word, loc);
 
-//								locationsList.get(loc).updateMatches(totalMatches);
-								Search newQuery = new Search(loc, totalMatches, totalWords);
-								locationsList.put(loc, newQuery);
+								locationsList.get(loc).calculate(totalMatches);
 							} else {
 								totalMatches = positions(word, loc);
 								totalWords = locationsMap.get(loc);
 
 								Search newQuery = new Search(loc, totalMatches, totalWords);
+								newQuery.calculate(totalMatches);
 								locationsList.put(loc, newQuery);
+
+								resultsList.add(newQuery);
 							}
 						}
 					}
@@ -319,17 +306,9 @@ public class InvertedIndex {
 			}
 		}
 
-		List<Search> tempList = new ArrayList<>();
-		for (String loc : locationsList.keySet()) {
-			tempList.add(locationsList.get(loc));
-		}
+		Collections.sort(resultsList, new Search.Comparison());
 
-//		for (Search q : tempList) {
-//			System.out.println(q.getRawScore());
-//		}
-		Collections.sort(tempList, new Search.Comparison());
-
-		for (Search query : tempList) {
+		for (Search query : resultsList) {
 			results.get(line).add(query);
 		}
 	}

@@ -52,19 +52,17 @@ public class Search {
 		return totalWords;
 	}
 
+	public void calculate(int matches) {
+		this.totalMatches = matches;
+		this.rawScore = Double.valueOf(this.totalMatches) / Double.valueOf(this.totalWords);
+	}
+
 	/**
 	 * Gets the raw score of the results in the location
 	 * @return raw score
 	 */
 	public double getRawScore() {
-		this.rawScore = Double.valueOf(this.totalMatches) / Double.valueOf(this.totalWords);
 		return rawScore;
-	}
-	
-	public void updateMatches(int matches) {
-		this.totalMatches = matches;
-		/*add to the current count
-		recalculate the score */
 	}
 
 	/**
@@ -72,7 +70,6 @@ public class Search {
 	 * @return rounded score
 	 */
 	public String getScore() {
-		// TODO DecimalFormatter code should go here
 		this.score = FORMATTER.format(this.rawScore);
 		return score;
 	}

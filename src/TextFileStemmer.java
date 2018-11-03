@@ -111,7 +111,7 @@ public class TextFileStemmer {
 				}
 				if (!queries.isEmpty()) {
 					if (exact == true) {
-//						index.exactSearch(results, queries);
+						index.exactSearch(results, queries);
 					} else {
 						index.partialSearch(results, queries);
 					}
