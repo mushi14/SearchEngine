@@ -1,19 +1,15 @@
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Comparator;
 
-// TODO public class Search implements Comparable<Search>
-public class Search {
+public class Search implements Comparable<Search> {
 
-	private String location;			// TODO final
-	private double totalMatches;		// TODO int
-	private double totalWords;			// TODO int, final
+	private DecimalFormat FORMATTER;
+	private final String location;
+	private int totalMatches;
+	private final int totalWords;
 	private double rawScore;
 	private String score;
 
-	
-	// TODO public Search(String location, int matches, int total)
-	// TODO calculate the score based on matches / total
 	/**
 	 * Constructor for the Query class
 	 * @param loc location that the query word is found in
@@ -22,12 +18,11 @@ public class Search {
 	 * @param rs raw score of the location
 	 * @param sc rounded score of the location
 	 */
-	public Search(String loc, double matches, double words, double rs, String sc) {
+	public Search(String loc, int matches, int words) {
+		FORMATTER = new DecimalFormat("0.000000"); 
 		this.location = loc;
 		this.totalMatches = matches;
 		this.totalWords = words;
-		this.rawScore = rs;
-		this.score = sc;
 	}
 
 	/**
@@ -42,7 +37,7 @@ public class Search {
 	 * Gets the total matches of the location
 	 * @return total number of matches in the location
 	 */
-	public double getMatches() {
+	public int getMatches() {
 		return totalMatches;
 	}
 
@@ -50,8 +45,13 @@ public class Search {
 	 * Gets the total words of the location
 	 * @return total words in the location
 	 */
-	public double getWords() {
+	public int getWords() {
 		return totalWords;
+	}
+
+	public void calculate(int matches) {
+		this.totalMatches = matches;
+		this.rawScore = Double.valueOf(this.totalMatches) / Double.valueOf(this.totalWords);
 	}
 
 	/**
@@ -61,35 +61,17 @@ public class Search {
 	public double getRawScore() {
 		return rawScore;
 	}
-	
-	/* TODO
-	public void updateMatches(int count) {
-		add to the current count
-		recalculate the score
-	}*/
 
 	/**
 	 * Gets the rounded score of the results in the location
 	 * @return rounded score
 	 */
 	public String getScore() {
-		// TODO DecimalFormatter code should go here
+		this.score = FORMATTER.format(this.rawScore);
 		return score;
 	}
 
-	// TODO Remove?
-	/**
-	 * Converts the score to 15 decimal points in order to better the score comparison of the results
-	 * @param score score to convert to 15 decimal point
-	 * @return score formatted with 15 decimal points
-	 */
-	public static double round(double score) {
-		return BigDecimal.valueOf(score)
-			.setScale(15, RoundingMode.HALF_UP)
-			.doubleValue();
-	}
-
-	// TODO Remove...
+//	// TODO Remove...
 	/**
 	 * Inner class that implements the comparator interface
 	 * @author mushahidhassan
@@ -117,11 +99,22 @@ public class Search {
 		}
 	}
 	
-	/* TODO
-	public int compareTo(Search other) {
-		
+	@Override
+	public int compareTo(Search o) {
+		if (this.getRawScore() > o.getRawScore()) {
+			return -1;
+		} else if (this.getRawScore() < o.getRawScore()) {
+			return 1;
+		} else {
+			if (this.getWords() > o.getWords()) {
+				return -1;
+			} else if (this.getWords() < o.getWords()) {
+				return 1;
+			} else {
+				return this.getLocation().compareToIgnoreCase(o.getLocation());
+			}
+		}
 	}
-	*/
 
 	/**
 	 * Overridden toString method
