@@ -201,24 +201,10 @@ public class InvertedIndex {
 	 * @param path path to the file to write to
 	 * @throws IOException in case there's any problem finding the file
 	 */
-	public void writeLocationsJSON(Path path) throws IOException {
+	public void writeLocJSON(Path path) throws IOException {
 		TreeJSONWriter.asLocations(locationsMap, path);
 	}
 
-	/**
-	 * Writes the search results to the file path in pretty json format
-	 * @param path path to the file to write to
-	 * @throws IOException in case there's any problem finding the file
-	 */
-	public void writeSearchResultsJSON(Map<String, List<Search>> results, Path path) throws IOException {
-		TreeJSONWriter.asSearchResult(results, path);
-	}
-
-	/*
-	 * TODO
-	 * public List<Search> exactSearch(Set<String> queries)
-	 */
-	
 	/**
 	 * Performs exact search on a line from the query file. Stores the results to results map
 	 * @param results map containing key-line and value-Search to refer from

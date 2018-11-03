@@ -1,18 +1,15 @@
 import java.text.DecimalFormat;
 import java.util.Comparator;
 
-// TODO public class Search implements Comparable<Search>
-public class Search {
+public class Search implements Comparable<Search> {
 
 	private DecimalFormat FORMATTER;
-	private final String location;			// TODO final
-	private int totalMatches;		// TODO int
-	private final int totalWords;			// TODO int, final
+	private final String location;
+	private int totalMatches;
+	private final int totalWords;
 	private double rawScore;
 	private String score;
 
-	// TODO public Search(String location, int matches, int total)
-	// TODO calculate the score based on matches / total
 	/**
 	 * Constructor for the Query class
 	 * @param loc location that the query word is found in
@@ -74,7 +71,7 @@ public class Search {
 		return score;
 	}
 
-	// TODO Remove...
+//	// TODO Remove...
 	/**
 	 * Inner class that implements the comparator interface
 	 * @author mushahidhassan
@@ -102,11 +99,22 @@ public class Search {
 		}
 	}
 	
-	/* TODO
-	public int compareTo(Search other) {
-		
+	@Override
+	public int compareTo(Search o) {
+		if (this.getRawScore() > o.getRawScore()) {
+			return -1;
+		} else if (this.getRawScore() < o.getRawScore()) {
+			return 1;
+		} else {
+			if (this.getWords() > o.getWords()) {
+				return -1;
+			} else if (this.getWords() < o.getWords()) {
+				return 1;
+			} else {
+				return this.getLocation().compareToIgnoreCase(o.getLocation());
+			}
+		}
 	}
-	*/
 
 	/**
 	 * Overridden toString method

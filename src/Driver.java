@@ -19,6 +19,7 @@ public class Driver {
 		InvertedIndex index = new InvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
 		Map<String, List<Search>> results = new TreeMap<>();
+		QueryFileParser search = new QueryFileParser(results, index);
 
 		if (!argMap.isEmpty()) {
 			if (argMap.hasFlag("-path")) {
@@ -51,17 +52,15 @@ public class Driver {
 				try {
 					if (argMap.flagPath("-search")) {
 						Path path = argMap.getPath("-search");
-						for (String f : PathChecker.queryFiles(path)) {
-							Path file = Paths.get(f);
-							results.clear();
-							boolean exact = false;
-							if (argMap.hasFlag("-exact")) {
-								exact = true;
-							}
-							results = TextFileStemmer.stemQueryFile(results, index, file, exact);
+						boolean exact = false;
+
+						if (argMap.hasFlag("-exact")) {
+							exact = true;
 						}
+
+						search.stemQueryFile(path, exact);
 					}
-				} catch (IOException | NullPointerException e) {
+				} catch (NullPointerException e) {
 					System.out.println("Unable to open the query file or directory provided. A valid query file or "
 							+ "directory is needed to search.");
 				}
@@ -71,10 +70,10 @@ public class Driver {
 				try {
 					if (argMap.flagPath("-results")) {
 						Path path = argMap.getPath("-results");
-						index.writeSearchResultsJSON(results, path);
+						search.writeJSON(path);
 						results.clear();
 					} else {
-						index.writeSearchResultsJSON(results, Paths.get("results.json"));
+						search.writeJSON(Paths.get("results.json"));
 						results.clear();
 					}
 				} catch (IOException | NullPointerException e) {
@@ -86,9 +85,9 @@ public class Driver {
 				try {
 					if (argMap.flagPath("-locations")) {
 						Path path = argMap.getPath("-locations");
-						index.writeLocationsJSON(path);
+						index.writeLocJSON(path);
 					} else {
-						index.writeLocationsJSON(Paths.get("locations.json"));
+						index.writeLocJSON(Paths.get("locations.json"));
 					}
 				} catch (IOException | NullPointerException e) {
 						System.out.println("File not found, locations cannot be printed in json format.");

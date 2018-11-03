@@ -4,12 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import opennlp.tools.stemmer.Stemmer;
@@ -89,60 +83,6 @@ public class TextFileStemmer {
 
 				line = br.readLine();
 			}
-		}
-	}
-
-	/*
-	 * TODO Move this to a QueryFileParser class
-	 */
-	/**
-	 * Stems query file performing partial or exact search and stores the results accordingly
-	 * @param index inverted index that contains the words, their locations, and their positions
-	 * @param path path of the file
-	 * @param exact boolean variable that ensures that an exact search must be performed
-	 */
-	public static Map<String, List<Search>> stemQueryFile(Map<String, List<Search>> results, InvertedIndex index, Path path, boolean exact) {
-		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-			String line = br.readLine();
-			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-
-			while (line != null) {
-				Set<String> queries = new TreeSet<>();
-				String[] words = parse(line);
-
-				for (String word : words) {
-					word = stemmer.stem(word).toString();
-					queries.add(word);
-				}
-
-				if (!queries.isEmpty()) {
-					if (exact == true) {
-						String queryLine = String.join(" ", queries);
-						if (!results.containsKey(queryLine)) {
-							results.put(queryLine, new ArrayList<>());
-							for (Search query : index.exactSearch(queries)) {
-								results.get(queryLine).add(query);
-							}
-						}
-					} else {
-						String queryLine = String.join(" ", queries);
-						if (!results.containsKey(queryLine)) {
-							results.put(queryLine, new ArrayList<>());
-							for (Search query : index.partialSearch(queries)) {
-								results.get(queryLine).add(query);
-							}
-						}
-					}
-				}
-
-				line = br.readLine();
-			}
-
-			return results;
-
-		} catch (IOException | NullPointerException e) {
-			System.out.println("There was an issue finding the query file: " + path);
-			return Collections.emptyMap();
 		}
 	}
 }
