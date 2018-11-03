@@ -24,6 +24,7 @@ public class InvertedIndex {
 	 */
 	public InvertedIndex() {
 		index = new TreeMap<>();
+		locationsMap = new TreeMap<>();
 	}
 
 	/** 
@@ -161,25 +162,6 @@ public class InvertedIndex {
 			return 0;
 		}
 	}
-
-//	/**
-//	 * Total locations of all the words and the total words they contain 
-//	 * @return TreeMap of locations and their total words
-//	 */
-//	public Map<String, Integer> totalLocations() {
-//		locationsMap = new TreeMap<>();
-//		for (String word : getWords()) {
-//			for (String path : getPaths(word)) {
-//				if (!locationsMap.containsKey(path)) {
-//					locationsMap.put(path, positions(word, path));
-//				} else {
-//					int value = locationsMap.get(path) + positions(word, path);
-//					locationsMap.replace(path, value);
-//				}
-//			}
-//		}
-//		return Collections.unmodifiableMap(locationsMap);
-//	}
 
 	/** 
 	 * Checks to see if the map contains the word

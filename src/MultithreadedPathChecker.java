@@ -3,12 +3,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class MultithreadedPathChecker {
 
-	Logger logger = LogManager.getLogger(getClass());
+//	Logger logger = LogManager.getLogger(getClass());
 
 	public final ThreadSafeInvertedIndex threadSafeIndex;
 	private final WorkQueue queue;
@@ -40,7 +37,7 @@ public class MultithreadedPathChecker {
 				}
 			}
 		} catch (IOException e) {
-			logger.debug(e.getMessage(), e);
+//			logger.debug(e.getMessage(), e);
 		}
 	}
 
@@ -64,7 +61,7 @@ public class MultithreadedPathChecker {
 			}
 //			logger.debug("Worker done!");
 		} catch (InterruptedException e) {
-			logger.debug(e.getMessage(), e);
+//			logger.debug(e.getMessage(), e);
 		}
 	}
 
@@ -82,7 +79,7 @@ public class MultithreadedPathChecker {
 //				logger.debug("Adding {} to index", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
 				TextFileStemmer.stemFile(path, threadSafeIndex);
 			} catch (IOException e) {
-				logger.debug(e.getMessage(), e);
+//				logger.debug(e.getMessage(), e);
 			}
 
 			decrementPending();

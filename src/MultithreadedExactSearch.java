@@ -2,12 +2,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class MultithreadedExactSearch {
 
-	Logger logger = LogManager.getLogger(getClass());
+//	Logger logger = LogManager.getLogger(getClass());
 
 	public final ThreadSafeInvertedIndex threadSafeIndex;
 	public final Map<String, List<Search>> results;
@@ -16,7 +13,7 @@ public class MultithreadedExactSearch {
 
 	public MultithreadedExactSearch(ThreadSafeInvertedIndex threadSafeIndex, Map<String, List<Search>> results, 
 			int threads, List<Set<String>> queries) {
-		logger.debug("CONSTRUCTOR CALLED");
+//		logger.debug("CONSTRUCTOR CALLED");
 		this.results = results;
 		this.threadSafeIndex = threadSafeIndex;
 		this.queue = new WorkQueue(threads);
@@ -29,18 +26,18 @@ public class MultithreadedExactSearch {
 	public void search(List<Set<String>> queries) {
 		for (Set<String> set : queries) {
 			queue.execute(new QueryLineSearch(set));
-			logger.debug("NEW TASK for search on {}", set);
+//			logger.debug("NEW TASK for search on {}", set);
 		}
 	}
 
 	private void incrementPending() {
 		pending++;
-		logger.debug("Incrementing pending to {}", pending);
+//		logger.debug("Incrementing pending to {}", pending);
 	}
 
 	private void decrementPending() {
 		pending--;
-		logger.debug("Incrementing pending to {}", pending);
+//		logger.debug("Incrementing pending to {}", pending);
 
 		if (pending == 0) {
 			this.notifyAll();
@@ -51,11 +48,11 @@ public class MultithreadedExactSearch {
 		try {
 			while (pending > 0) {
 				this.wait();
-				logger.debug("woke up with pending at {}", pending);
+//				logger.debug("woke up with pending at {}", pending);
 			}
-			logger.debug("Worker done!");
+//			logger.debug("Worker done!");
 		} catch (InterruptedException e) {
-			logger.debug(e.getMessage(), e);
+//			logger.debug(e.getMessage(), e);
 		}
 	}
 
@@ -69,10 +66,10 @@ public class MultithreadedExactSearch {
 
 		@Override
 		public void run() {
-			logger.debug("PERFORMING search on {}", queries);
+//			logger.debug("PERFORMING search on {}", queries);
 			threadSafeIndex.exactSearch(results, queries);
 			decrementPending();
-			logger.debug("DONE with search on {}", queries);
+//			logger.debug("DONE with search on {}", queries);
 		}
 	}
 }

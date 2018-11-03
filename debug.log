@@ -1,22 +1,10 @@
-[56:23:633 debug] main: CONSTRUCTOR CALLED
-[56:23:642 debug] main: Incrementing pending to 1
-[56:23:642 debug] main: NEW TASK for search on [ant]
-[56:23:642 debug] Thread-5: PERFORMING search on [ant]
-[56:23:642 debug] main: Incrementing pending to 2
-[56:23:643 debug] main: NEW TASK for search on [eight, nine, seven]
-[56:23:643 debug] Thread-9: PERFORMING search on [eight, nine, seven]
-[56:23:643 debug] main: Incrementing pending to 3
-[56:23:643 debug] main: NEW TASK for search on [hello, world]
-[56:23:643 debug] Thread-6: PERFORMING search on [hello, world]
-[56:23:643 debug] main: Incrementing pending to 4
-[56:23:644 debug] main: NEW TASK for search on [hello, world]
-[56:23:644 debug] Thread-8: PERFORMING search on [hello, world]
-[56:23:644 debug] main: Incrementing pending to 5
-[56:23:644 debug] main: NEW TASK for search on [cardin]
-[56:23:644 debug] Thread-7: PERFORMING search on [cardin]
-[56:23:644 debug] main: Incrementing pending to 6
-[56:23:645 debug] main: NEW TASK for search on [aar, alpaca, eleph]
-[56:23:645 debug] main: Incrementing pending to 7
-[56:23:645 debug] main: NEW TASK for search on [capybara, hidden]
-[56:23:645 debug] main: Incrementing pending to 8
-[56:23:645 debug] main: NEW TASK for search on [antelop, observ]
+[51:06:042 debug] main: CONSTRUCTOR CALLED
+[51:06:049 debug] main: Incrementing pending to 1
+[51:06:049 debug] main: NEW TASK for search on [lori]
+[51:06:049 debug] Thread-5: PERFORMING search on [lori]
+[51:06:050 debug] main: Incrementing pending to 2
+[51:06:050 debug] main: NEW TASK for search on [lori]
+[51:06:050 debug] Thread-9: PERFORMING search on [lori]
+[51:06:050 debug] main: Incrementing pending to 3
+[51:06:050 debug] main: NEW TASK for search on [narwhal, tarsier]
+[51:06:050 debug] Thread-6: PERFORMING search on [narwhal, tarsier]
