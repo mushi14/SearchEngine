@@ -1,10 +1,12 @@
+import java.text.DecimalFormat;
 import java.util.Comparator;
 
 public class Search {
 
-	private String location;
-	private double totalMatches;
-	private double totalWords;
+	private DecimalFormat FORMATTER;
+	private final String location;
+	private int totalMatches;
+	private final int totalWords;
 	private double rawScore;
 	private String score;
 
@@ -16,12 +18,11 @@ public class Search {
 	 * @param rs raw score of the location
 	 * @param sc rounded score of the location
 	 */
-	public Search(String loc, double matches, double words, double rs, String sc) {
+	public Search(String loc, int matches, int words) {
+		FORMATTER = new DecimalFormat("0.000000"); 
 		this.location = loc;
 		this.totalMatches = matches;
 		this.totalWords = words;
-		this.rawScore = rs;
-		this.score = sc;
 	}
 
 	/**
@@ -36,7 +37,7 @@ public class Search {
 	 * Gets the total matches of the location
 	 * @return total number of matches in the location
 	 */
-	public double getMatches() {
+	public int getMatches() {
 		return totalMatches;
 	}
 
@@ -44,8 +45,13 @@ public class Search {
 	 * Gets the total words of the location
 	 * @return total words in the location
 	 */
-	public double getWords() {
+	public int getWords() {
 		return totalWords;
+	}
+
+	public void calculate(int matches) {
+		this.totalMatches = matches;
+		this.rawScore = Double.valueOf(this.totalMatches) / Double.valueOf(this.totalWords);
 	}
 
 	/**
@@ -61,6 +67,7 @@ public class Search {
 	 * @return rounded score
 	 */
 	public String getScore() {
+		this.score = FORMATTER.format(this.rawScore);
 		return score;
 	}
 
@@ -68,7 +75,7 @@ public class Search {
 	 * Inner class that implements the comparator interface
 	 * @author mushahidhassan
 	 */
-	public static class Comparison implements Comparator<Search> {
+	static class Comparison implements Comparator<Search> {
 		/**
 		 * sorts a list of queries in descending order by their raw score, if score is the same, sorts by
 		 * total number of words in a query location, if number of words the same, then sorts alphabetically (case insensitively)
@@ -90,6 +97,23 @@ public class Search {
 			}
 		}
 	}
+	
+//	@Override
+//	public int compareTo(Search o) {
+//		if (this.getRawScore() > o.getRawScore()) {
+//			return -1;
+//		} else if (this.getRawScore() < o.getRawScore()) {
+//			return 1;
+//		} else {
+//			if (this.getWords() > o.getWords()) {
+//				return -1;
+//			} else if (this.getWords() < o.getWords()) {
+//				return 1;
+//			} else {
+//				return this.getLocation().compareToIgnoreCase(o.getLocation());
+//			}
+//		}
+//	}
 
 	/**
 	 * Overridden toString method

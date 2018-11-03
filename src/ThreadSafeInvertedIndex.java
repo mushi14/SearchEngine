@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class ThreadSafeInvertedIndex extends InvertedIndex {
@@ -11,22 +10,6 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	public ThreadSafeInvertedIndex() {
 		super();
 		lock = new ReadWriteLock();
-	}
-
-	/** 
-	 * Gets the TreeMap of keys paths and values positions associated with the word
-	 * 
-	 * @param word word inside of the file
-	 * @return TreeMap containing path and positions of word 
-	 */
-	@Override
-	public Map<String, Set<Integer>> get(String word) {
-		lock.lockReadOnly();
-		try {
-			return super.get(word);
-		} finally {
-			lock.unlockReadOnly();
-		}
 	}
 
 	/**
@@ -241,25 +224,10 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @throws IOException in case there's any problem finding the file
 	 */
 	@Override
-	public void writeLocationsJSON(Path path) throws IOException {
+	public void writeLocJSON(Path path) throws IOException {
 		lock.lockReadWrite();;
 		try {
-			super.writeLocationsJSON(path);
-		} finally {
-			lock.unlockReadWrite();;
-		}
-	}
-
-	/**
-	 * Writes the search results to the file path in pretty json format
-	 * @param path path to the file to write to
-	 * @throws IOException in case there's any problem finding the file
-	 */
-	@Override
-	public void writeSearchResultsJSON(Map<String, List<Search>> results, Path path) throws IOException {
-		lock.lockReadWrite();;
-		try {
-			super.writeSearchResultsJSON(results, path);;
+			super.writeLocJSON(path);
 		} finally {
 			lock.unlockReadWrite();;
 		}
@@ -271,10 +239,10 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param queries line of queries to compare
 	 */
 	@Override
-	public void exactSearch(Map<String, List<Search>> results, Set<String> queries) {
+	public List<Search> exactSearch(Set<String> queries) {
 		lock.lockReadWrite();
 		try {
-			super.exactSearch(results, queries);
+			return super.exactSearch(queries);
 		} finally {
 			lock.unlockReadWrite();
 		}
@@ -284,12 +252,13 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * performs partial search on a line from the query file. Stores the results to results map
 	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
+	 * @return 
 	 */
 	@Override
-	public void partialSearch(Map<String, List<Search>> results, Set<String> queries) {
+	public List<Search> partialSearch(Set<String> queries) {
 		lock.lockReadWrite();
 		try {
-			super.partialSearch(results, queries);
+			return super.partialSearch(queries);
 		} finally {
 			lock.unlockReadWrite();
 		}
