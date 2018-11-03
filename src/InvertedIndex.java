@@ -224,82 +224,31 @@ public class InvertedIndex {
 	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
 	 */
-	public void exactSearch(Map<String, List<Search>> results, Set<String> queries) {
-		String line = String.join(" ", queries);
+	public List<Search> exactSearch(Set<String> queries) {
 		int totalMatches = 0;
 		int totalWords = 0;
 
 		Map<String, Search> locationsList = new HashMap<>();
 		List<Search> resultsList = new ArrayList<>();
 
-		if (!results.containsKey(line)) {
-			results.put(line, new ArrayList<>());
-			for (String query : queries) {
-				for (String word : getWords()) {
-					if (word.equals(query)) {
-						for (String loc : getPaths(word)) {
-							if (locationsList.containsKey(loc)) {
-								totalMatches = locationsList.get(loc).getMatches();
-								totalMatches += positions(word, loc);
+		for (String query : queries) {
+			for (String word : getWords()) {
+				if (word.equals(query)) {
+					for (String loc : getPaths(word)) {
+						if (locationsList.containsKey(loc)) {
+							totalMatches = locationsList.get(loc).getMatches();
+							totalMatches += positions(word, loc);
 
-								locationsList.get(loc).calculate(totalMatches);
-							} else {
-								totalMatches = positions(word, loc);
-								totalWords = locationsMap.get(loc);
+							locationsList.get(loc).calculate(totalMatches);
+						} else {
+							totalMatches = positions(word, loc);
+							totalWords = locationsMap.get(loc);
 
-								Search newQuery = new Search(loc, totalMatches, totalWords);
-								newQuery.calculate(totalMatches);
-								locationsList.put(loc, newQuery);
+							Search newQuery = new Search(loc, totalMatches, totalWords);
+							newQuery.calculate(totalMatches);
+							locationsList.put(loc, newQuery);
 
-								resultsList.add(newQuery);
-							}
-						}
-					}
-				}
-			}
-
-			Collections.sort(resultsList, new Search.Comparison());
-
-			for (Search query : resultsList) {
-				results.get(line).add(query);
-			}
-		}
-	}
-
-	/**
-	 * Performs partial search on a line from the query file. Stores the results to results map
-	 * @param results map containing key-line and value-Search to refer from
-	 * @param queries line of queries to compare
-	 */
-	public void partialSearch(Map<String, List<Search>> results, Set<String> queries) {
-		String line = String.join(" ", queries);
-		int totalMatches = 0;
-		int totalWords = 0;
-
-		Map<String, Search> locationsList = new HashMap<>();
-		List<Search> resultsList = new ArrayList<>();
-
-		if (!results.containsKey(line)) {
-			results.put(line, new ArrayList<>());
-			for (String query : queries) {
-				for (String word : getWords()) {
-					if (word.startsWith(query)) {
-						for (String loc : getPaths(word)) {
-							if (locationsList.containsKey(loc)) {
-								totalMatches = locationsList.get(loc).getMatches();
-								totalMatches += positions(word, loc);
-
-								locationsList.get(loc).calculate(totalMatches);
-							} else {
-								totalMatches = positions(word, loc);
-								totalWords = locationsMap.get(loc);
-
-								Search newQuery = new Search(loc, totalMatches, totalWords);
-								newQuery.calculate(totalMatches);
-								locationsList.put(loc, newQuery);
-
-								resultsList.add(newQuery);
-							}
+							resultsList.add(newQuery);
 						}
 					}
 				}
@@ -307,10 +256,47 @@ public class InvertedIndex {
 		}
 
 		Collections.sort(resultsList, new Search.Comparison());
+		return resultsList;
+	}
 
-		for (Search query : resultsList) {
-			results.get(line).add(query);
+	/**
+	 * Performs partial search on a line from the query file. Stores the results to results map
+	 * @param results map containing key-line and value-Search to refer from
+	 * @param queries line of queries to compare
+	 */
+	public List<Search> partialSearch(Set<String> queries) {
+		int totalMatches = 0;
+		int totalWords = 0;
+
+		Map<String, Search> locationsList = new HashMap<>();
+		List<Search> resultsList = new ArrayList<>();
+
+		for (String query : queries) {
+			for (String word : getWords()) {
+				if (word.startsWith(query)) {
+					for (String loc : getPaths(word)) {
+						if (locationsList.containsKey(loc)) {
+							totalMatches = locationsList.get(loc).getMatches();
+							totalMatches += positions(word, loc);
+
+							locationsList.get(loc).calculate(totalMatches);
+						} else {
+							totalMatches = positions(word, loc);
+							totalWords = locationsMap.get(loc);
+
+							Search newQuery = new Search(loc, totalMatches, totalWords);
+							newQuery.calculate(totalMatches);
+							locationsList.put(loc, newQuery);
+
+							resultsList.add(newQuery);
+						}
+					}
+				}
+			}
 		}
+
+		Collections.sort(resultsList, new Search.Comparison());
+		return resultsList;
 	}
 
 	/** 

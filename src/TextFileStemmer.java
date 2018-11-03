@@ -4,6 +4,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -76,6 +78,7 @@ public class TextFileStemmer {
 			String line = br.readLine();
 			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 			String name = path.toString();
+
 			while(line != null) {
 				String[] words = parse(line);
 				for (String word : words) {
@@ -83,6 +86,7 @@ public class TextFileStemmer {
 					index.add(word, name, position);
 					position++;
 				}
+
 				line = br.readLine();
 			}
 		}
@@ -97,7 +101,7 @@ public class TextFileStemmer {
 	 * @param path path of the file
 	 * @param exact boolean variable that ensures that an exact search must be performed
 	 */
-	public static void stemQueryFile(Map<String, List<Search>> results, InvertedIndex index, Path path, boolean exact) {
+	public static Map<String, List<Search>> stemQueryFile(Map<String, List<Search>> results, InvertedIndex index, Path path, boolean exact) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			String line = br.readLine();
 			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
@@ -105,24 +109,40 @@ public class TextFileStemmer {
 			while (line != null) {
 				Set<String> queries = new TreeSet<>();
 				String[] words = parse(line);
+
 				for (String word : words) {
 					word = stemmer.stem(word).toString();
 					queries.add(word);
 				}
+
 				if (!queries.isEmpty()) {
 					if (exact == true) {
-						index.exactSearch(results, queries);
+						String queryLine = String.join(" ", queries);
+						if (!results.containsKey(queryLine)) {
+							results.put(queryLine, new ArrayList<>());
+							for (Search query : index.exactSearch(queries)) {
+								results.get(queryLine).add(query);
+							}
+						}
 					} else {
-						index.partialSearch(results, queries);
+						String queryLine = String.join(" ", queries);
+						if (!results.containsKey(queryLine)) {
+							results.put(queryLine, new ArrayList<>());
+							for (Search query : index.partialSearch(queries)) {
+								results.get(queryLine).add(query);
+							}
+						}
 					}
 				}
+
 				line = br.readLine();
 			}
-//			return results;
+
+			return results;
 
 		} catch (IOException | NullPointerException e) {
 			System.out.println("There was an issue finding the query file: " + path);
-//			return Collections.emptyMap();
+			return Collections.emptyMap();
 		}
 	}
 }
