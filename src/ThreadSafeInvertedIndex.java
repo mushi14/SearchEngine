@@ -156,19 +156,19 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 		}
 	}
 
-	/**
-	 * Total locations of all the words and the total words they contain 
-	 * @return TreeMap of locations and their total words
-	 */
-	@Override
-	public Map<String, Integer> totalLocations() {
-		lock.lockReadWrite();
-		try {
-			return super.totalLocations();
-		} finally {
-			lock.unlockReadWrite();
-		}
-	}
+//	/**
+//	 * Total locations of all the words and the total words they contain 
+//	 * @return TreeMap of locations and their total words
+//	 */
+//	@Override
+//	public Map<String, Integer> totalLocations() {
+//		lock.lockReadWrite();
+//		try {
+//			return super.totalLocations();
+//		} finally {
+//			lock.unlockReadWrite();
+//		}
+//	}
 
 	/** 
 	 * Checks to see if the map contains the word

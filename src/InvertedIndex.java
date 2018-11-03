@@ -61,6 +61,12 @@ public class InvertedIndex {
 			index.get(word).put(path, new TreeSet<Integer>());
 			index.get(word).get(path).add(position);
 		}
+
+		if (locationsMap.containsKey(path)) {
+			locationsMap.put(path, locationsMap.get(path) + 1);
+		} else {
+			locationsMap.put(path, 1);
+		}
 	}
 
 	/**
@@ -156,24 +162,24 @@ public class InvertedIndex {
 		}
 	}
 
-	/**
-	 * Total locations of all the words and the total words they contain 
-	 * @return TreeMap of locations and their total words
-	 */
-	public Map<String, Integer> totalLocations() {
-		locationsMap = new TreeMap<>();
-		for (String word : getWords()) {
-			for (String path : getPaths(word)) {
-				if (!locationsMap.containsKey(path)) {
-					locationsMap.put(path, positions(word, path));
-				} else {
-					int value = locationsMap.get(path) + positions(word, path);
-					locationsMap.replace(path, value);
-				}
-			}
-		}
-		return Collections.unmodifiableMap(locationsMap);
-	}
+//	/**
+//	 * Total locations of all the words and the total words they contain 
+//	 * @return TreeMap of locations and their total words
+//	 */
+//	public Map<String, Integer> totalLocations() {
+//		locationsMap = new TreeMap<>();
+//		for (String word : getWords()) {
+//			for (String path : getPaths(word)) {
+//				if (!locationsMap.containsKey(path)) {
+//					locationsMap.put(path, positions(word, path));
+//				} else {
+//					int value = locationsMap.get(path) + positions(word, path);
+//					locationsMap.replace(path, value);
+//				}
+//			}
+//		}
+//		return Collections.unmodifiableMap(locationsMap);
+//	}
 
 	/** 
 	 * Checks to see if the map contains the word
@@ -230,8 +236,8 @@ public class InvertedIndex {
 	 * @throws IOException in case there's any problem finding the file
 	 */
 	public void writeLocationsJSON(Path path) throws IOException {
-		Map<String, Integer> totalLocations = totalLocations();
-		TreeJSONWriter.asLocations(totalLocations, path);
+//		Map<String, Integer> totalLocations = totalLocations();
+		TreeJSONWriter.asLocations(locationsMap, path);
 	}
 
 	/**
@@ -257,7 +263,7 @@ public class InvertedIndex {
 		String score = "";
 
 		Map<String, Search> locationsList = new TreeMap<>();
-		Map<String, Integer> totalLocations = totalLocations();
+//		Map<String, Integer> totalLocations = totalLocations();
 		if (!results.containsKey(line)) {
 			results.put(line, new ArrayList<>());
 			for (String query : queries) {
@@ -267,7 +273,7 @@ public class InvertedIndex {
 							if (locationsList.containsKey(loc)) {
 								totalMatches = locationsList.get(loc).getMatches();
 								totalMatches += positions(word, loc);
-								totalWords = totalLocations.get(loc);
+								totalWords = locationsMap.get(loc);
 								rawScore = totalMatches / totalWords;
 								score = FORMATTER.format(totalMatches / totalWords);
 
@@ -275,7 +281,7 @@ public class InvertedIndex {
 								locationsList.put(loc, q);
 							} else {
 								totalMatches = positions(word, loc);
-								totalWords = totalLocations.get(loc);
+								totalWords = locationsMap.get(loc);
 								rawScore = totalMatches / totalWords;
 								score = FORMATTER.format(totalMatches / totalWords);
 
@@ -312,7 +318,7 @@ public class InvertedIndex {
 		String score = "";
 
 		Map<String, Search> locationsList = new TreeMap<>();
-		Map<String, Integer> totalLocations = totalLocations();
+//		Map<String, Integer> totalLocations = totalLocations();
 		if (!results.containsKey(line)) {
 			results.put(line, new ArrayList<>());
 			for (String query : queries) {
@@ -322,7 +328,7 @@ public class InvertedIndex {
 							if (locationsList.containsKey(loc)) {
 								totalMatches = locationsList.get(loc).getMatches();
 								totalMatches += positions(word, loc);
-								totalWords = totalLocations.get(loc);
+								totalWords = locationsMap.get(loc);
 								rawScore = totalMatches / totalWords;
 								score = FORMATTER.format(totalMatches / totalWords);
 
@@ -330,7 +336,7 @@ public class InvertedIndex {
 								locationsList.put(loc, q);
 							} else {
 								totalMatches = positions(word, loc);
-								totalWords = totalLocations.get(loc);
+								totalWords = locationsMap.get(loc);
 								rawScore = totalMatches / totalWords;
 								score = FORMATTER.format(totalMatches / totalWords);
 
