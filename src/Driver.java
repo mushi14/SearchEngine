@@ -29,6 +29,7 @@ public class Driver {
 
 			if (argMap.hasFlag("-threads")) {
 				multithreaded = true;
+
 				if (argMap.flagPath("-threads")) {
 					threads = argMap.getThreads("-threads");
 				}
@@ -38,12 +39,14 @@ public class Driver {
 				try {
 					if (argMap.flagPath("-path")) {
 						Path path = argMap.getPath("-path");
+
 						if (multithreaded == true) {
 							MultithreadedPathChecker workers = new MultithreadedPathChecker(path, threads, threadSafeIndex);
 							threadSafeIndex = workers.threadSafeIndex;
 						} else {
 							PathChecker.filesInPath(path, index);
 						}
+
 					} else {
 						System.out.println("There is no path provided. A valid path is needed to build the index.");
 					}
@@ -56,11 +59,13 @@ public class Driver {
 				try {
 					if (argMap.flagPath("-index")) {
 						Path path = argMap.getPath("-index");
+
 						if (multithreaded == true) {
 							threadSafeIndex.writeIndexJSON(path);
 						} else {
 							index.writeIndexJSON(path);
 						}
+
 					} else {
 						if (multithreaded == true) {
 							threadSafeIndex.writeIndexJSON(Paths.get("index.json"));
@@ -76,18 +81,19 @@ public class Driver {
 			if (argMap.hasFlag("-search")) {
 				try {
 					if (argMap.flagPath("-search")) {
+						Path path = argMap.getPath("-search");
+
 						if (multithreaded == true) {
-							Path path = argMap.getPath("-search");
 							boolean exact = false;
 
 							if (argMap.hasFlag("-exact")) {
 								exact = true;
 							}
 
-							search.multithreadQueryFile(path, exact, threads);
+							results = search.multithreadQueryFile(path, exact, threads);
+							System.out.println(results);
 
 						} else {
-							Path path = argMap.getPath("-search");
 							boolean exact = false;
 
 							if (argMap.hasFlag("-exact")) {
@@ -107,13 +113,17 @@ public class Driver {
 				try {
 					if (argMap.flagPath("-results")) {
 						Path path = argMap.getPath("-results");
-						search.writeJSON(path);
+
+//						search.writeJSON(path);
+						TreeJSONWriter.asSearchResult(results, path);
 						results.clear();
 					} else {
-						search.writeJSON(Paths.get("results.json"));
+//						search.writeJSON(Paths.get("results.json"));
+						TreeJSONWriter.asSearchResult(results, Paths.get("results.json"));
+
 						results.clear();
 					}
-				} catch (IOException | NullPointerException e) {
+				} catch (/*IOException | */NullPointerException e) {
 					System.out.println("File not found, search results cannot be printed in json format.");
 				}
 			}

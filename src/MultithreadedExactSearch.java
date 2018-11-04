@@ -18,34 +18,38 @@ public class MultithreadedExactSearch {
 
 	public MultithreadedExactSearch(ThreadSafeInvertedIndex threadSafeIndex, Map<String, List<Search>> results, 
 			int threads, List<Set<String>> queries) {
-//		logger.debug("CONSTRUCTOR CALLED");
 		this.threadSafeIndex = threadSafeIndex;
 		this.results = results;
 		this.queries = queries;
 		this.queue = new WorkQueue(threads);
 		this.pending = 0;
 		this.search();
+//		this.finish();
+//		this.queue.shutdown();
 	}
 
 	private void search() {
 		for (Set<String> query : queries) {
 			String queryLine = String.join(" ", query);
+
 			if (!results.containsKey(queryLine)) {
 				results.put(queryLine, new ArrayList<>());
-				queue.execute(new QueryLineSearch(query, results, queryLine));
 				logger.debug("NEW TASK for search on {}", query);
+				queue.execute(new QueryLineSearch(query, results, queryLine));
 			}
 		}
-		this.finish();
+		finish();
 		this.queue.shutdown();
 	}
 
 	private void incrementPending() {
 		pending++;
+		logger.debug("Incrementing pending. Pending: {}", pending);
 	}
 
 	private void decrementPending() {
 		pending--;
+		logger.debug("Decrementing pending. Pending: {}", pending);
 
 		if (pending == 0) {
 			this.notifyAll();
@@ -78,10 +82,17 @@ public class MultithreadedExactSearch {
 		public void run() {
 			List<Search> temp = new ArrayList<>();
 			logger.debug("PERFORMING search on {}", query);
-			temp = threadSafeIndex.exactSearch(query);
+
+			try {
+				temp = threadSafeIndex.exactSearch(query);
+			} catch (IllegalMonitorStateException e) {
+				logger.debug(e.getMessage(), e);
+			}
+
 			synchronized (results) {
 				results.put(line, temp);
 			}
+
 			logger.debug("DONE with search on {}", query);
 			decrementPending();
 		}

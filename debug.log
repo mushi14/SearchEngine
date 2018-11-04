@@ -1,49 +1,42 @@
-[44:08:131 debug] Thread-5: PERFORMING search on [ant]
-[44:08:131 debug] main: NEW TASK for search on [ant]
-[44:08:136 debug] main: NEW TASK for search on [eight, nine, seven]
-[44:08:136 debug] Thread-9: PERFORMING search on [eight, nine, seven]
-[44:08:136 debug] Thread-5: DONE with search on [ant]
-[44:08:136 debug] Thread-6: PERFORMING search on [hello, world]
-[44:08:137 debug] Thread-9: DONE with search on [eight, nine, seven]
-[44:08:137 debug] Thread-6: DONE with search on [hello, world]
-[44:08:137 debug] main: NEW TASK for search on [hello, world]
-[44:08:139 debug] main: NEW TASK for search on [cardin]
-[44:08:139 debug] Thread-8: PERFORMING search on [cardin]
-[44:08:139 debug] Thread-8: DONE with search on [cardin]
-[44:08:139 debug] Thread-9: PERFORMING search on [aar, alpaca, eleph]
-[44:08:140 debug] Thread-9: DONE with search on [aar, alpaca, eleph]
-[44:08:144 debug] main: NEW TASK for search on [aar, alpaca, eleph]
-[44:08:145 debug] Thread-7: PERFORMING search on [capybara, hidden]
-[44:08:146 debug] Thread-7: DONE with search on [capybara, hidden]
-[44:08:147 debug] main: NEW TASK for search on [capybara, hidden]
-[44:08:148 debug] Thread-8: PERFORMING search on [antelop, observ]
-[44:08:140 debug] Thread-9: null
+[06:10:917 debug] main: NEW TASK for search on [ant]
+[06:10:922 debug] main: Incrementing pending. Pending: 1
+[06:10:923 debug] Thread-5: PERFORMING search on [ant]
+[06:10:923 debug] main: NEW TASK for search on [eight, nine, seven]
+[06:10:923 debug] main: Incrementing pending. Pending: 2
+[06:10:924 debug] main: NEW TASK for search on [hello, world]
+[06:10:924 debug] Thread-5: DONE with search on [ant]
+[06:10:924 debug] Thread-9: PERFORMING search on [eight, nine, seven]
+[06:10:924 debug] main: Incrementing pending. Pending: 3
+[06:10:924 debug] Thread-5: Decrementing pending. Pending: 2
+[06:10:925 debug] Thread-6: PERFORMING search on [hello, world]
+[06:10:925 debug] main: NEW TASK for search on [cardin]
+[06:10:925 debug] main: Incrementing pending. Pending: 3
+[06:10:925 debug] Thread-9: DONE with search on [eight, nine, seven]
+[06:10:926 debug] Thread-6: DONE with search on [hello, world]
+[06:10:926 debug] Thread-9: Decrementing pending. Pending: 2
+[06:10:926 debug] Thread-6: Decrementing pending. Pending: 1
+[06:10:926 debug] Thread-8: PERFORMING search on [cardin]
+[06:10:926 debug] main: NEW TASK for search on [aar, alpaca, eleph]
+[06:10:926 debug] Thread-8: DONE with search on [cardin]
+[06:10:926 debug] main: Incrementing pending. Pending: 2
+[06:10:926 debug] Thread-8: Decrementing pending. Pending: 1
+[06:10:926 debug] main: NEW TASK for search on [capybara, hidden]
+[06:10:926 debug] Thread-7: PERFORMING search on [aar, alpaca, eleph]
+[06:10:927 debug] main: Incrementing pending. Pending: 2
+[06:10:927 debug] Thread-6: PERFORMING search on [capybara, hidden]
+[06:10:927 debug] Thread-7: DONE with search on [aar, alpaca, eleph]
+[06:10:927 debug] main: NEW TASK for search on [antelop, observ]
+[06:10:927 debug] Thread-7: Decrementing pending. Pending: 1
+[06:10:927 debug] Thread-6: DONE with search on [capybara, hidden]
+[06:10:927 debug] main: Incrementing pending. Pending: 2
+[06:10:928 debug] Thread-6: Decrementing pending. Pending: 1
+[06:10:928 debug] Thread-5: PERFORMING search on [antelop, observ]
+[06:10:928 debug] Thread-5: DONE with search on [antelop, observ]
+[06:10:928 debug] Thread-5: Decrementing pending. Pending: 0
+[06:10:930 debug] Thread-5: null
 java.lang.IllegalMonitorStateException: null
 	at java.lang.Object.notifyAll(Native Method) ~[?:?]
-	at MultithreadedExactSearch.decrementPending(MultithreadedExactSearch.java:51) ~[bin/:?]
-	at MultithreadedExactSearch.access$1(MultithreadedExactSearch.java:47) ~[bin/:?]
-	at MultithreadedExactSearch$QueryLineSearch.run(MultithreadedExactSearch.java:86) ~[bin/:?]
-	at WorkQueue$ThreadPool.run(WorkQueue.java:61) [bin/:?]
-[44:08:148 debug] main: NEW TASK for search on [antelop, observ]
-[44:08:149 debug] Thread-8: DONE with search on [antelop, observ]
-[44:08:146 debug] Thread-7: null
-java.lang.IllegalMonitorStateException: null
-	at java.lang.Object.notifyAll(Native Method) ~[?:?]
-	at MultithreadedExactSearch.decrementPending(MultithreadedExactSearch.java:51) ~[bin/:?]
-	at MultithreadedExactSearch.access$1(MultithreadedExactSearch.java:47) ~[bin/:?]
-	at MultithreadedExactSearch$QueryLineSearch.run(MultithreadedExactSearch.java:86) ~[bin/:?]
-	at WorkQueue$ThreadPool.run(WorkQueue.java:61) [bin/:?]
-[44:08:149 debug] Thread-8: null
-java.lang.IllegalMonitorStateException: null
-	at java.lang.Object.notifyAll(Native Method) ~[?:?]
-	at MultithreadedExactSearch.decrementPending(MultithreadedExactSearch.java:51) ~[bin/:?]
-	at MultithreadedExactSearch.access$1(MultithreadedExactSearch.java:47) ~[bin/:?]
-	at MultithreadedExactSearch$QueryLineSearch.run(MultithreadedExactSearch.java:86) ~[bin/:?]
-	at WorkQueue$ThreadPool.run(WorkQueue.java:61) [bin/:?]
-[44:08:139 debug] Thread-6: null
-java.lang.IllegalMonitorStateException: null
-	at java.lang.Object.notifyAll(Native Method) ~[?:?]
-	at MultithreadedExactSearch.decrementPending(MultithreadedExactSearch.java:51) ~[bin/:?]
-	at MultithreadedExactSearch.access$1(MultithreadedExactSearch.java:47) ~[bin/:?]
-	at MultithreadedExactSearch$QueryLineSearch.run(MultithreadedExactSearch.java:86) ~[bin/:?]
+	at MultithreadedExactSearch.decrementPending(MultithreadedExactSearch.java:55) ~[bin/:?]
+	at MultithreadedExactSearch.access$1(MultithreadedExactSearch.java:50) ~[bin/:?]
+	at MultithreadedExactSearch$QueryLineSearch.run(MultithreadedExactSearch.java:97) ~[bin/:?]
 	at WorkQueue$ThreadPool.run(WorkQueue.java:61) [bin/:?]
