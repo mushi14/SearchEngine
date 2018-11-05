@@ -40,7 +40,7 @@ public class Driver {
 					if (argMap.flagPath("-path")) {
 						Path path = argMap.getPath("-path");
 
-						if (multithreaded == true) {
+						if (multithreaded) {
 							MultithreadedPathChecker workers = new MultithreadedPathChecker(path, threads, threadSafeIndex);
 							threadSafeIndex = workers.threadSafeIndex;
 						} else {
@@ -60,14 +60,14 @@ public class Driver {
 					if (argMap.flagPath("-index")) {
 						Path path = argMap.getPath("-index");
 
-						if (multithreaded == true) {
+						if (multithreaded) {
 							threadSafeIndex.writeIndexJSON(path);
 						} else {
 							index.writeIndexJSON(path);
 						}
 
 					} else {
-						if (multithreaded == true) {
+						if (multithreaded) {
 							threadSafeIndex.writeIndexJSON(Paths.get("index.json"));
 						} else {
 							index.writeIndexJSON(Paths.get("index.json"));
@@ -83,7 +83,7 @@ public class Driver {
 					if (argMap.flagPath("-search")) {
 						Path path = argMap.getPath("-search");
 
-						if (multithreaded == true) {
+						if (multithreaded) {
 							boolean exact = false;
 
 							if (argMap.hasFlag("-exact")) {
@@ -91,7 +91,6 @@ public class Driver {
 							}
 
 							results = search.multithreadQueryFile(path, exact, threads);
-							System.out.println(results);
 
 						} else {
 							boolean exact = false;
@@ -99,8 +98,8 @@ public class Driver {
 							if (argMap.hasFlag("-exact")) {
 								exact = true;
 							}
-							
-							search.stemQueryFile(path, exact);
+
+							results = search.stemQueryFile(path, exact);
 						}
 					}
 				} catch (NullPointerException e) {
@@ -114,16 +113,14 @@ public class Driver {
 					if (argMap.flagPath("-results")) {
 						Path path = argMap.getPath("-results");
 
-//						search.writeJSON(path);
-						TreeJSONWriter.asSearchResult(results, path);
+						search.writeJSON(path);
 						results.clear();
 					} else {
-//						search.writeJSON(Paths.get("results.json"));
-						TreeJSONWriter.asSearchResult(results, Paths.get("results.json"));
+						search.writeJSON(Paths.get("results.json"));
 
 						results.clear();
 					}
-				} catch (/*IOException | */NullPointerException e) {
+				} catch (IOException | NullPointerException e) {
 					System.out.println("File not found, search results cannot be printed in json format.");
 				}
 			}

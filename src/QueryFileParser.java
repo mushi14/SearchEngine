@@ -108,13 +108,8 @@ public class QueryFileParser {
 			}
 
 			if (!queries.isEmpty()) {
-				if (exact == true) {
-					MultithreadedExactSearch exactSearch = new MultithreadedExactSearch(threadSafeInvertedIndex, 
-							results, threads, queries);
-				} else {
-//					MultithreadedPartialSearch exactSearch = new MultithreadedPartialSearch(threadSafeInvertedIndex, 
-//							results, threads, queries);			
-				}
+				MultithreadedSearch search = new MultithreadedSearch(threadSafeInvertedIndex, 
+						results, threads, queries, exact);
 			}
 
 			return results;
