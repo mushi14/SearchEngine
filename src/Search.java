@@ -1,7 +1,6 @@
 import java.text.DecimalFormat;
-import java.util.Comparator;
 
-public class Search {
+public class Search implements Comparable<Search> {
 
 	private DecimalFormat FORMATTER;
 	private final String location;
@@ -71,49 +70,22 @@ public class Search {
 		return score;
 	}
 
-	/**
-	 * Inner class that implements the comparator interface
-	 * @author mushahidhassan
-	 */
-	static class Comparison implements Comparator<Search> {
-		/**
-		 * sorts a list of queries in descending order by their raw score, if score is the same, sorts by
-		 * total number of words in a query location, if number of words the same, then sorts alphabetically (case insensitively)
-		 */
-		@Override
-		public int compare(Search o1, Search o2) {
-			if (o1.getRawScore() > o2.getRawScore()) {
+	@Override
+	public int compareTo(Search o) {
+		if (this.getRawScore() > o.getRawScore()) {
+			return -1;
+		} else if (this.getRawScore() < o.getRawScore()) {
+			return 1;
+		} else {
+			if (this.getWords() > o.getWords()) {
 				return -1;
-			} else if (o1.getRawScore() < o2.getRawScore()) {
+			} else if (this.getWords() < o.getWords()) {
 				return 1;
 			} else {
-				if (o1.getWords() > o2.getWords()) {
-					return -1;
-				} else if (o1.getWords() < o2.getWords()) {
-					return 1;
-				} else {
-					return o1.getLocation().compareToIgnoreCase(o2.getLocation());
-				}
+				return this.getLocation().compareToIgnoreCase(o.getLocation());
 			}
 		}
 	}
-	
-//	@Override
-//	public int compareTo(Search o) {
-//		if (this.getRawScore() > o.getRawScore()) {
-//			return -1;
-//		} else if (this.getRawScore() < o.getRawScore()) {
-//			return 1;
-//		} else {
-//			if (this.getWords() > o.getWords()) {
-//				return -1;
-//			} else if (this.getWords() < o.getWords()) {
-//				return 1;
-//			} else {
-//				return this.getLocation().compareToIgnoreCase(o.getLocation());
-//			}
-//		}
-//	}
 
 	/**
 	 * Overridden toString method

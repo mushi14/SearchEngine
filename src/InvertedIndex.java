@@ -223,29 +223,21 @@ public class InvertedIndex {
 
 		for (String query : queries) {
 			for (String word : index.keySet()) {
-//				logger.debug("In inverted index in the nested for loop of words {}", word);
 				if (word.equals(query)) {
-//					logger.debug("yes {}", word);
 					for (String loc : index.get(word).keySet()) {
-//						logger.debug("location: {}", loc);
 						if (locationsList.containsKey(loc)) {
 							totalMatches = locationsList.get(loc).getMatches();
 							totalMatches += index.get(word).get(loc).size();
 
 							locationsList.get(loc).calculate(totalMatches);
-//							logger.debug("This is the score {}", locationsList.get(loc).getScore());
 						} else {
-//							logger.debug("YESSUM");
 							totalMatches = index.get(word).get(loc).size();
 							totalWords = locationsMap.get(loc);
 
-//							logger.debug("total matches: {} total words: {}", totalMatches, totalWords);
 							Search newQuery = new Search(loc, totalMatches, totalWords);
 							newQuery.calculate(totalMatches);
-							
-//							logger.debug("This is the score {}", newQuery.getScore());
-							locationsList.put(loc, newQuery);
 
+							locationsList.put(loc, newQuery);
 							resultsList.add(newQuery);
 						}
 					}
@@ -253,7 +245,7 @@ public class InvertedIndex {
 			}
 		}
 
-		Collections.sort(resultsList, new Search.Comparison());
+		Collections.sort(resultsList);
 		return resultsList;
 	}
 
@@ -270,16 +262,16 @@ public class InvertedIndex {
 		List<Search> resultsList = new ArrayList<>();
 
 		for (String query : queries) {
-			for (String word : getWords()) {
+			for (String word : index.keySet()) {
 				if (word.startsWith(query)) {
-					for (String loc : getPaths(word)) {
+					for (String loc : index.get(word).keySet()) {
 						if (locationsList.containsKey(loc)) {
 							totalMatches = locationsList.get(loc).getMatches();
-							totalMatches += positions(word, loc);
+							totalMatches += index.get(word).get(loc).size();
 
 							locationsList.get(loc).calculate(totalMatches);
 						} else {
-							totalMatches = positions(word, loc);
+							totalMatches = index.get(word).get(loc).size();
 							totalWords = locationsMap.get(loc);
 
 							Search newQuery = new Search(loc, totalMatches, totalWords);
@@ -293,7 +285,7 @@ public class InvertedIndex {
 			}
 		}
 
-		Collections.sort(resultsList, new Search.Comparison());
+		Collections.sort(resultsList);
 		return resultsList;
 	}
 
