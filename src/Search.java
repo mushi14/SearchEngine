@@ -1,5 +1,4 @@
 import java.text.DecimalFormat;
-import java.util.Comparator;
 
 public class Search implements Comparable<Search> {
 
@@ -71,34 +70,10 @@ public class Search implements Comparable<Search> {
 		return score;
 	}
 
-//	// TODO Remove...
 	/**
-	 * Inner class that implements the comparator interface
-	 * @author mushahidhassan
+	 * Compares the search results by their scores. If scores are the same, then compares by the total number of words
+	 * in the file. If that's the same as well, sorts alphabetically 
 	 */
-	static class Comparison implements Comparator<Search> {
-		/**
-		 * sorts a list of queries in descending order by their raw score, if score is the same, sorts by
-		 * total number of words in a query location, if number of words the same, then sorts alphabetically (case insensitively)
-		 */
-		@Override
-		public int compare(Search o1, Search o2) {
-			if (o1.getRawScore() > o2.getRawScore()) {
-				return -1;
-			} else if (o1.getRawScore() < o2.getRawScore()) {
-				return 1;
-			} else {
-				if (o1.getWords() > o2.getWords()) {
-					return -1;
-				} else if (o1.getWords() < o2.getWords()) {
-					return 1;
-				} else {
-					return o1.getLocation().compareToIgnoreCase(o2.getLocation());
-				}
-			}
-		}
-	}
-	
 	@Override
 	public int compareTo(Search o) {
 		if (this.getRawScore() > o.getRawScore()) {

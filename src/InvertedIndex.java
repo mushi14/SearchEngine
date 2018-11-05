@@ -241,7 +241,7 @@ public class InvertedIndex {
 			}
 		}
 
-		Collections.sort(resultsList, new Search.Comparison());
+		Collections.sort(resultsList);
 		return resultsList;
 	}
 
@@ -281,7 +281,7 @@ public class InvertedIndex {
 			}
 		}
 
-		Collections.sort(resultsList, new Search.Comparison());
+		Collections.sort(resultsList);
 		return resultsList;
 	}
 
