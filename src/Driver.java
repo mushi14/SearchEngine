@@ -46,7 +46,6 @@ public class Driver {
 						} else {
 							PathChecker.filesInPath(path, index);
 						}
-
 					} else {
 						System.out.println("There is no path provided. A valid path is needed to build the index.");
 					}
@@ -65,7 +64,6 @@ public class Driver {
 						} else {
 							index.writeIndexJSON(path);
 						}
-
 					} else {
 						if (multithreaded) {
 							threadSafeIndex.writeIndexJSON(Paths.get("index.json"));
@@ -91,7 +89,6 @@ public class Driver {
 							}
 
 							results = search.multithreadQueryFile(path, exact, threads);
-
 						} else {
 							boolean exact = false;
 

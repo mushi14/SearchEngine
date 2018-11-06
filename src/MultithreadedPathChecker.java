@@ -5,14 +5,11 @@ import java.nio.file.Path;
 
 public class MultithreadedPathChecker {
 
-//	Logger logger = LogManager.getLogger(getClass());
-
 	public final ThreadSafeInvertedIndex threadSafeIndex;
 	private final WorkQueue queue;
 	private int pending;
 
 	public MultithreadedPathChecker(Path path, int threads, ThreadSafeInvertedIndex threadSafeIndex) {
-//		logger.debug("NEW CONSTRUCTOR CALLED");
 		this.threadSafeIndex = threadSafeIndex;
 		this.queue = new WorkQueue(threads);
 		this.pending = 0;
@@ -26,7 +23,6 @@ public class MultithreadedPathChecker {
 			if (Files.isRegularFile(path)) {
 				String name = path.toString();
 				if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
-//					logger.debug("Worker for {} CREATED", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
 					queue.execute(new FilesTask(path));
 				}
 			} else if (Files.isDirectory(path)) {
@@ -37,7 +33,6 @@ public class MultithreadedPathChecker {
 				}
 			}
 		} catch (IOException e) {
-//			logger.debug(e.getMessage(), e);
 		}
 	}
 
@@ -57,11 +52,9 @@ public class MultithreadedPathChecker {
 		try {
 			while (pending > 0) {
 				this.wait();
-//				logger.debug("woke up with pending at {}", pending);
 			}
-//			logger.debug("Worker done!");
 		} catch (InterruptedException e) {
-//			logger.debug(e.getMessage(), e);
+			System.out.println("Thread interrupted.");
 		}
 	}
 
@@ -76,14 +69,12 @@ public class MultithreadedPathChecker {
 		@Override
 		public void run() {
 			try {
-//				logger.debug("Adding {} to index", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
 				TextFileStemmer.stemFile(path, threadSafeIndex);
 			} catch (IOException e) {
-//				logger.debug(e.getMessage(), e);
+				System.out.println("File not found.");
 			}
 
 			decrementPending();
-//			logger.debug("Worker for {} FINISHED", path.toString().substring(path.toString().lastIndexOf("/simple", path.toString().length())));
 		}
 	}
 }
