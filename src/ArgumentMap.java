@@ -103,15 +103,41 @@ public class ArgumentMap {
 	 */
 	public Path getPath(String flag) {
 		Path path;
+
 		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
 			path = Paths.get(argMap.get(flag));
 		} else {
 			path = null;
 		}
+
 		return path;
 	}
-	
-	// TODO public Path getPath(String flag, String defaultPath)
+
+	/**
+	 * Returns the value to which the specified flag is mapped as a {@link Path},
+	 * or the default value if unable to retrieve this mapping for any reason
+	 * (including being unable to convert the value to a {@link Path} or no value
+	 * existing for this flag).
+	 *
+	 * This method should not throw any exceptions!
+	 *
+	 * @param flag         the flag whose associated value is to be returned
+	 * @param defaultValue the default value to return if there is no mapping for
+	 *                     the flag
+	 * @return the value to which the specified flag is mapped as a {@link Path},
+	 *         or the default value if there is no mapping for the flag
+	 */
+	public Path getPath(String flag, Path defaultValue) {
+		Path path;
+
+		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
+			path = Paths.get(argMap.get(flag));
+		} else {
+			path = defaultValue;
+		}
+
+		return path;
+	}
 
 	/**
 	 * Checks to see if the arguments map is empty

@@ -247,16 +247,25 @@ public class InvertedIndex {
 		return resultsList;
 	}
 
-	private void searchHelper(String query, Map<String, Search> locationsList, List<Search> resultsList,
+	/**
+	 * Performs search and updates results for one given word that is in the query line and also
+	 * in the inverted index 
+	 * @param word the word in the query line that is found in the inverted index
+	 * @param locationsList a map containing list of locations mapped with their search results
+	 * @param resultsList a list of search results, used for adding all the results to a query line
+	 * @param totalMatches total number of matches
+	 * @param totalWords total number of words
+	 */
+	private void searchHelper(String word, Map<String, Search> locationsList, List<Search> resultsList,
 			int totalMatches, int totalWords) {
-		for (String loc : getPaths(query)) {
+		for (String loc : getPaths(word)) {
 			if (locationsList.containsKey(loc)) {
 				totalMatches = locationsList.get(loc).getMatches();
-				totalMatches = positions(query, loc);
+				totalMatches = positions(word, loc);
 
-				locationsList.get(loc).calculate(index.get(query).get(loc).size());
+				locationsList.get(loc).calculate(index.get(word).get(loc).size());
 			} else {
-				totalMatches = positions(query, loc);
+				totalMatches = positions(word, loc);
 				totalWords = locationsMap.get(loc);
 
 				Search newQuery = new Search(loc, totalMatches, totalWords);

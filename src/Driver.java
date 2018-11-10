@@ -25,6 +25,7 @@ public class Driver {
 			if (argMap.hasFlag("-path")) {
 				try {
 					Path path = argMap.getPath("-path");
+
 					if (argMap.flagPath("-path")) {
 						PathChecker.filesInPath(path, index);
 					} else {
@@ -37,12 +38,8 @@ public class Driver {
 
 			if (argMap.hasFlag("-index")) {
 				try {
-					Path path = argMap.getPath("-index");
-					if (argMap.flagPath("-index")) {
-						index.writeIndexJSON(path);
-					} else {
-						index.writeIndexJSON(Paths.get("index.json"));
-					}
+					Path path = argMap.getPath("-index", Paths.get("index.json"));
+					index.writeIndexJSON(path);
 				} catch (IOException | NullPointerException e) {
 						System.out.println("File not found, index cannot be printed in json format.");
 				}
@@ -50,17 +47,10 @@ public class Driver {
 
 			if (argMap.hasFlag("-search")) {
 				try {
+					Path path = argMap.getPath("-search");
+
 					if (argMap.flagPath("-search")) {
-						Path path = argMap.getPath("-search");
-						boolean exact = false;
-
-						if (argMap.hasFlag("-exact")) {
-							exact = true;
-						}
-
-						search.stemQueryFile(path, exact);
-						
-						// TODO search.stemQueryFile(path, argMap.hasFlag("-exact"));
+						search.stemQueryFile(path, argMap.hasFlag("-exact"));
 					}
 				} catch (NullPointerException e) {
 					System.out.println("Unable to open the query file or directory provided. A valid query file or "
@@ -70,14 +60,8 @@ public class Driver {
 
 			if (argMap.hasFlag("-results")) {
 				try {
-					if (argMap.flagPath("-results")) {
-						Path path = argMap.getPath("-results");
-						search.writeJSON(path);
-						results.clear();
-					} else {
-						search.writeJSON(Paths.get("results.json"));
-						results.clear();
-					}
+					Path path = argMap.getPath("-results", Paths.get("results.json"));
+					search.writeJSON(path);
 				} catch (IOException | NullPointerException e) {
 					System.out.println("File not found, search results cannot be printed in json format.");
 				}
@@ -85,12 +69,8 @@ public class Driver {
 
 			if (argMap.hasFlag("-locations")) {
 				try {
-					if (argMap.flagPath("-locations")) {
-						Path path = argMap.getPath("-locations");
-						index.writeLocJSON(path);
-					} else {
-						index.writeLocJSON(Paths.get("locations.json"));
-					}
+					Path path = argMap.getPath("-locations", Paths.get("locations.json"));
+					index.writeLocJSON(path);
 				} catch (IOException | NullPointerException e) {
 						System.out.println("File not found, locations cannot be printed in json format.");
 				}

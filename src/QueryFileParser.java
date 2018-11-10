@@ -21,7 +21,7 @@ public class QueryFileParser {
 	/** 
 	 * Constructor for QueryFileParser
 	 * @param results Map of results to store the search data in
-	 * @param index inverted index to retrive the information from
+	 * @param index inverted index to retrieve the information from
 	 */
 	public QueryFileParser(Map<String, List<Search>> results, InvertedIndex index) {
 		this.results = results;
