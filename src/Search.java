@@ -21,7 +21,6 @@ public class Search implements Comparable<Search> {
 		this.totalMatches = matches;
 		this.totalWords = words;
 		this.rawScore = Double.valueOf(this.totalMatches) / Double.valueOf(this.totalWords);
-		// TODO this.rawScore = ...
 	}
 
 	/**
@@ -49,11 +48,10 @@ public class Search implements Comparable<Search> {
 	}
 
 	/**
-	 * TODO
-	 * @param matches
+	 * Calculates or updates the raw score of the search object
+	 * @param matches updated number of matches
 	 */
 	public void calculate(int matches) {
-		// TODO this.totalMatches += matches;
 		this.totalMatches += matches;
 		this.rawScore = Double.valueOf(this.totalMatches) / Double.valueOf(this.totalWords);
 	}
@@ -86,7 +84,6 @@ public class Search implements Comparable<Search> {
 			result = Double.compare(o.totalWords, this.totalWords);
 
 			if (result == 0) {
-				System.out.println("equal");
 				result = this.location.compareToIgnoreCase(o.location);
 			}
 		}

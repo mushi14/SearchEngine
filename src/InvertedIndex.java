@@ -214,31 +214,8 @@ public class InvertedIndex {
 		List<Search> resultsList = new ArrayList<>();
 
 		for (String query : queries) {
-			/*
-			 * TODO Linear search looking for 1 thing
-			 * And you can access your private data directly to avoid the overhead
-			 * of converting to an unmodifiable collection.
-			 */
-//			for (String word : getWords()) {
-//				if (word.equals(query)) {
 			if (index.containsKey(query)) {
-				for (String loc : getPaths(query)) {
-					if (locationsList.containsKey(loc)) {
-						totalMatches = locationsList.get(loc).getMatches();
-						totalMatches = positions(query, loc);
-
-						locationsList.get(loc).calculate(index.get(query).get(loc).size());
-//						locationsList.get(loc).calculate(totalMatches);
-					} else {
-						totalMatches = positions(query, loc);
-						totalWords = locationsMap.get(loc);
-
-						Search newQuery = new Search(loc, totalMatches, totalWords);
-						locationsList.put(loc, newQuery);
-
-						resultsList.add(newQuery);
-					}
-				}
+				searchHelper(query, locationsList, resultsList, totalMatches, totalWords);
 			}
 		}
 
@@ -259,49 +236,35 @@ public class InvertedIndex {
 		List<Search> resultsList = new ArrayList<>();
 
 		for (String query : queries) {
-			/*
-			 * TODO Another linear search, but looking for more things.
-			 * 
-			 * If we can "start in the right place" we can stop looking once
-			 * we have a key that no longer starts with our query.
-			 * 
-			 * To start in the right place, take a look at the docs for
-			 * headMap and tailMap and what happens when you give them something
-			 * that isn't a key. (Use the one that makes the msot sense.)
-			 * 
-			 * https://github.com/usf-cs212-fall2018/lectures/blob/master/Data%20Structures/src/FindDemo.java
-			 */
-			for (String word : getWords()) {
+			for (String word : index.tailMap(query).keySet()) {
 				if (word.startsWith(query)) {
-					/*
-					 * TODO This loop in here is the same in both search methods... code reuse!
-					 * 
-					 * private void searchHelper(String word, lookup map, result list)
-					 */
-					for (String loc : getPaths(word)) {
-						if (locationsList.containsKey(loc)) {
-							totalMatches = locationsList.get(loc).getMatches();
-							totalMatches = positions(word, loc);
-
-							locationsList.get(loc).calculate(totalMatches);
-						} else {
-							totalMatches = positions(word, loc);
-							totalWords = locationsMap.get(loc);
-
-							Search newQuery = new Search(loc, totalMatches, totalWords);
-							newQuery.calculate(totalMatches);
-							locationsList.put(loc, newQuery);
-
-							resultsList.add(newQuery);
-						}
-					}
+					searchHelper(word, locationsList, resultsList, totalMatches, totalWords);
 				}
-				// TODO else break
 			}
 		}
 
 		Collections.sort(resultsList);
 		return resultsList;
+	}
+
+	private void searchHelper(String query, Map<String, Search> locationsList, List<Search> resultsList,
+			int totalMatches, int totalWords) {
+		for (String loc : getPaths(query)) {
+			if (locationsList.containsKey(loc)) {
+				totalMatches = locationsList.get(loc).getMatches();
+				totalMatches = positions(query, loc);
+
+				locationsList.get(loc).calculate(index.get(query).get(loc).size());
+			} else {
+				totalMatches = positions(query, loc);
+				totalWords = locationsMap.get(loc);
+
+				Search newQuery = new Search(loc, totalMatches, totalWords);
+				locationsList.put(loc, newQuery);
+
+				resultsList.add(newQuery);
+			}
+		}
 	}
 
 	/** 
