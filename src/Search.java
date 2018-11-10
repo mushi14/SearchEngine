@@ -2,12 +2,12 @@ import java.text.DecimalFormat;
 
 public class Search implements Comparable<Search> {
 
-	private DecimalFormat FORMATTER;
+	private DecimalFormat FORMATTER; // TODO private static final?
 	private final String location;
 	private int totalMatches;
 	private final int totalWords;
 	private double rawScore;
-	private String score;
+	private String score; // TODO Remove
 
 	/**
 	 * Constructor for the Query class
@@ -22,6 +22,8 @@ public class Search implements Comparable<Search> {
 		this.location = loc;
 		this.totalMatches = matches;
 		this.totalWords = words;
+		
+		// TODO this.rawScore = ...
 	}
 
 	/**
@@ -48,7 +50,12 @@ public class Search implements Comparable<Search> {
 		return totalWords;
 	}
 
+	/**
+	 * TODO
+	 * @param matches
+	 */
 	public void calculate(int matches) {
+		// TODO this.totalMatches += matches;
 		this.totalMatches = matches;
 		this.rawScore = Double.valueOf(this.totalMatches) / Double.valueOf(this.totalWords);
 	}
@@ -68,6 +75,8 @@ public class Search implements Comparable<Search> {
 	public String getScore() {
 		this.score = FORMATTER.format(this.rawScore);
 		return score;
+		
+		// TODO return FORMATTER.format(this.rawScore);
 	}
 
 	/**
@@ -89,6 +98,19 @@ public class Search implements Comparable<Search> {
 				return this.getLocation().compareToIgnoreCase(o.getLocation());
 			}
 		}
+		
+		/* TODO
+		int result = Double.compare(this.rawScore, o.rawScore);
+		
+		if (result == 0) {
+			compare by ints 
+			
+			if ints are 0
+				compare by location
+		}
+		
+		return result
+		*/
 	}
 
 	/**

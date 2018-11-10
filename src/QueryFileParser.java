@@ -27,13 +27,21 @@ public class QueryFileParser {
 		this.results = results;
 		this.index = index;
 	}
+
+	/* TODO
+	public QueryFileParser(InvertedIndex index) {
+		this.results = new TreeMap<String, List<Search>> results;
+		this.index = index;
+	}	
+	*/
+	
 	/**
 	 * Stems query file performing partial or exact search and stores the results accordingly
 	 * @param index inverted index that contains the words, their locations, and their positions
 	 * @param path path of the file
 	 * @param exact boolean variable that ensures that an exact search must be performed
 	 */
-	public Map<String, List<Search>> stemQueryFile(Path path, boolean exact) {
+	public Map<String, List<Search>> stemQueryFile(Path path, boolean exact) { // TODO public void stemQueryFile(...)
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			String line = br.readLine();
 			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
@@ -46,11 +54,18 @@ public class QueryFileParser {
 					word = stemmer.stem(word).toString();
 					queries.add(word);
 				}
+				
+				/*
+				String queryLine = String.join(" ", queries);
+				
+				if (!queries.isEmpty() && !results.containsKey(queryLine)) {
+				 */
 
 				if (!queries.isEmpty()) {
 					if (exact == true) {
 						String queryLine = String.join(" ", queries);
 						if (!results.containsKey(queryLine)) {
+							// TODO instead... results.put(queryLine, index.exactSearch(queries))
 							results.put(queryLine, new ArrayList<>());
 							for (Search query : index.exactSearch(queries)) {
 								results.get(queryLine).add(query);

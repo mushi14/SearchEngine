@@ -110,6 +110,8 @@ public class ArgumentMap {
 		}
 		return path;
 	}
+	
+	// TODO public Path getPath(String flag, String defaultPath)
 
 	/**
 	 * Checks to see if the arguments map is empty

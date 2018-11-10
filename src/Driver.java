@@ -59,6 +59,8 @@ public class Driver {
 						}
 
 						search.stemQueryFile(path, exact);
+						
+						// TODO search.stemQueryFile(path, argMap.hasFlag("-exact"));
 					}
 				} catch (NullPointerException e) {
 					System.out.println("Unable to open the query file or directory provided. A valid query file or "
