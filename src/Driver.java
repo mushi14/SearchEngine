@@ -1,9 +1,6 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class Driver {
 
@@ -18,8 +15,7 @@ public class Driver {
 		
 		InvertedIndex index = new InvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
-		Map<String, List<Search>> results = new TreeMap<>();
-		QueryFileParser search = new QueryFileParser(results, index);
+		QueryFileParser search = new QueryFileParser(index);
 
 		if (!argMap.isEmpty()) {
 			if (argMap.hasFlag("-path")) {
