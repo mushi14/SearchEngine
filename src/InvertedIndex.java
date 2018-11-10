@@ -47,14 +47,7 @@ public class InvertedIndex {
 			index.get(word).get(path).add(position);
 		}
 
-		
-		// TODO locationsMap.put(path, locationsMap.getOrDefault(path, 0) + 1);
-		
-		if (locationsMap.containsKey(path)) {
-			locationsMap.put(path, locationsMap.get(path) + 1);
-		} else {
-			locationsMap.put(path, 1);
-		}
+		locationsMap.put(path, locationsMap.getOrDefault(path, 0) + 1);
 	}
 
 	/**
@@ -226,26 +219,24 @@ public class InvertedIndex {
 			 * And you can access your private data directly to avoid the overhead
 			 * of converting to an unmodifiable collection.
 			 */
-			for (String word : getWords()) {
-				if (word.equals(query)) {
-			// TODO if (index.containsKey(query)) {
-					for (String loc : getPaths(word)) {
-						if (locationsList.containsKey(loc)) {
-							totalMatches = locationsList.get(loc).getMatches();
-							totalMatches += positions(word, loc);
+//			for (String word : getWords()) {
+//				if (word.equals(query)) {
+			if (index.containsKey(query)) {
+				for (String loc : getPaths(query)) {
+					if (locationsList.containsKey(loc)) {
+						totalMatches = locationsList.get(loc).getMatches();
+						totalMatches = positions(query, loc);
 
-							// TODO locationsList.get(loc).calculate(index.get(word).get(loc).size());
-							locationsList.get(loc).calculate(totalMatches);
-						} else {
-							totalMatches = positions(word, loc);
-							totalWords = locationsMap.get(loc);
+						locationsList.get(loc).calculate(index.get(query).get(loc).size());
+//						locationsList.get(loc).calculate(totalMatches);
+					} else {
+						totalMatches = positions(query, loc);
+						totalWords = locationsMap.get(loc);
 
-							Search newQuery = new Search(loc, totalMatches, totalWords);
-							newQuery.calculate(totalMatches); // TODO Remove
-							locationsList.put(loc, newQuery);
+						Search newQuery = new Search(loc, totalMatches, totalWords);
+						locationsList.put(loc, newQuery);
 
-							resultsList.add(newQuery);
-						}
+						resultsList.add(newQuery);
 					}
 				}
 			}
@@ -290,7 +281,7 @@ public class InvertedIndex {
 					for (String loc : getPaths(word)) {
 						if (locationsList.containsKey(loc)) {
 							totalMatches = locationsList.get(loc).getMatches();
-							totalMatches += positions(word, loc);
+							totalMatches = positions(word, loc);
 
 							locationsList.get(loc).calculate(totalMatches);
 						} else {
