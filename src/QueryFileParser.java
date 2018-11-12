@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import opennlp.tools.stemmer.Stemmer;
@@ -15,9 +16,9 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class QueryFileParser {
 
-	private final Map<String, List<Search>> results;
 	private final InvertedIndex index;
 	private final ThreadSafeInvertedIndex threadSafeInvertedIndex;
+	private final Map<String, List<Search>> results;
 
 	/** 
 	 * Constructor for QueryFileParser
@@ -26,7 +27,7 @@ public class QueryFileParser {
 	 */
 	public QueryFileParser(Map<String, List<Search>> results, InvertedIndex index, 
 			ThreadSafeInvertedIndex threadSafeInvertedIndex) {
-		this.results = results;
+		this.results = new TreeMap<String, List<Search>>();
 		this.index = index;
 		this.threadSafeInvertedIndex = threadSafeInvertedIndex;
 	}
@@ -37,7 +38,7 @@ public class QueryFileParser {
 	 * @param path path of the file
 	 * @param exact boolean variable that ensures that an exact search must be performed
 	 */
-	public Map<String, List<Search>> stemQueryFile(Path path, boolean exact) {
+	public void stemQueryFile(Path path, boolean exact) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			String line = br.readLine();
 			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
@@ -50,35 +51,21 @@ public class QueryFileParser {
 					word = stemmer.stem(word).toString();
 					queries.add(word);
 				}
+				
 
-				if (!queries.isEmpty()) {
+				String queryLine = String.join(" ", queries);
+				if (!queries.isEmpty() && !results.containsKey(queryLine)) {
 					if (exact == true) {
-						String queryLine = String.join(" ", queries);
-						if (!results.containsKey(queryLine)) {
-							results.put(queryLine, new ArrayList<>());
-							for (Search query : index.exactSearch(queries)) {
-								results.get(queryLine).add(query);
-							}
-						}
+						results.put(queryLine, index.exactSearch(queries));
 					} else {
-						String queryLine = String.join(" ", queries);
-						if (!results.containsKey(queryLine)) {
-							results.put(queryLine, new ArrayList<>());
-							for (Search query : index.partialSearch(queries)) {
-								results.get(queryLine).add(query);
-							}
-						}
+						results.put(queryLine, index.partialSearch(queries));
 					}
 				}
 
 				line = br.readLine();
 			}
-
-			return results;
-
 		} catch (IOException | NullPointerException e) {
 			System.out.println("There was an issue finding the query file: " + path);
-			return Collections.emptyMap();
 		}
 	}
 
