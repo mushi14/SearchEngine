@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class ArgumentMap {
 
-	public final Map<String, String> argMap;
+	private final Map<String, String> argMap;
 
 	/**
 	 * Initializes this argument map.
@@ -55,18 +55,14 @@ public class ArgumentMap {
 	public static boolean isFlag(String arg) {
 		try {
 			arg = arg.trim();
-			if (arg.length() >= 2) {
-				if (arg.charAt(0) == '-' && arg.charAt(1) != ' ') {
-					return true;
-				} else {
-					return false;
-				}
+			if (arg.charAt(0) == '-' && arg.charAt(1) != ' ') {
+				return true;
 			} else {
 				return false;
 			}
 		} catch (NullPointerException e) {
 			return false;
-		}	
+		}
 	}
 
 	/**
@@ -107,14 +103,47 @@ public class ArgumentMap {
 	 */
 	public Path getPath(String flag) {
 		Path path;
+
 		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
 			path = Paths.get(argMap.get(flag));
 		} else {
 			path = null;
 		}
+
 		return path;
 	}
 
+	/**
+	 * Returns the value to which the specified flag is mapped as a {@link Path},
+	 * or the default value if unable to retrieve this mapping for any reason
+	 * (including being unable to convert the value to a {@link Path} or no value
+	 * existing for this flag).
+	 *
+	 * This method should not throw any exceptions!
+	 *
+	 * @param flag         the flag whose associated value is to be returned
+	 * @param defaultValue the default value to return if there is no mapping for
+	 *                     the flag
+	 * @return the value to which the specified flag is mapped as a {@link Path},
+	 *         or the default value if there is no mapping for the flag
+	 */
+	public Path getPath(String flag, Path defaultValue) {
+		Path path;
+
+		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
+			path = Paths.get(argMap.get(flag));
+		} else {
+			path = defaultValue;
+		}
+
+		return path;
+	}
+
+	/**
+	 * Gets the number of threads the user wants to run on. If no threads provided, defaults to 5
+	 * @param flag the flag associated with the threads to be returned
+	 * @return number of threads, default is 5
+	 */
 	public int getThreads(String flag) {
 		int threads;
 		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
