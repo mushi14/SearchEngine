@@ -9,9 +9,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /** 
  * Data structure to store file paths and the word positions.
  */
@@ -19,9 +16,8 @@ public class InvertedIndex {
 	/** 
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
-	public final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	public final Map<String, Integer> locationsMap;
-	Logger logger = LogManager.getLogger(getClass());
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	private final Map<String, Integer> locationsMap;
 
 	/**
 	 *  Initializes the index.
@@ -51,11 +47,7 @@ public class InvertedIndex {
 			index.get(word).get(path).add(position);
 		}
 
-		if (locationsMap.containsKey(path)) {
-			locationsMap.put(path, locationsMap.get(path) + 1);
-		} else {
-			locationsMap.put(path, 1);
-		}
+		locationsMap.put(path, locationsMap.getOrDefault(path, 0) + 1);
 	}
 
 	/**
@@ -211,8 +203,8 @@ public class InvertedIndex {
 
 	/**
 	 * Performs exact search on a line from the query file. Stores the results to results map
-	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
+	 * @return list of search results sorted
 	 */
 	public List<Search> exactSearch(Set<String> queries) {
 		int totalMatches = 0;
@@ -222,26 +214,8 @@ public class InvertedIndex {
 		List<Search> resultsList = new ArrayList<>();
 
 		for (String query : queries) {
-			for (String word : index.keySet()) {
-				if (word.equals(query)) {
-					for (String loc : index.get(word).keySet()) {
-						if (locationsList.containsKey(loc)) {
-							totalMatches = locationsList.get(loc).getMatches();
-							totalMatches += index.get(word).get(loc).size();
-
-							locationsList.get(loc).calculate(totalMatches);
-						} else {
-							totalMatches = index.get(word).get(loc).size();
-							totalWords = locationsMap.get(loc);
-
-							Search newQuery = new Search(loc, totalMatches, totalWords);
-							newQuery.calculate(totalMatches);
-
-							locationsList.put(loc, newQuery);
-							resultsList.add(newQuery);
-						}
-					}
-				}
+			if (index.containsKey(query)) {
+				searchHelper(query, locationsList, resultsList, totalMatches, totalWords);
 			}
 		}
 
@@ -251,8 +225,8 @@ public class InvertedIndex {
 
 	/**
 	 * Performs partial search on a line from the query file. Stores the results to results map
-	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
+	 * @return list of search results sorted
 	 */
 	public List<Search> partialSearch(Set<String> queries) {
 		int totalMatches = 0;
@@ -262,31 +236,44 @@ public class InvertedIndex {
 		List<Search> resultsList = new ArrayList<>();
 
 		for (String query : queries) {
-			for (String word : index.keySet()) {
+			for (String word : index.tailMap(query).keySet()) {
 				if (word.startsWith(query)) {
-					for (String loc : index.get(word).keySet()) {
-						if (locationsList.containsKey(loc)) {
-							totalMatches = locationsList.get(loc).getMatches();
-							totalMatches += index.get(word).get(loc).size();
-
-							locationsList.get(loc).calculate(totalMatches);
-						} else {
-							totalMatches = index.get(word).get(loc).size();
-							totalWords = locationsMap.get(loc);
-
-							Search newQuery = new Search(loc, totalMatches, totalWords);
-							newQuery.calculate(totalMatches);
-							locationsList.put(loc, newQuery);
-
-							resultsList.add(newQuery);
-						}
-					}
+					searchHelper(word, locationsList, resultsList, totalMatches, totalWords);
 				}
 			}
 		}
 
 		Collections.sort(resultsList);
 		return resultsList;
+	}
+
+	/**
+	 * Performs search and updates results for one given word that is in the query line and also
+	 * in the inverted index 
+	 * @param word the word in the query line that is found in the inverted index
+	 * @param locationsList a map containing list of locations mapped with their search results
+	 * @param resultsList a list of search results, used for adding all the results to a query line
+	 * @param totalMatches total number of matches
+	 * @param totalWords total number of words
+	 */
+	private void searchHelper(String word, Map<String, Search> locationsList, List<Search> resultsList,
+			int totalMatches, int totalWords) {
+		for (String loc : getPaths(word)) {
+			if (locationsList.containsKey(loc)) {
+				totalMatches = locationsList.get(loc).getMatches();
+				totalMatches = positions(word, loc);
+
+				locationsList.get(loc).calculate(index.get(word).get(loc).size());
+			} else {
+				totalMatches = positions(word, loc);
+				totalWords = locationsMap.get(loc);
+
+				Search newQuery = new Search(loc, totalMatches, totalWords);
+				locationsList.put(loc, newQuery);
+
+				resultsList.add(newQuery);
+			}
+		}
 	}
 
 	/** 
