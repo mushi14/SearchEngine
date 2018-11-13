@@ -207,15 +207,12 @@ public class InvertedIndex {
 	 * @return list of search results sorted
 	 */
 	public List<Search> exactSearch(Set<String> queries) {
-		int totalMatches = 0; // TODO Why do you need this?
-		int totalWords = 0; // TODO Why do you need this?
-
 		Map<String, Search> locationsList = new HashMap<>();
 		List<Search> resultsList = new ArrayList<>();
 
 		for (String query : queries) {
 			if (index.containsKey(query)) {
-				searchHelper(query, locationsList, resultsList, totalMatches, totalWords);
+				searchHelper(query, locationsList, resultsList);
 			}
 		}
 
@@ -229,18 +226,16 @@ public class InvertedIndex {
 	 * @return list of search results sorted
 	 */
 	public List<Search> partialSearch(Set<String> queries) {
-		int totalMatches = 0;
-		int totalWords = 0;
-
 		Map<String, Search> locationsList = new HashMap<>();
 		List<Search> resultsList = new ArrayList<>();
 
 		for (String query : queries) {
 			for (String word : index.tailMap(query).keySet()) {
 				if (word.startsWith(query)) {
-					searchHelper(word, locationsList, resultsList, totalMatches, totalWords);
+					searchHelper(word, locationsList, resultsList);
+				} else {
+					break;
 				}
-				// TODO else break !!!!! (don't need to search to zebra if no longer starts with our query)
 			}
 		}
 
@@ -257,19 +252,13 @@ public class InvertedIndex {
 	 * @param totalMatches total number of matches
 	 * @param totalWords total number of words
 	 */
-	private void searchHelper(String word, Map<String, Search> locationsList, List<Search> resultsList,
-			int totalMatches, int totalWords) {
+	private void searchHelper(String word, Map<String, Search> locationsList, List<Search> resultsList) {
 		for (String loc : getPaths(word)) {
 			if (locationsList.containsKey(loc)) {
-				// TODO You don't use totalMatches here, and don't need it.
-				totalMatches = locationsList.get(loc).getMatches();
-				totalMatches = positions(word, loc);
-
 				locationsList.get(loc).calculate(index.get(word).get(loc).size());
 			} else {
-				// TODO Make these local variables here, remove as parameters to this method
-				totalMatches = positions(word, loc);
-				totalWords = locationsMap.get(loc);
+				int totalMatches = positions(word, loc);
+				int totalWords = locationsMap.get(loc);
 
 				Search newQuery = new Search(loc, totalMatches, totalWords);
 				locationsList.put(loc, newQuery);

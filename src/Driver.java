@@ -18,6 +18,7 @@ public class Driver {
 		QueryFileParser search = new QueryFileParser(index);
 
 		if (!argMap.isEmpty()) {
+
 			if (argMap.hasFlag("-path")) {
 				try {
 					Path path = argMap.getPath("-path");
