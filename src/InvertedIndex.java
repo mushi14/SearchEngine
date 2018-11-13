@@ -16,7 +16,7 @@ public class InvertedIndex {
 	/** 
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
-	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	public final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 	private final Map<String, Integer> locationsMap;
 
 	/**
@@ -258,14 +258,14 @@ public class InvertedIndex {
 	 */
 	private void searchHelper(String word, Map<String, Search> locationsList, List<Search> resultsList,
 			int totalMatches, int totalWords) {
-		for (String loc : getPaths(word)) {
+		for (String loc : index.get(word).keySet()) {
 			if (locationsList.containsKey(loc)) {
 				totalMatches = locationsList.get(loc).getMatches();
-				totalMatches = positions(word, loc);
+				totalMatches = index.get(word).get(loc).size();
 
 				locationsList.get(loc).calculate(index.get(word).get(loc).size());
 			} else {
-				totalMatches = positions(word, loc);
+				totalMatches = index.get(word).get(loc).size();
 				totalWords = locationsMap.get(loc);
 
 				Search newQuery = new Search(loc, totalMatches, totalWords);

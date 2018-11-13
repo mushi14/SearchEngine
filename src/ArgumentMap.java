@@ -144,14 +144,12 @@ public class ArgumentMap {
 	 * @param flag the flag associated with the threads to be returned
 	 * @return number of threads, default is 5
 	 */
-	public int getThreads(String flag) {
-		int threads;
+	public int getThreads(String flag, int defaultValue) {
 		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
-			threads = Integer.valueOf(argMap.get(flag));
+			return Integer.valueOf(argMap.get(flag));
 		} else {
-			threads = 5;
+			return defaultValue;
 		}
-		return threads;
 	}
 
 	/**

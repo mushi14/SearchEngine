@@ -25,8 +25,7 @@ public class QueryFileParser {
 	 * @param results Map of results to store the search data in
 	 * @param index inverted index to retrive the information from
 	 */
-	public QueryFileParser(Map<String, List<Search>> results, InvertedIndex index, 
-			ThreadSafeInvertedIndex threadSafeInvertedIndex) {
+	public QueryFileParser(InvertedIndex index, ThreadSafeInvertedIndex threadSafeInvertedIndex) {
 		this.results = new TreeMap<String, List<Search>>();
 		this.index = index;
 		this.threadSafeInvertedIndex = threadSafeInvertedIndex;
