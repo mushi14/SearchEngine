@@ -1,0 +1,37 @@
+[37:38:251 debug] main: NEW TASK for search on [ant]
+[37:38:256 debug] main: Incrementing pending. Pending: 1
+[37:38:256 debug] main: NEW TASK for search on [eight, nine, seven]
+[37:38:256 debug] Thread-5: PERFORMING search on [ant]
+[37:38:257 debug] main: Incrementing pending. Pending: 2
+[37:38:257 debug] Thread-5: DONE with search on [ant]
+[37:38:258 debug] Thread-5: Decrementing pending. Pending: 1
+[37:38:258 debug] Thread-9: PERFORMING search on [eight, nine, seven]
+[37:38:258 debug] main: NEW TASK for search on [hello, world]
+[37:38:258 debug] main: Incrementing pending. Pending: 2
+[37:38:259 debug] main: NEW TASK for search on [cardin]
+[37:38:259 debug] Thread-6: PERFORMING search on [hello, world]
+[37:38:259 debug] Thread-9: DONE with search on [eight, nine, seven]
+[37:38:259 debug] Thread-6: DONE with search on [hello, world]
+[37:38:259 debug] main: Incrementing pending. Pending: 3
+[37:38:259 debug] Thread-6: Decrementing pending. Pending: 2
+[37:38:260 debug] Thread-5: PERFORMING search on [cardin]
+[37:38:260 debug] main: NEW TASK for search on [aar, alpaca, eleph]
+[37:38:260 debug] Thread-9: Decrementing pending. Pending: 1
+[37:38:260 debug] Thread-5: DONE with search on [cardin]
+[37:38:260 debug] main: Incrementing pending. Pending: 2
+[37:38:260 debug] Thread-5: Decrementing pending. Pending: 1
+[37:38:260 debug] main: NEW TASK for search on [capybara, hidden]
+[37:38:260 debug] Thread-7: PERFORMING search on [aar, alpaca, eleph]
+[37:38:261 debug] main: Incrementing pending. Pending: 2
+[37:38:261 debug] Thread-7: DONE with search on [aar, alpaca, eleph]
+[37:38:261 debug] Thread-9: PERFORMING search on [capybara, hidden]
+[37:38:261 debug] Thread-7: Decrementing pending. Pending: 1
+[37:38:261 debug] main: NEW TASK for search on [antelop, observ]
+[37:38:261 debug] Thread-9: DONE with search on [capybara, hidden]
+[37:38:262 debug] main: Incrementing pending. Pending: 2
+[37:38:262 debug] Thread-9: Decrementing pending. Pending: 1
+[37:38:262 debug] Thread-5: PERFORMING search on [antelop, observ]
+[37:38:262 debug] Thread-5: DONE with search on [antelop, observ]
+[37:38:263 debug] Thread-5: Decrementing pending. Pending: 0
+[37:38:263 debug] main: woke up with pending at 0
+[37:38:264 debug] main: Worker done!

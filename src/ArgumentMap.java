@@ -110,7 +110,7 @@ public class ArgumentMap {
 			path = null;
 		}
 
-		return path;
+    return path;
 	}
 
 	/**
@@ -137,6 +137,19 @@ public class ArgumentMap {
 		}
 
 		return path;
+	}
+
+	/**
+	 * Gets the number of threads the user wants to run on. If no threads provided, defaults to 5
+	 * @param flag the flag associated with the threads to be returned
+	 * @return number of threads, default is 5
+	 */
+	public int getThreads(String flag, int defaultValue) {
+		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
+			return Integer.valueOf(argMap.get(flag));
+		} else {
+			return defaultValue;
+		}
 	}
 
 	/**

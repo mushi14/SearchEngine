@@ -12,19 +12,31 @@ public class Driver {
 	 * @return 0 if everything went well
 	 */
 	public static void main(String[] args) {
-		
 		InvertedIndex index = new InvertedIndex();
+		ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
-		QueryFileParser search = new QueryFileParser(index);
+		QueryFileParser search = new QueryFileParser(index, threadSafeIndex);
+
+		boolean multithreaded = false;
+		int threads = argMap.getThreads("-threads", 5);
 
 		if (!argMap.isEmpty()) {
 
+			if (argMap.hasFlag("-threads")) {
+				multithreaded = true;
+			}
 			if (argMap.hasFlag("-path")) {
 				try {
 					Path path = argMap.getPath("-path");
 
 					if (argMap.flagPath("-path")) {
-						PathChecker.filesInPath(path, index);
+
+						if (multithreaded) {
+							MultithreadedPathChecker workers = new MultithreadedPathChecker(path, threads, threadSafeIndex);
+							threadSafeIndex = workers.threadSafeIndex;
+						} else {
+							PathChecker.filesInPath(path, index);
+						}
 					} else {
 						System.out.println("There is no path provided. A valid path is needed to build the index.");
 					}
@@ -36,7 +48,11 @@ public class Driver {
 			if (argMap.hasFlag("-index")) {
 				try {
 					Path path = argMap.getPath("-index", Paths.get("index.json"));
-					index.writeIndexJSON(path);
+					if (multithreaded) {
+						threadSafeIndex.writeIndexJSON(path);
+					} else {
+						index.writeIndexJSON(path);
+					}
 				} catch (IOException | NullPointerException e) {
 						System.out.println("File not found, index cannot be printed in json format.");
 				}
@@ -45,9 +61,13 @@ public class Driver {
 			if (argMap.hasFlag("-search")) {
 				try {
 					Path path = argMap.getPath("-search");
-
 					if (argMap.flagPath("-search")) {
-						search.stemQueryFile(path, argMap.hasFlag("-exact"));
+
+						if (multithreaded) {
+							search.multithreadQueryFile(path, argMap.hasFlag("-exact"), threads);
+						} else {
+							search.stemQueryFile(path, argMap.hasFlag("-exact"));
+						}
 					}
 				} catch (NullPointerException e) {
 					System.out.println("Unable to open the query file or directory provided. A valid query file or "
