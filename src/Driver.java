@@ -12,7 +12,6 @@ public class Driver {
 	 * @return 0 if everything went well
 	 */
 	public static void main(String[] args) {
-		
 		InvertedIndex index = new InvertedIndex();
 		ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
@@ -49,7 +48,6 @@ public class Driver {
 			if (argMap.hasFlag("-index")) {
 				try {
 					Path path = argMap.getPath("-index", Paths.get("index.json"));
-
 					if (multithreaded) {
 						threadSafeIndex.writeIndexJSON(path);
 					} else {
@@ -63,7 +61,6 @@ public class Driver {
 			if (argMap.hasFlag("-search")) {
 				try {
 					Path path = argMap.getPath("-search");
-
 					if (argMap.flagPath("-search")) {
 
 						if (multithreaded) {
