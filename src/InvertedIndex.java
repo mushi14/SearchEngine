@@ -207,8 +207,8 @@ public class InvertedIndex {
 	 * @return list of search results sorted
 	 */
 	public List<Search> exactSearch(Set<String> queries) {
-		int totalMatches = 0;
-		int totalWords = 0;
+		int totalMatches = 0; // TODO Why do you need this?
+		int totalWords = 0; // TODO Why do you need this?
 
 		Map<String, Search> locationsList = new HashMap<>();
 		List<Search> resultsList = new ArrayList<>();
@@ -240,6 +240,7 @@ public class InvertedIndex {
 				if (word.startsWith(query)) {
 					searchHelper(word, locationsList, resultsList, totalMatches, totalWords);
 				}
+				// TODO else break !!!!! (don't need to search to zebra if no longer starts with our query)
 			}
 		}
 
@@ -260,11 +261,13 @@ public class InvertedIndex {
 			int totalMatches, int totalWords) {
 		for (String loc : getPaths(word)) {
 			if (locationsList.containsKey(loc)) {
+				// TODO You don't use totalMatches here, and don't need it.
 				totalMatches = locationsList.get(loc).getMatches();
 				totalMatches = positions(word, loc);
 
 				locationsList.get(loc).calculate(index.get(word).get(loc).size());
 			} else {
+				// TODO Make these local variables here, remove as parameters to this method
 				totalMatches = positions(word, loc);
 				totalWords = locationsMap.get(loc);
 
