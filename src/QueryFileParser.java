@@ -30,7 +30,7 @@ public class QueryFileParser {
 		this.index = index;
 		this.threadSafeInvertedIndex = threadSafeInvertedIndex;
 	}
-
+  
 	/**
 	 * Stems query file performing partial or exact search and stores the results accordingly
 	 * @param index inverted index that contains the words, their locations, and their positions

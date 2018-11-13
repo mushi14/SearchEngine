@@ -25,10 +25,10 @@ public class Driver {
 			if (argMap.hasFlag("-threads")) {
 				multithreaded = true;
 			}
-
 			if (argMap.hasFlag("-path")) {
 				try {
 					Path path = argMap.getPath("-path");
+
 					if (argMap.flagPath("-path")) {
 
 						if (multithreaded) {

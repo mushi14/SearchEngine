@@ -13,7 +13,7 @@ public class TextFileStemmer {
 
 	public static final Pattern SPLIT_REGEX = Pattern.compile("(?U)\\p{Space}+");
 	public static final Pattern CLEAN_REGEX = Pattern.compile("(?U)[^\\p{Alpha}\\p{Space}]+");
-	
+
 	/**
 	 * Cleans the text by removing any non-alphabetic characters (e.g. non-letters
 	 * like digits, punctuation, symbols, and diacritical marks like the umlaut)
@@ -72,6 +72,7 @@ public class TextFileStemmer {
 			String line = br.readLine();
 			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 			String name = path.toString();
+
 			while(line != null) {
 				String[] words = parse(line);
 				for (String word : words) {
@@ -79,6 +80,7 @@ public class TextFileStemmer {
 					index.add(word, name, position);
 					position++;
 				}
+
 				line = br.readLine();
 			}
 		}
