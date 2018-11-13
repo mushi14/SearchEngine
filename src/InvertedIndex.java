@@ -207,15 +207,12 @@ public class InvertedIndex {
 	 * @return list of search results sorted
 	 */
 	public List<Search> exactSearch(Set<String> queries) {
-		int totalMatches = 0;
-		int totalWords = 0;
-
 		Map<String, Search> locationsList = new HashMap<>();
 		List<Search> resultsList = new ArrayList<>();
 
 		for (String query : queries) {
 			if (index.containsKey(query)) {
-				searchHelper(query, locationsList, resultsList, totalMatches, totalWords);
+				searchHelper(query, locationsList, resultsList);
 			}
 		}
 
@@ -229,16 +226,15 @@ public class InvertedIndex {
 	 * @return list of search results sorted
 	 */
 	public List<Search> partialSearch(Set<String> queries) {
-		int totalMatches = 0;
-		int totalWords = 0;
-
 		Map<String, Search> locationsList = new HashMap<>();
 		List<Search> resultsList = new ArrayList<>();
 
 		for (String query : queries) {
 			for (String word : index.tailMap(query).keySet()) {
 				if (word.startsWith(query)) {
-					searchHelper(word, locationsList, resultsList, totalMatches, totalWords);
+					searchHelper(word, locationsList, resultsList);
+				} else {
+					break;
 				}
 			}
 		}
@@ -256,17 +252,13 @@ public class InvertedIndex {
 	 * @param totalMatches total number of matches
 	 * @param totalWords total number of words
 	 */
-	private void searchHelper(String word, Map<String, Search> locationsList, List<Search> resultsList,
-			int totalMatches, int totalWords) {
+	private void searchHelper(String word, Map<String, Search> locationsList, List<Search> resultsList) {
 		for (String loc : index.get(word).keySet()) {
 			if (locationsList.containsKey(loc)) {
-				totalMatches = locationsList.get(loc).getMatches();
-				totalMatches = index.get(word).get(loc).size();
-
 				locationsList.get(loc).calculate(index.get(word).get(loc).size());
 			} else {
-				totalMatches = index.get(word).get(loc).size();
-				totalWords = locationsMap.get(loc);
+				int totalMatches = index.get(word).get(loc).size();
+				int totalWords = locationsMap.get(loc);
 
 				Search newQuery = new Search(loc, totalMatches, totalWords);
 				locationsList.put(loc, newQuery);
