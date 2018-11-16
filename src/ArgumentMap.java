@@ -153,6 +153,20 @@ public class ArgumentMap {
 	}
 
 	/**
+	 * Gets the total number of URLs to crawl when building the index. If no limit provided, defaults to 50
+	 * @param flag the flag associated with the limit to be returned
+	 * @param defaultValue number of URLs to crawl, default is 50
+	 * @return
+	 */
+	public int getLimit(String flag, int defaultValue) {
+		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
+			return Integer.valueOf(argMap.get(flag));
+		} else {
+			return defaultValue;
+		}
+	}
+
+	/**
 	 * Checks to see if the arguments map is empty
 	 * @return returns true if empty, false if not
 	 */

@@ -17,14 +17,20 @@ public class Driver {
 		ArgumentMap argMap = new ArgumentMap(args);
 		QueryFileParser search = new QueryFileParser(index, threadSafeIndex);
 
-		boolean multithreaded = false;
+		boolean multithreaded = argMap.hasFlag("-threads");
 		int threads = argMap.getThreads("-threads", 5);
 
 		if (!argMap.isEmpty()) {
 
-			if (argMap.hasFlag("-threads")) {
+			if (argMap.hasFlag("-url")) {
+				Path path = argMap.getPath("-url");
 				multithreaded = true;
 			}
+
+			if (argMap.hasFlag("limit")) {
+				int total = argMap.getLimit("-url", 50);
+			}
+
 			if (argMap.hasFlag("-path")) {
 				try {
 					Path path = argMap.getPath("-path");
