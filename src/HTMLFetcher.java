@@ -117,7 +117,7 @@ public class HTMLFetcher {
 		StringBuilder html = new StringBuilder();
 		int statusCode = HTMLFetcher.getStatusCode(headers);
 
-		if (HTMLFetcher.isHTML(headers) && statusCode >= 200 && statusCode < 300) {
+		if (HTMLFetcher.isHTML(headers) && statusCode == 200) {
 			try (
 				InputStreamReader input = new InputStreamReader(urlConnection.getInputStream());
 				BufferedReader reader = new BufferedReader(input);
@@ -142,11 +142,11 @@ public class HTMLFetcher {
 
 			return html.toString();
 		} else if (HTMLFetcher.isRedirect(headers) && redirects > 0) {
-			String temp = "";
+			String newURL = "";
 			for (var entry : headers.get("Location")) {
-				temp = String.join(" ", entry);
+				newURL = String.join(" ", entry);
 			}
-			url = new URL(temp);
+			url = new URL(newURL);
 
 			return fetchHTML(url, redirects - 1);
 		} else {

@@ -1,5 +1,7 @@
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +30,14 @@ public class WebCrawler {
 		if (count <= total) {
 			try {
 				String html = HTMLFetcher.fetchHTML(url);
-				LinkParser.listLinks(url, html);
+				queue.execute(new Crawler(html));
+
+				List<URL> href = new ArrayList<>();
+				href = LinkParser.listLinks(url, html);
+				for (URL newURL : href) {
+					String newHTML = HTMLFetcher.fetchHTML(newURL);
+					queue.execute(new Crawler(newHTML));
+				}
 			} catch (IOException e) {
 				logger.debug("Exception with fetch html");
 			}
