@@ -9,6 +9,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-opennlp-1.9.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/log4j2"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/opennlp"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jetty"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>

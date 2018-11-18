@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -23,8 +25,12 @@ public class Driver {
 		if (!argMap.isEmpty()) {
 
 			if (argMap.hasFlag("-url")) {
-				Path path = argMap.getPath("-url");
-				multithreaded = true;
+				try {
+					URL url = new URL(argMap.getPath("-url").toString());
+					multithreaded = true;
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
 			}
 
 			if (argMap.hasFlag("limit")) {

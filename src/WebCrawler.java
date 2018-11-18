@@ -1,18 +1,21 @@
-import java.nio.file.Path;
+import java.net.URL;
 
 public class WebCrawler {
 
-	public final ThreadSafeInvertedIndex threadSafeIndex;
+	private final ThreadSafeInvertedIndex threadSafeIndex;
 	private final WorkQueue queue;
 	private int pending;
 
-	public WebCrawler(Path path, int threads, ThreadSafeInvertedIndex threadSafeIndex) {
+	public WebCrawler(URL url, int total, int threads, ThreadSafeInvertedIndex threadSafeIndex) {
 		this.threadSafeIndex = threadSafeIndex;
 		this.queue = new WorkQueue(threads);
 		this.pending = 0;
+		this.start(url, total);
+		this.finish();
+		this.queue.shutdown();
 	}
 
-	private void parse() {
+	private void start(URL url, int total) {
 		
 	}
 

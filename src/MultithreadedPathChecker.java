@@ -33,6 +33,7 @@ public class MultithreadedPathChecker {
 				}
 			}
 		} catch (IOException e) {
+			System.out.println("The path is invalid, cannot build an index.");
 		}
 	}
 
