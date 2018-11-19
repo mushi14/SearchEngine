@@ -1,7 +1,9 @@
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,14 +17,16 @@ public class WebCrawler {
 
 	private final ThreadSafeInvertedIndex threadSafeIndex;
 	private final WorkQueue queue;
-	private List<Boolean> seen;
+	private List<URL> seen;
+	private Queue<URL> Q;
 	private int pending;
 	private int count;
 
-	public WebCrawler(URL url, int total, int threads, ThreadSafeInvertedIndex threadSafeIndex) {
+	public WebCrawler(URL url, int total, int threads, ThreadSafeInvertedIndex threadSafeIndex) throws IOException {
 		this.threadSafeIndex = threadSafeIndex;
 		this.queue = new WorkQueue(threads);
-		seen = new ArrayList<>();
+		this.seen = new ArrayList<>();
+		this.Q = new LinkedList<>();
 		this.pending = 0;
 		this.count = 0;
 		this.start(url, total);
@@ -30,25 +34,26 @@ public class WebCrawler {
 		this.queue.shutdown();
 	}
 
-	private void start(URL url, int total) {
-		count++;
-		if (count <= total) {
-			try {
-				if (!seen.contains(url)) {
-					String html = HTMLFetcher.fetchHTML(url);
-					queue.execute(new Crawler(url, html));
-				} else {
-					
-				}
+	private void start(URL url, int total) throws IOException {
+		String html = HTMLFetcher.fetchHTML(url);
 
-				List<URL> href = new ArrayList<>();
-				href = LinkParser.listLinks(url, html);
-				for (URL newURL : href) {
-					String newHTML = HTMLFetcher.fetchHTML(newURL);
-					queue.execute(new Crawler(newURL, newHTML));
+		if (count == 0) {
+			Q.add(url);
+			queue.execute(new Crawler(url, html));
+		}
+
+		if (!LinkParser.listLinks(url, html).isEmpty()) {
+			while (count < total) {
+				url = Q.poll();
+				for (URL newURL : LinkParser.listLinks(url, html)) {
+					count++;
+					if (count < total) {
+						Q.add(newURL);
+						queue.execute(new Crawler(newURL, html));
+					} else { 
+						break;
+					}
 				}
-			} catch (IOException e) {
-				logger.debug("Exception with fetch html");
 			}
 		}
 	}
