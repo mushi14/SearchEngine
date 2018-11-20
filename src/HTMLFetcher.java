@@ -115,6 +115,9 @@ public class HTMLFetcher {
 		StringBuilder html = new StringBuilder();
 		int statusCode = HTMLFetcher.getStatusCode(headers);
 
+//		for (var entry : headers.entrySet()) {
+//			System.out.println(entry);
+//		}
 		if (HTMLFetcher.isHTML(headers) && statusCode == 200) {
 			try (
 				InputStreamReader input = new InputStreamReader(urlConnection.getInputStream());
