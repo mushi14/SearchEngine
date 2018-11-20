@@ -15,6 +15,8 @@ import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class QueryFileParser {
+	
+	// TODO Nooooo multithreading heeerrreeeeee. Remove the threadSafe index! Revert this back to project 2!
 
 	private final InvertedIndex index;
 	private final ThreadSafeInvertedIndex threadSafeInvertedIndex;

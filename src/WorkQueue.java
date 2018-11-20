@@ -5,12 +5,16 @@ import org.apache.logging.log4j.Logger;
 
 public class WorkQueue {
 
+	// TODO Make all loggers final static
 	Logger logger = LogManager.getLogger();
 
 	private final ThreadPool[] workers;
 	private final LinkedList<Runnable> queue;
 	private volatile boolean shutdown;
 
+	// TODO Add Javadoc
+	// TODO Move the pending variable into WorkQueue, just like the homework required.
+	
 	public WorkQueue(int threads) {
 		workers = new ThreadPool[threads];
 		queue = new LinkedList<>();

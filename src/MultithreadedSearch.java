@@ -3,6 +3,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/*
+ * TODO There is similar methods and functionality between the multithreaded and
+ * singled threaded version of this class. To make that formal, create an interface
+ * with the common methods and the implement that interface in both classes. This
+ * will enable some clever upcasting in Driver later too.
+ * 
+ * This class should not need the queries list...
+ * 
+ * To multithread this class, everything that used to be inside the while loop for
+ * going through the query file should now be in a task. It should almost be exactly
+ * the same, except the task needs to synchronize access to results.
+ */
+
 public class MultithreadedSearch {
 
 	private final ThreadSafeInvertedIndex threadSafeIndex;
@@ -60,6 +73,8 @@ public class MultithreadedSearch {
 	private class QueryLineSearch implements Runnable {
 		private Set<String> query;
 		String line;
+		
+		// TODO Only pass in the line and exact. Everything else you can either access directly (like the results) or should be a local variable inside of run().
 
 		public QueryLineSearch(Set<String> query, Map<String, List<Search>> results, String line, boolean exact) {
 			this.query = query;
@@ -70,6 +85,8 @@ public class MultithreadedSearch {
 		@Override
 		public void run() {
 			List<Search> temp = new ArrayList<>();
+			
+			// TODO Move as much work here as possible, including all the query parsing.
 
 			if (exact) {
 				temp = threadSafeIndex.exactSearch(query);
