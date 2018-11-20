@@ -4,7 +4,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -112,8 +111,7 @@ public class HTMLFetcher {
 	 */
 	public static String fetchHTML(URL url, int redirects) throws IOException {
 		URLConnection urlConnection = url.openConnection();
-		Map<String, List<String>> headers = new HashMap<>();
-		headers = HttpsFetcher.fetchURL(url);
+		Map<String, List<String>> headers = HttpsFetcher.fetchURL(url);
 		StringBuilder html = new StringBuilder();
 		int statusCode = HTMLFetcher.getStatusCode(headers);
 

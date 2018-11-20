@@ -51,6 +51,7 @@ public class HttpsFetcher {
 				InputStreamReader input = new InputStreamReader(socket.getInputStream());
 				BufferedReader response = new BufferedReader(input);
 		) {
+
 			// write request to socket
 			request.printf("GET %s HTTP/1.1\r\n", resource);
 			request.printf("Host: %s\r\n", host);

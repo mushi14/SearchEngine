@@ -1,8 +1,6 @@
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,9 +13,8 @@ public class WebCrawler {
 
 	private static final Logger logger = LogManager.getLogger();
 
-	private final ThreadSafeInvertedIndex threadSafeIndex;
+	public final ThreadSafeInvertedIndex threadSafeIndex;
 	private final WorkQueue queue;
-	private List<URL> seen;
 	private Queue<URL> Q;
 	private int pending;
 	private int count;
@@ -25,7 +22,6 @@ public class WebCrawler {
 	public WebCrawler(URL url, int total, int threads, ThreadSafeInvertedIndex threadSafeIndex) throws IOException {
 		this.threadSafeIndex = threadSafeIndex;
 		this.queue = new WorkQueue(threads);
-		this.seen = new ArrayList<>();
 		this.Q = new LinkedList<>();
 		this.pending = 0;
 		this.count = 0;

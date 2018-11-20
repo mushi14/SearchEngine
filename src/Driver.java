@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,13 +27,11 @@ public class Driver {
 				try {
 					URL url = new URL(argMap.getPath("-url").toString());
 					multithreaded = true;
-				} catch (MalformedURLException e) {
+					WebCrawler crawl = new WebCrawler(url, argMap.getLimit("-limit", 50), threads, threadSafeIndex);
+					threadSafeIndex = crawl.threadSafeIndex;
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
-
-			if (argMap.hasFlag("limit")) {
-				int total = argMap.getLimit("-url", 50);
 			}
 
 			if (argMap.hasFlag("-path")) {
