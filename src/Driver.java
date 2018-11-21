@@ -25,7 +25,7 @@ public class Driver {
 
 			if (argMap.hasFlag("-url")) {
 				try {
-					URL url = new URL(argMap.getPath("-url").toString());
+					URL url = argMap.getURL("-url");
 					multithreaded = true;
 					WebCrawler crawl = new WebCrawler(url, argMap.getLimit("-limit", 50), threads, threadSafeIndex);
 					threadSafeIndex = crawl.threadSafeIndex;

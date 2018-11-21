@@ -1,3 +1,5 @@
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -98,8 +100,8 @@ public class ArgumentMap {
 	 * {@link String}, or null if there is no mapping for the flag.
 	 *
 	 * @param flag the flag whose associated value is to be returned
-	 * @return the value to which the specified flag is mapped, or {@code null} if
-	 *         there is no mapping for the flag
+	 * @return the value to which the specified flag is mapped, or {@code null} if 
+	 * there is no mapping for the flag
 	 */
 	public Path getPath(String flag) {
 		Path path;
@@ -121,11 +123,10 @@ public class ArgumentMap {
 	 *
 	 * This method should not throw any exceptions!
 	 *
-	 * @param flag         the flag whose associated value is to be returned
-	 * @param defaultValue the default value to return if there is no mapping for
-	 *                     the flag
+	 * @param flag the flag whose associated value is to be returned
+	 * @param defaultValue the default value to return if there is no mapping for the flag
 	 * @return the value to which the specified flag is mapped as a {@link Path},
-	 *         or the default value if there is no mapping for the flag
+	 * or the default value if there is no mapping for the flag
 	 */
 	public Path getPath(String flag, Path defaultValue) {
 		Path path;
@@ -137,6 +138,24 @@ public class ArgumentMap {
 		}
 
 		return path;
+	}
+
+	/**
+	 * Gets the URL that is associated with the flag
+	 * @param flag the flag to look for
+	 * @return the URL of the flag
+	 * @throws MalformedURLException
+	 */
+	public URL getURL(String flag) throws MalformedURLException {
+		URL url;
+
+		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
+			url = new URL(argMap.get(flag));
+		} else {
+			url = null;
+		}
+
+		return url;
 	}
 
 	/**

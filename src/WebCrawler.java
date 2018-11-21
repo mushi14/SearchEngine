@@ -31,19 +31,15 @@ public class WebCrawler {
 	}
 
 	private void start(URL url, int total) throws IOException {
-		url = new URL("https://www.example.com");
 //		Map<String, List<String>> results = new HashMap<>();
 //		URLConnection urlConnection = url.openConnection();
 //		results.putAll(urlConnection.getHeaderFields());
 //
 		String html = HTMLFetcher.fetchHTML(url);
-		System.out.println(html);
 
-		System.out.println(HTMLCleaner.stripHTML(html));
-//		for (var entry : results.entrySet()) {
-//			System.out.println(entry);
-//		}
-		
+		html = HTMLCleaner.stripHTML(html);
+		stemHTML(url, html);
+
 //		if (count == 0) {
 //			Q.add(url);
 //			queue.execute(new Crawler(url, html));
@@ -93,6 +89,8 @@ public class WebCrawler {
 		String[] words = html.split(" ");
 
 		for (String word : words) {
+			
+			System.out.print(word + ", ");
 			word = stemmer.stem(word).toString();
 			synchronized (threadSafeIndex) {
 				threadSafeIndex.add(word, url.toString(), position);
