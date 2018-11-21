@@ -1,15 +1,10 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class HTMLFetcher {
 
@@ -110,7 +105,6 @@ public class HTMLFetcher {
 	 * @see #isRedirect(Map)
 	 */
 	public static String fetchHTML(URL url, int redirects) throws IOException {
-		URLConnection urlConnection = url.openConnection();
 		Map<String, List<String>> headers = HttpsFetcher.fetchURL(url);
 		StringBuilder html = new StringBuilder();
 		int statusCode = HTMLFetcher.getStatusCode(headers);
@@ -119,18 +113,6 @@ public class HTMLFetcher {
 //			System.out.println(entry);
 //		}
 		if (HTMLFetcher.isHTML(headers) && statusCode == 200) {
-			try (
-				InputStreamReader input = new InputStreamReader(urlConnection.getInputStream());
-				BufferedReader reader = new BufferedReader(input);
-				Stream<String> stream = reader.lines();
-			) {
-				List<String> lines = stream.collect(Collectors.toList());
-				headers.put("Content", lines);
-				
-			} catch (IOException e) {
-				headers.put("Content", Collections.emptyList());
-			}
-
 			int count = 0;
 			for (var entry : headers.get("Content")) {
 				count++;

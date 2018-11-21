@@ -31,27 +31,28 @@ public class WebCrawler {
 	}
 
 	private void start(URL url, int total) throws IOException {
-		String html = HTMLFetcher.fetchHTML(url);
+//		System.out.println(HttpsFetcher.fetchURL(url));
+		String html = HTMLFetcher.fetchHTML(url.toString());
 
-		if (count == 0) {
-			Q.add(url);
-			queue.execute(new Crawler(url, html));
-		}
-
-		if (!LinkParser.listLinks(url, html).isEmpty()) {
-			while (count < total) {
-				url = Q.poll();
-				for (URL newURL : LinkParser.listLinks(url, html)) {
-					count++;
-					if (count < total) {
-						Q.add(newURL);
-						queue.execute(new Crawler(newURL, html));
-					} else { 
-						break;
-					}
-				}
-			}
-		}
+//		if (count == 0) {
+//			Q.add(url);
+//			queue.execute(new Crawler(url, html));
+//		}
+//
+//		if (!LinkParser.listLinks(url, html).isEmpty()) {
+//			while (count < total) {
+//				url = Q.poll();
+//				for (URL newURL : LinkParser.listLinks(url, html)) {
+//					count++;
+//					if (count < total) {
+//						Q.add(newURL);
+//						queue.execute(new Crawler(newURL, html));
+//					} else { 
+//						break;
+//					}
+//				}
+//			}
+//		}
 	}
 
 	private synchronized void incrementPending() {
