@@ -8,9 +8,14 @@ import org.apache.logging.log4j.Logger;
 
 public class ThreadSafeInvertedIndex extends InvertedIndex {
 
-	private ReadWriteLock lock;
+	private ReadWriteLock lock; // TODO final
+	
+	// TODO static final
 	Logger logger = LogManager.getLogger(getClass());
 
+	/**
+	 * TODO
+	 */
 	public ThreadSafeInvertedIndex() {
 		super();
 		lock = new ReadWriteLock();
@@ -193,6 +198,8 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 		}
 	}
 
+	// TODO Fix double ;; in methods below
+	
 	/**
 	 * Writes the index to the file path in pretty json format
 	 * @param path path to the file to write to
@@ -230,6 +237,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public List<Search> exactSearch(Set<String> queries) {
+		// TODO Why did you lock for read and write? What is being written to? Is it shared or local?
 		lock.lockReadWrite();
 		try {
 			return super.exactSearch(queries);
@@ -246,6 +254,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public List<Search> partialSearch(Set<String> queries) {
+		// TODO Why did you lock for read and write? What is being written to? Is it shared or local?
 		lock.lockReadWrite();
 		try {
 			return super.partialSearch(queries);
