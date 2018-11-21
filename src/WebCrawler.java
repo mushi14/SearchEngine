@@ -11,7 +11,7 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class WebCrawler {
 
-	private static final Logger logger = LogManager.getLogger();
+	Logger logger = LogManager.getLogger();
 
 	public final ThreadSafeInvertedIndex threadSafeIndex;
 	private final WorkQueue queue;
@@ -31,34 +31,28 @@ public class WebCrawler {
 	}
 
 	private void start(URL url, int total) throws IOException {
-//		Map<String, List<String>> results = new HashMap<>();
-//		URLConnection urlConnection = url.openConnection();
-//		results.putAll(urlConnection.getHeaderFields());
-//
 		String html = HTMLFetcher.fetchHTML(url);
 
-		html = HTMLCleaner.stripHTML(html);
-		stemHTML(url, html);
+		if (count == 0) {
+			Q.add(url);
+			queue.execute(new Crawler(url, html));
+		}
 
-//		if (count == 0) {
-//			Q.add(url);
-//			queue.execute(new Crawler(url, html));
-//		}
-//
-//		if (!LinkParser.listLinks(url, html).isEmpty()) {
-//			while (count < total) {
-//				url = Q.poll();
-//				for (URL newURL : LinkParser.listLinks(url, html)) {
-//					count++;
-//					if (count < total) {
-//						Q.add(newURL);
-//						queue.execute(new Crawler(newURL, html));
-//					} else { 
-//						break;
-//					}
-//				}
-//			}
-//		}
+		if (!LinkParser.listLinks(url, html).isEmpty()) {
+			while (count < total) {
+				url = Q.poll();
+				for (URL newURL : LinkParser.listLinks(url, html)) {
+					count++;
+					if (count < total) {
+						Q.add(newURL);
+						html = HTMLFetcher.fetchHTML(newURL);
+						queue.execute(new Crawler(newURL, html));
+					} else { 
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	private synchronized void incrementPending() {
@@ -89,12 +83,24 @@ public class WebCrawler {
 		String[] words = html.split(" ");
 
 		for (String word : words) {
-			
-			System.out.print(word + ", ");
-			word = stemmer.stem(word).toString();
-			synchronized (threadSafeIndex) {
-				threadSafeIndex.add(word, url.toString(), position);
-				position++;
+			if (!word.isEmpty()) {
+				if (!word.contains("\n")) {
+					word = word.replaceAll("(?s)\\W", "");
+					word = stemmer.stem(word).toString();
+					synchronized (threadSafeIndex) {
+						threadSafeIndex.add(word, url.toString(), position);
+						position++;
+					}
+				} else {
+					if (word.equals(words[words.length - 1])) {
+						word = word.replaceAll("(?s)\\W", "");
+						word = stemmer.stem(word).toString();
+						synchronized (threadSafeIndex) {
+							threadSafeIndex.add(word, url.toString(), position);
+							position++;
+						}
+					}
+				}
 			}
 		}
 	}
