@@ -31,9 +31,19 @@ public class WebCrawler {
 	}
 
 	private void start(URL url, int total) throws IOException {
-//		System.out.println(HttpsFetcher.fetchURL(url));
-		String html = HTMLFetcher.fetchHTML(url.toString());
+		url = new URL("https://www.example.com");
+//		Map<String, List<String>> results = new HashMap<>();
+//		URLConnection urlConnection = url.openConnection();
+//		results.putAll(urlConnection.getHeaderFields());
+//
+		String html = HTMLFetcher.fetchHTML(url);
+		System.out.println(html);
 
+		System.out.println(HTMLCleaner.stripHTML(html));
+//		for (var entry : results.entrySet()) {
+//			System.out.println(entry);
+//		}
+		
 //		if (count == 0) {
 //			Q.add(url);
 //			queue.execute(new Crawler(url, html));
