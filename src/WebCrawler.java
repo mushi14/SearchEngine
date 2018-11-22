@@ -1,8 +1,8 @@
 import java.io.IOException;
 import java.net.URL;
+import java.text.Normalizer;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +14,8 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 public class WebCrawler {
 
 	private final Logger logger = LogManager.getLogger();
+	public static final Pattern SPLIT_REGEX = Pattern.compile("(?U)\\p{Space}+");
+	public static final Pattern CLEAN_REGEX = Pattern.compile("(?U)[^\\p{Alpha}\\p{Space}]+");
 
 	public final ThreadSafeInvertedIndex threadSafeIndex;
 	private final WorkQueue queue;
@@ -35,35 +37,28 @@ public class WebCrawler {
 	private void start(URL url, int total) throws IOException {
 		count++;
 
-		if (count == 1) {
-			Q.add(url);
-			String html = HTMLFetcher.fetchHTML(url);
-//			logger.debug("first task created on url {}", url);
-			queue.execute(new Crawler(url, html));
-		}
+		while (count <= total) {
 
-		boolean done = false;
-		while (done == false) {
-			url = Q.poll();
-			String html = HTMLFetcher.fetchHTML(url);
-
-			for (URL newURL : LinkParser.listLinks(url, html)) {
-				count++;
-
-				if (count <= total) {
-					Q.add(newURL);
-					String newHTML = HTMLFetcher.fetchHTML(newURL);
-					if (newHTML != null) {
-//						logger.debug("creating task for url {}", newURL);
-						queue.execute(new Crawler(newURL, newHTML));
-					}
-				} else {
-					break;
-				}
+			if (count == 1) {
+				Q.add(url);
+				String html = HTMLFetcher.fetchHTML(url);
+				queue.execute(new Crawler(url, html));
 			}
 
-			if (count == total) {
-				done = true;
+			url = Q.poll();
+			String html = HTMLFetcher.fetchHTML(url);
+			for (URL newURL : LinkParser.listLinks(url, html)) {
+				String newHTML = HTMLFetcher.fetchHTML(newURL);
+				if (newHTML != null) {
+					count++;
+					if (count <= total) {
+						Q.add(newURL);
+						
+					} else {
+						break;
+					}
+					queue.execute(new Crawler(newURL, newHTML));
+				}
 			}
 		}
 	}
@@ -90,30 +85,38 @@ public class WebCrawler {
 		}
 	}
 
+	public static String clean(CharSequence text) {
+		String cleaned = Normalizer.normalize(text, Normalizer.Form.NFD);
+		cleaned = CLEAN_REGEX.matcher(cleaned).replaceAll("");
+		return cleaned.toLowerCase();
+	}
+
+	public static String[] split(String text) {
+		text = text.trim();
+		return text.isEmpty() ? new String[0] : SPLIT_REGEX.split(text);
+	}
+
+	public static String[] parse(String text) {
+		return split(clean(text));
+	}
+
 	private synchronized void stemHTML(URL url, String html) {
 		int position = 1;
 		Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		String[] words = html.split(" ");
 
 		for (String word : words) {
-			if (!word.isEmpty()) {
-				String regex = ".*\\w";
-				Pattern pattern = Pattern.compile(regex);
-				Matcher matcher = pattern.matcher(word);
-
-				if (matcher.find()) {
-					for (int i = 0; i <= matcher.groupCount(); i++) {
-						word = matcher.group(i);
-					}
-
+			String[] wordArr = parse(word);
+			if (wordArr.length != 0) {
+				for (String parsedW : wordArr) {
+					parsedW = parsedW.toLowerCase();
+					parsedW = stemmer.stem(parsedW).toString();
 					synchronized (threadSafeIndex) {
-						word = stemmer.stem(word).toString();
-						threadSafeIndex.add(word, url.toString(), position);
+						threadSafeIndex.add(parsedW, url.toString(), position);
 						position++;
 					}
 				}
 			}
-			
 		}
 	}
 
