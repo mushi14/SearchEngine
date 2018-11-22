@@ -2,6 +2,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +13,7 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class WebCrawler {
 
-	Logger logger = LogManager.getLogger();
+	private final Logger logger = LogManager.getLogger();
 
 	public final ThreadSafeInvertedIndex threadSafeIndex;
 	private final WorkQueue queue;
@@ -31,26 +33,37 @@ public class WebCrawler {
 	}
 
 	private void start(URL url, int total) throws IOException {
-		String html = HTMLFetcher.fetchHTML(url);
+		count++;
 
-		if (count == 0) {
+		if (count == 1) {
 			Q.add(url);
+			String html = HTMLFetcher.fetchHTML(url);
+//			logger.debug("first task created on url {}", url);
 			queue.execute(new Crawler(url, html));
 		}
 
-		if (!LinkParser.listLinks(url, html).isEmpty()) {
-			while (count < total) {
-				url = Q.poll();
-				for (URL newURL : LinkParser.listLinks(url, html)) {
-					count++;
-					if (count < total) {
-						Q.add(newURL);
-						html = HTMLFetcher.fetchHTML(newURL);
-						queue.execute(new Crawler(newURL, html));
-					} else { 
-						break;
+		boolean done = false;
+		while (done == false) {
+			url = Q.poll();
+			String html = HTMLFetcher.fetchHTML(url);
+
+			for (URL newURL : LinkParser.listLinks(url, html)) {
+				count++;
+
+				if (count <= total) {
+					Q.add(newURL);
+					String newHTML = HTMLFetcher.fetchHTML(newURL);
+					if (newHTML != null) {
+//						logger.debug("creating task for url {}", newURL);
+						queue.execute(new Crawler(newURL, newHTML));
 					}
+				} else {
+					break;
 				}
+			}
+
+			if (count == total) {
+				done = true;
 			}
 		}
 	}
@@ -84,24 +97,23 @@ public class WebCrawler {
 
 		for (String word : words) {
 			if (!word.isEmpty()) {
-				if (!word.contains("\n")) {
-					word = word.replaceAll("(?s)\\W", "");
-					word = stemmer.stem(word).toString();
+				String regex = ".*\\w";
+				Pattern pattern = Pattern.compile(regex);
+				Matcher matcher = pattern.matcher(word);
+
+				if (matcher.find()) {
+					for (int i = 0; i <= matcher.groupCount(); i++) {
+						word = matcher.group(i);
+					}
+
 					synchronized (threadSafeIndex) {
+						word = stemmer.stem(word).toString();
 						threadSafeIndex.add(word, url.toString(), position);
 						position++;
 					}
-				} else {
-					if (word.equals(words[words.length - 1])) {
-						word = word.replaceAll("(?s)\\W", "");
-						word = stemmer.stem(word).toString();
-						synchronized (threadSafeIndex) {
-							threadSafeIndex.add(word, url.toString(), position);
-							position++;
-						}
-					}
 				}
 			}
+			
 		}
 	}
 
@@ -117,8 +129,8 @@ public class WebCrawler {
 
 		@Override
 		public void run() {
-			/* Parse the doctype html and store each word in the thread safe inverted index*/
 			html = HTMLCleaner.stripHTML(html);
+//			logger.debug("this is cleaned html {}", html);
 			stemHTML(url, html);
 			decrementPending();
 		}
