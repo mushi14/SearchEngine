@@ -179,7 +179,9 @@ public class ArgumentMap {
 	 */
 	public int getLimit(String flag, int defaultValue) {
 		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
-			if (argMap.get(flag).contains("\\d") && Integer.valueOf(argMap.get(flag)) >= 1) {
+			String value = argMap.get(flag);
+
+			if (isNumeric(value) && Integer.parseInt(value) >= 1) {
 				return Integer.valueOf(argMap.get(flag));
 			} else {
 				return defaultValue;
@@ -187,6 +189,15 @@ public class ArgumentMap {
 		} else {
 			return defaultValue;
 		}
+	}
+
+	public static boolean isNumeric(String strNum) {
+		try {
+			double d = Double.parseDouble(strNum);
+		} catch (NumberFormatException | NullPointerException nfe) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

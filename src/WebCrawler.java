@@ -35,24 +35,28 @@ public class WebCrawler {
 	}
 
 	private void start(URL url, int total) throws IOException {
-		while (count <= total) {
-
-			count++;
-			if (count == 1) {
-				Q.add(url);
+		while (count < total) {
+			if (count == 0) {
+//				System.out.println(url + " the count is: " + count);
 				String html = HTMLFetcher.fetchHTML(url);
-				queue.execute(new Crawler(url, html));
-			}
-
-			url = Q.poll();
-			String html = HTMLFetcher.fetchHTML(url);
-			for (URL newURL : LinkParser.listLinks(url, html)) {
-				String newHTML = HTMLFetcher.fetchHTML(newURL);
-				if (newHTML != null) {
+				if (html != null) {
 					count++;
-					if (count <= total) {
-						Q.add(newURL);
-						queue.execute(new Crawler(newURL, newHTML));
+					Q.add(url);
+					queue.execute(new Crawler(url, html));
+				}
+			} else {
+				url = Q.poll();
+				String html = HTMLFetcher.fetchHTML(url);
+
+				for (URL ref : LinkParser.listLinks(url, html)) {
+//					System.out.println(ref + " the count is: " + count);
+					String newHTML = HTMLFetcher.fetchHTML(ref);
+					if (count < total) {
+						count++;
+						if (newHTML != null) {
+							Q.add(url);
+							queue.execute(new Crawler(ref, newHTML));
+						}
 					} else {
 						break;
 					}
@@ -60,6 +64,33 @@ public class WebCrawler {
 			}
 		}
 	}
+
+
+//		while (count <= total) {
+//
+//			count++;
+//			if (count == 1) {
+//				Q.add(url);
+//				String html = HTMLFetcher.fetchHTML(url);
+//				queue.execute(new Crawler(url, html));
+//			}
+//
+//			url = Q.poll();
+//			String html = HTMLFetcher.fetchHTML(url);
+//			for (URL newURL : LinkParser.listLinks(url, html)) {
+//				String newHTML = HTMLFetcher.fetchHTML(newURL);
+//				if (newHTML != null) {
+//					count++;
+//					if (count <= total) {
+//						Q.add(newURL);
+//						queue.execute(new Crawler(newURL, newHTML));
+//					} else {
+//						break;
+//					}
+//				}
+//			}
+//		}
+//	}
 
 	private synchronized void incrementPending() {
 		pending++;
@@ -131,7 +162,6 @@ public class WebCrawler {
 		@Override
 		public void run() {
 			html = HTMLCleaner.stripHTML(html);
-//			logger.debug("this is cleaned html {}", html);
 			stemHTML(url, html);
 			decrementPending();
 		}
