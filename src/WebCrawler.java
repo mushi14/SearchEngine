@@ -35,10 +35,9 @@ public class WebCrawler {
 	}
 
 	private void start(URL url, int total) throws IOException {
-		count++;
-
 		while (count <= total) {
 
+			count++;
 			if (count == 1) {
 				Q.add(url);
 				String html = HTMLFetcher.fetchHTML(url);
@@ -53,11 +52,10 @@ public class WebCrawler {
 					count++;
 					if (count <= total) {
 						Q.add(newURL);
-						
+						queue.execute(new Crawler(newURL, newHTML));
 					} else {
 						break;
 					}
-					queue.execute(new Crawler(newURL, newHTML));
 				}
 			}
 		}

@@ -25,10 +25,14 @@ public class Driver {
 
 			if (argMap.hasFlag("-url")) {
 				try {
-					URL url = argMap.getURL("-url");
-					multithreaded = true;
-					WebCrawler crawl = new WebCrawler(url, argMap.getLimit("-limit", 50), threads, threadSafeIndex);
-					threadSafeIndex = crawl.threadSafeIndex;
+					
+					if (argMap.flagPath("-url")) {
+						URL url = argMap.getURL("-url");
+						multithreaded = true;
+						int limit = argMap.getLimit("-limit", 50);
+						WebCrawler crawl = new WebCrawler(url, limit, threads, threadSafeIndex);
+						threadSafeIndex = crawl.threadSafeIndex;
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

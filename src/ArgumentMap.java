@@ -179,7 +179,11 @@ public class ArgumentMap {
 	 */
 	public int getLimit(String flag, int defaultValue) {
 		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
-			return Integer.valueOf(argMap.get(flag));
+			if (argMap.get(flag).contains("\\d") && Integer.valueOf(argMap.get(flag)) >= 1) {
+				return Integer.valueOf(argMap.get(flag));
+			} else {
+				return defaultValue;
+			}
 		} else {
 			return defaultValue;
 		}
@@ -191,5 +195,11 @@ public class ArgumentMap {
 	 */
 	public boolean isEmpty() {
 		return argMap.isEmpty();
+	}
+
+	public void print() {
+		for (String key : argMap.keySet()) {
+			System.out.println(key + " " + argMap.get(key));
+		}
 	}
 }

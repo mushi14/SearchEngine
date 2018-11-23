@@ -121,7 +121,7 @@ public class HTMLFetcher {
 			}
 
 			return html.toString();
-		} else if (HTMLFetcher.isRedirect(headers) && redirects > 0) {
+		} else if (HTMLFetcher.isRedirect(headers) && redirects > 0 && redirects <= 3) {
 			String newURL = "";
 			for (var entry : headers.get("Location")) {
 				newURL = String.join(" ", entry);
