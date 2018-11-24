@@ -25,7 +25,7 @@ public class Driver {
 
 			if (argMap.hasFlag("-url")) {
 				try {
-					
+
 					if (argMap.flagPath("-url")) {
 						URL url = argMap.getURL("-url");
 						multithreaded = true;
