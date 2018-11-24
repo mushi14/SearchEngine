@@ -1,7 +1,9 @@
 import java.io.IOException;
 import java.net.URL;
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,7 @@ public class WebCrawler {
 	public final ThreadSafeInvertedIndex threadSafeIndex;
 	private final WorkQueue queue;
 	private Queue<URL> Q;
+	private List<URL> seen;
 	private int pending;
 	private int count;
 
@@ -27,6 +30,7 @@ public class WebCrawler {
 		this.threadSafeIndex = threadSafeIndex;
 		this.queue = new WorkQueue(threads);
 		this.Q = new LinkedList<>();
+		this.seen = new ArrayList<>();
 		this.pending = 0;
 		this.count = 0;
 		this.start(url, total);
@@ -37,11 +41,11 @@ public class WebCrawler {
 	private void start(URL url, int total) throws IOException {
 		while (count < total) {
 			if (count == 0) {
-//				System.out.println(url + " the count is: " + count);
 				String html = HTMLFetcher.fetchHTML(url);
 				if (html != null) {
 					count++;
 					Q.add(url);
+					seen.add(url);
 					queue.execute(new Crawler(url, html));
 				}
 			} else {
@@ -49,13 +53,15 @@ public class WebCrawler {
 				String html = HTMLFetcher.fetchHTML(url);
 
 				for (URL ref : LinkParser.listLinks(url, html)) {
-//					System.out.println(ref + " the count is: " + count);
 					String newHTML = HTMLFetcher.fetchHTML(ref);
 					if (count < total) {
-						count++;
-						if (newHTML != null) {
-							Q.add(url);
-							queue.execute(new Crawler(ref, newHTML));
+						if (!seen.contains(ref)) {
+							count++;
+							if (newHTML != null) {
+								Q.add(ref);
+								seen.add(ref);
+								queue.execute(new Crawler(ref, newHTML));
+							}
 						}
 					} else {
 						break;
@@ -167,3 +173,17 @@ public class WebCrawler {
 		}
 	}
 }
+
+
+
+//Running: out/index-url-numpy.json...
+//Seed URL: https://www.cs.usfca.edu/~cs212/numpy/user/index.html the count is: 0
+//NEW URL FROM QUEUE: https://www.cs.usfca.edu/~cs212/numpy/user/index.html the count is: 1
+//HREFs URL: https://www.cs.usfca.edu/~cs212/numpy/index.html the count is: 1
+//HREFs URL: https://www.cs.usfca.edu/~cs212/numpy/genindex.html the count is: 2
+//HREFs URL: https://www.cs.usfca.edu/~cs212/numpy/user/setting-up.html the count is: 3
+//HREFs URL: https://www.cs.usfca.edu/~cs212/numpy/contents.html the count is: 4
+//NEW URL FROM QUEUE: https://www.cs.usfca.edu/~cs212/numpy/index.html the count is: 5
+//NEW URL FROM QUEUE: https://www.cs.usfca.edu/~cs212/numpy/genindex.html the count is: 5
+//NEW URL FROM QUEUE: https://www.cs.usfca.edu/~cs212/numpy/user/setting-up.html the count is: 5
+//NEW URL FROM QUEUE: https://www.cs.usfca.edu/~cs212/numpy/contents.html the count is: 5
