@@ -17,7 +17,7 @@ public class InvertedIndex {
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
 	public final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	private final Map<String, Integer> locationsMap;
+	public final Map<String, Integer> locationsMap;
 
 	/**
 	 *  Initializes the index.

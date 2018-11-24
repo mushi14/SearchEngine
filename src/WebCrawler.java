@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -71,33 +72,6 @@ public class WebCrawler {
 		}
 	}
 
-
-//		while (count <= total) {
-//
-//			count++;
-//			if (count == 1) {
-//				Q.add(url);
-//				String html = HTMLFetcher.fetchHTML(url);
-//				queue.execute(new Crawler(url, html));
-//			}
-//
-//			url = Q.poll();
-//			String html = HTMLFetcher.fetchHTML(url);
-//			for (URL newURL : LinkParser.listLinks(url, html)) {
-//				String newHTML = HTMLFetcher.fetchHTML(newURL);
-//				if (newHTML != null) {
-//					count++;
-//					if (count <= total) {
-//						Q.add(newURL);
-//						queue.execute(new Crawler(newURL, newHTML));
-//					} else {
-//						break;
-//					}
-//				}
-//			}
-//		}
-//	}
-
 	private synchronized void incrementPending() {
 		pending++;
 	}
@@ -146,13 +120,19 @@ public class WebCrawler {
 				for (String parsedW : wordArr) {
 					parsedW = parsedW.toLowerCase();
 					parsedW = stemmer.stem(parsedW).toString();
-					synchronized (threadSafeIndex) {
-						threadSafeIndex.add(parsedW, url.toString(), position);
-						position++;
+					if (!parsedW.isEmpty()) {
+						synchronized (threadSafeIndex) {
+							threadSafeIndex.add(parsedW, url.toString(), position);
+							position++;
+						}
 					}
 				}
 			}
 		}
+	}
+
+	public void writeLocJSON(Path path) {
+		TreeJSONWriter.asLocations(threadSafeIndex.locationsMap, path); 
 	}
 
 	private class Crawler implements Runnable {
@@ -173,17 +153,3 @@ public class WebCrawler {
 		}
 	}
 }
-
-
-
-//Running: out/index-url-numpy.json...
-//Seed URL: https://www.cs.usfca.edu/~cs212/numpy/user/index.html the count is: 0
-//NEW URL FROM QUEUE: https://www.cs.usfca.edu/~cs212/numpy/user/index.html the count is: 1
-//HREFs URL: https://www.cs.usfca.edu/~cs212/numpy/index.html the count is: 1
-//HREFs URL: https://www.cs.usfca.edu/~cs212/numpy/genindex.html the count is: 2
-//HREFs URL: https://www.cs.usfca.edu/~cs212/numpy/user/setting-up.html the count is: 3
-//HREFs URL: https://www.cs.usfca.edu/~cs212/numpy/contents.html the count is: 4
-//NEW URL FROM QUEUE: https://www.cs.usfca.edu/~cs212/numpy/index.html the count is: 5
-//NEW URL FROM QUEUE: https://www.cs.usfca.edu/~cs212/numpy/genindex.html the count is: 5
-//NEW URL FROM QUEUE: https://www.cs.usfca.edu/~cs212/numpy/user/setting-up.html the count is: 5
-//NEW URL FROM QUEUE: https://www.cs.usfca.edu/~cs212/numpy/contents.html the count is: 5

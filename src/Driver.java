@@ -100,7 +100,11 @@ public class Driver {
 			if (argMap.hasFlag("-locations")) {
 				try {
 					Path path = argMap.getPath("-locations", Paths.get("locations.json"));
-					index.writeLocJSON(path);
+					if (multithreaded) {
+						TreeJSONWriter.asLocations(threadSafeIndex.locationsMap, path);
+					} else {
+						index.writeLocJSON(path);
+					}
 				} catch (IOException | NullPointerException e) {
 						System.out.println("File not found, locations cannot be printed in json format.");
 				}
