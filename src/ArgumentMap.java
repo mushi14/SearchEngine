@@ -39,8 +39,10 @@ public class ArgumentMap {
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
 				if ((i + 1) < args.length && !isFlag(args[i + 1])) {
-					argMap.put(args[i], args[i + 1]);
-					i++;
+					if (!args[i + 1].contains("null")) {
+						argMap.put(args[i], args[i + 1]);
+						i++;
+					}
 				} else {
 					argMap.put(args[i], null);
 				}

@@ -2,6 +2,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
 public class Driver {
 
@@ -27,11 +29,15 @@ public class Driver {
 				try {
 
 					if (argMap.flagPath("-url")) {
-						URL url = argMap.getURL("-url");
 						multithreaded = true;
+						URL url = argMap.getURL("-url");
 						int limit = argMap.getLimit("-limit", 50);
-						WebCrawler crawl = new WebCrawler(url, limit, threads, threadSafeIndex);
-						threadSafeIndex = crawl.threadSafeIndex;
+						Map<String, List<String>> headers = HttpsFetcher.fetchURL(url);
+						String html = HTMLFetcher.fetchHTML(url);
+						if (HTMLFetcher.getStatusCode(headers) == 200) {
+							WebCrawler crawl = new WebCrawler(url, html, limit, threads, threadSafeIndex);
+							threadSafeIndex = crawl.threadSafeIndex;
+						}
 					}
 				} catch (IOException e) {
 					e.printStackTrace();

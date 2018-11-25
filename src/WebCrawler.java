@@ -21,52 +21,58 @@ public class WebCrawler {
 	public static final Pattern CLEAN_REGEX = Pattern.compile("(?U)[^\\p{Alpha}\\p{Space}]+");
 
 	public final ThreadSafeInvertedIndex threadSafeIndex;
+	private URL url;
+	private String html;
 	private final WorkQueue queue;
 	private Queue<URL> Q;
 	private List<URL> seen;
 	private int pending;
-	private int count;
 
-	public WebCrawler(URL url, int total, int threads, ThreadSafeInvertedIndex threadSafeIndex) throws IOException {
+	public WebCrawler(URL url, String html, int total, int threads, 
+			ThreadSafeInvertedIndex threadSafeIndex) throws IOException {
 		this.threadSafeIndex = threadSafeIndex;
+		this.url = url;
+		this.html = html;
 		this.queue = new WorkQueue(threads);
 		this.Q = new LinkedList<>();
 		this.seen = new ArrayList<>();
 		this.pending = 0;
-		this.count = 0;
-		this.start(url, total);
+		this.start(total);
 		this.finish();
 		this.queue.shutdown();
 	}
 
-	private void start(URL url, int total) throws IOException {
-		while (count < total) {
-			if (count == 0) {
-				String html = HTMLFetcher.fetchHTML(url);
-				if (html != null) {
-					count++;
-					Q.add(url);
-					seen.add(url);
-					queue.execute(new Crawler(url, html));
-				}
-			} else {
-				url = Q.poll();
-				String html = HTMLFetcher.fetchHTML(url);
+	private void start(int total) throws IOException {
+		int count = 0;
 
-				for (URL ref : LinkParser.listLinks(url, html)) {
-					String newHTML = HTMLFetcher.fetchHTML(ref);
-					if (count < total) {
-						if (!seen.contains(ref)) {
-							count++;
-							if (newHTML != null) {
-								Q.add(ref);
-								seen.add(ref);
-								queue.execute(new Crawler(ref, newHTML));
-							}
+		System.out.println("Seed url: " + url + " count: " + count);
+		if (html != null) {
+			count++;
+			Q.add(url);
+			seen.add(url);
+			queue.execute(new Crawler(url, html));
+		}
+
+		while (count < total) {
+			url = Q.poll();
+			String html = HTMLFetcher.fetchHTML(url);
+			System.out.println("NEW URL FROM Q: " + url + " count: " + count);
+
+
+			for (URL ref : LinkParser.listLinks(url, html)) {
+				String newHTML = HTMLFetcher.fetchHTML(ref);
+				if (count < total) {
+					if (!seen.contains(ref)) {
+						System.out.println("New ref: " + ref + " count: " + count);
+						count++;
+						if (newHTML != null) {
+							Q.add(ref);
+							seen.add(ref);
+							queue.execute(new Crawler(ref, newHTML));
 						}
-					} else {
-						break;
 					}
+				} else {
+					break;
 				}
 			}
 		}
@@ -153,3 +159,11 @@ public class WebCrawler {
 		}
 	}
 }
+
+
+//Seed url: https://www.cs.usfca.edu/~cs212/redirect/ count: 0
+//NEW URL FROM Q: https://www.cs.usfca.edu/~cs212/redirect/ count: 1
+//New ref: https://www.cs.usfca.edu/~cs212/redirect/nowhere count: 1
+//New ref: https://www.cs.usfca.edu/~cs212/redirect/gone count: 2
+//New ref: https://www.cs.usfca.edu/~cs212/redirect/loop1 count: 3
+//New ref: https://www.cs.usfca.edu/~cs212/redirect/one count: 4
