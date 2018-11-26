@@ -110,10 +110,10 @@ public class HTMLFetcher {
 		int statusCode = HTMLFetcher.getStatusCode(headers);
 
 		if (HTMLFetcher.isHTML(headers) && statusCode == 200) {
-			int count = 0;
+			int temp = 0;
 			for (var entry : headers.get("Content")) {
-				count++;
-				if (count < headers.get("Content").size()) {
+				temp++;
+				if (temp < headers.get("Content").size()) {
 					html.append(entry + "\n");
 				} else {
 					html.append(entry);
@@ -121,7 +121,7 @@ public class HTMLFetcher {
 			}
 
 			return html.toString();
-		} else if (HTMLFetcher.isRedirect(headers) && redirects > 0 && redirects <= 3) {
+		} else if (HTMLFetcher.isRedirect(headers) && redirects > 0) {
 			String newURL = "";
 			for (var entry : headers.get("Location")) {
 				newURL = String.join(" ", entry);

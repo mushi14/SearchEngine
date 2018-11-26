@@ -28,7 +28,7 @@ public class WebCrawler {
 	private List<URL> seen;
 	private int pending;
 
-	public WebCrawler(URL url, String html, int total, int threads, 
+	public WebCrawler(URL url, String html, int total, int redirects, int threads, 
 			ThreadSafeInvertedIndex threadSafeIndex) throws IOException {
 		this.threadSafeIndex = threadSafeIndex;
 		this.url = url;
@@ -37,15 +37,14 @@ public class WebCrawler {
 		this.Q = new LinkedList<>();
 		this.seen = new ArrayList<>();
 		this.pending = 0;
-		this.start(total);
+		this.start(total, redirects);
 		this.finish();
 		this.queue.shutdown();
 	}
 
-	private void start(int total) throws IOException {
+	private void start(int total, int redirects) throws IOException {
 		int count = 0;
 
-		System.out.println("Seed url: " + url + " count: " + count);
 		if (html != null) {
 			count++;
 			Q.add(url);
@@ -55,27 +54,32 @@ public class WebCrawler {
 
 		while (count < total) {
 			url = Q.poll();
-			String html = HTMLFetcher.fetchHTML(url);
-			System.out.println("NEW URL FROM Q: " + url + " count: " + count);
+			String html = HTMLFetcher.fetchHTML(url, redirects);
 
+			if (!LinkParser.listLinks(url, html).isEmpty()) {
+				for (URL ref : LinkParser.listLinks(url, html)) {
+					String newHTML = HTMLFetcher.fetchHTML(ref, redirects);
 
-			for (URL ref : LinkParser.listLinks(url, html)) {
-				String newHTML = HTMLFetcher.fetchHTML(ref);
-				if (count < total) {
-					if (!seen.contains(ref)) {
-						System.out.println("New ref: " + ref + " count: " + count);
-						count++;
-						if (newHTML != null) {
-							Q.add(ref);
-							seen.add(ref);
-							queue.execute(new Crawler(ref, newHTML));
+					if (count < total) {
+						if (!seen.contains(ref)) {
+							count++;
+							System.out.println(count);
+
+							if (newHTML != null) {
+								Q.add(ref);
+								seen.add(ref);
+								queue.execute(new Crawler(ref, newHTML));
+							}
 						}
+					} else {
+						break;
 					}
-				} else {
-					break;
 				}
+			} else {
+				break;
 			}
 		}
+		System.out.println(threadSafeIndex);
 	}
 
 	private synchronized void incrementPending() {

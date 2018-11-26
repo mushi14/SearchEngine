@@ -33,9 +33,10 @@ public class Driver {
 						URL url = argMap.getURL("-url");
 						int limit = argMap.getLimit("-limit", 50);
 						Map<String, List<String>> headers = HttpsFetcher.fetchURL(url);
-						String html = HTMLFetcher.fetchHTML(url);
+						String html = HTMLFetcher.fetchHTML(url, 3);
+
 						if (HTMLFetcher.getStatusCode(headers) == 200) {
-							WebCrawler crawl = new WebCrawler(url, html, limit, threads, threadSafeIndex);
+							WebCrawler crawl = new WebCrawler(url, html, limit, 3, threads, threadSafeIndex);
 							threadSafeIndex = crawl.threadSafeIndex;
 						}
 					}
