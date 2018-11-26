@@ -58,12 +58,10 @@ public class WebCrawler {
 
 			if (!LinkParser.listLinks(url, html).isEmpty()) {
 				for (URL ref : LinkParser.listLinks(url, html)) {
-					String newHTML = HTMLFetcher.fetchHTML(ref, redirects);
-
 					if (count < total) {
 						if (!seen.contains(ref)) {
+							String newHTML = HTMLFetcher.fetchHTML(ref, redirects);
 							count++;
-							System.out.println(count);
 
 							if (newHTML != null) {
 								Q.add(ref);
@@ -79,7 +77,6 @@ public class WebCrawler {
 				break;
 			}
 		}
-		System.out.println(threadSafeIndex);
 	}
 
 	private synchronized void incrementPending() {
@@ -163,11 +160,3 @@ public class WebCrawler {
 		}
 	}
 }
-
-
-//Seed url: https://www.cs.usfca.edu/~cs212/redirect/ count: 0
-//NEW URL FROM Q: https://www.cs.usfca.edu/~cs212/redirect/ count: 1
-//New ref: https://www.cs.usfca.edu/~cs212/redirect/nowhere count: 1
-//New ref: https://www.cs.usfca.edu/~cs212/redirect/gone count: 2
-//New ref: https://www.cs.usfca.edu/~cs212/redirect/loop1 count: 3
-//New ref: https://www.cs.usfca.edu/~cs212/redirect/one count: 4
