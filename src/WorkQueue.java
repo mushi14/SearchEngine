@@ -6,11 +6,11 @@ import org.apache.logging.log4j.Logger;
 public class WorkQueue {
 
 	// TODO Make all loggers final static
-	final Logger logger = LogManager.getLogger();
+	final static Logger logger = LogManager.getLogger();
 
 	private final ThreadPool[] workers;
 	private final LinkedList<Runnable> queue;
-	public int pending;
+	private int pending;
 	private volatile boolean shutdown;
 
 	// TODO Add Javadoc
@@ -35,11 +35,11 @@ public class WorkQueue {
 		finish();
 	}
 
-	public synchronized void incrementPending() {
+	private synchronized void incrementPending() {
 		pending++;
 	}
 
-	public synchronized void decrementPending() {
+	private synchronized void decrementPending() {
 		pending--;
 
 		if (pending == 0) {

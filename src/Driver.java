@@ -32,8 +32,7 @@ public class Driver {
 					if (argMap.flagPath("-path")) {
 
 						if (multithreaded) {
-							MultithreadedPathChecker workers = new MultithreadedPathChecker(path, threads, threadSafeIndex);
-							threadSafeIndex = workers.threadSafeIndex;
+							MultithreadedPathChecker.filesInPath(path, threads, threadSafeIndex);
 //							System.out.println(threadSafeIndex);
 						} else {
 							PathChecker.filesInPath(path, index);
