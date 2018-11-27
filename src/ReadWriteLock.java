@@ -23,8 +23,10 @@ public class ReadWriteLock {
 
 	public synchronized void unlockReadOnly() {
 		readers--;
-		this.notifyAll();
-		
+		if (readers == 0) {
+			this.notifyAll();
+		}
+
 		/*
 		 * TODO Small efficiency issue: over-notification.
 		 * 

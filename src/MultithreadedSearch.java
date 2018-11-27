@@ -73,7 +73,7 @@ public class MultithreadedSearch {
 	private class QueryLineSearch implements Runnable {
 		private Set<String> query;
 		String line;
-		
+
 		// TODO Only pass in the line and exact. Everything else you can either access directly (like the results) or should be a local variable inside of run().
 
 		public QueryLineSearch(Set<String> query, Map<String, List<Search>> results, String line, boolean exact) {
@@ -85,7 +85,7 @@ public class MultithreadedSearch {
 		@Override
 		public void run() {
 			List<Search> temp = new ArrayList<>();
-			
+
 			// TODO Move as much work here as possible, including all the query parsing.
 
 			if (exact) {

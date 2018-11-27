@@ -52,7 +52,6 @@ public class QueryFileParser {
 					word = stemmer.stem(word).toString();
 					queries.add(word);
 				}
-				
 
 				String queryLine = String.join(" ", queries);
 				if (!queries.isEmpty() && !results.containsKey(queryLine)) {

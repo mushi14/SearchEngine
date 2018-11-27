@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 
 public class ThreadSafeInvertedIndex extends InvertedIndex {
 
-	private ReadWriteLock lock; // TODO final
-	
+	private final ReadWriteLock lock;
+
 	// TODO static final
 	Logger logger = LogManager.getLogger(getClass());
 
@@ -198,8 +198,6 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 		}
 	}
 
-	// TODO Fix double ;; in methods below
-	
 	/**
 	 * Writes the index to the file path in pretty json format
 	 * @param path path to the file to write to
@@ -207,11 +205,11 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public void writeIndexJSON(Path path) throws IOException {
-		lock.lockReadWrite();;
+		lock.lockReadWrite();
 		try {
 			super.writeIndexJSON(path);
 		} finally {
-			lock.unlockReadWrite();;
+			lock.unlockReadWrite();
 		}
 	}
 
@@ -238,11 +236,11 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	@Override
 	public List<Search> exactSearch(Set<String> queries) {
 		// TODO Why did you lock for read and write? What is being written to? Is it shared or local?
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.exactSearch(queries);
 		} finally {
-			lock.unlockReadWrite();
+			lock.unlockReadOnly();
 		}
 	}
 
@@ -255,11 +253,11 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	@Override
 	public List<Search> partialSearch(Set<String> queries) {
 		// TODO Why did you lock for read and write? What is being written to? Is it shared or local?
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.partialSearch(queries);
 		} finally {
-			lock.unlockReadWrite();
+			lock.lockReadOnly();
 		}
 	}
 
