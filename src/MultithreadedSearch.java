@@ -3,9 +3,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import opennlp.tools.stemmer.Stemmer;
@@ -38,6 +40,8 @@ public class MultithreadedSearch {
 	public static void multithreadQueryFile(Path path, boolean exact, int threads) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			WorkQueue queue = new WorkQueue(threads);
+			index = new ThreadSafeInvertedIndex();
+			results = new TreeMap<String, List<Search>>();
 			String line = br.readLine();
 
 			while (line != null) {
@@ -47,6 +51,15 @@ public class MultithreadedSearch {
 		} catch (IOException | NullPointerException e) {
 			System.out.println("There was an issue finding the query file: " + path);
 		}
+	}
+
+	/**
+	 * Writes the search results to the file path in pretty json format
+	 * @param path path to the file to write to
+	 * @throws IOException in case there's any problem finding the file
+	 */
+	public static void writeJSON(Path path) throws IOException {
+		TreeJSONWriter.asSearchResult(results, path);
 	}
 
 	private static class QueryLineSearch implements Runnable {
@@ -71,10 +84,17 @@ public class MultithreadedSearch {
 
 			String queryLine = String.join(" ", queries);
 			if (!queries.isEmpty() && !results.containsKey(queryLine)) {
-				if (exact == true) {
-					results.put(queryLine, index.exactSearch(queries));
+				if (exact) {
+					synchronized (results) {
+						results.put(queryLine, new ArrayList<>());
+						results.put(queryLine, index.exactSearch(queries));
+						System.out.println(results);
+					}
 				} else {
-					results.put(queryLine, index.partialSearch(queries));
+					synchronized (results) {
+						results.put(queryLine, new ArrayList<>());
+						results.put(queryLine, index.partialSearch(queries));
+					}
 				}
 			}
 		}

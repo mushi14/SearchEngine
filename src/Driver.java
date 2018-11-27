@@ -76,7 +76,12 @@ public class Driver {
 			if (argMap.hasFlag("-results")) {
 				try {
 					Path path = argMap.getPath("-results", Paths.get("results.json"));
-					QueryFileParser.writeJSON(path);
+
+					if (multithreaded) {
+						MultithreadedSearch.writeJSON(path);
+					} else {
+						QueryFileParser.writeJSON(path);
+					}
 				} catch (IOException | NullPointerException e) {
 					System.out.println("File not found, search results cannot be printed in json format.");
 				}
