@@ -1,7 +1,15 @@
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
+
+import opennlp.tools.stemmer.Stemmer;
+import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 /*
  * TODO There is similar methods and functionality between the multithreaded and
@@ -18,60 +26,56 @@ import java.util.Set;
 
 public class MultithreadedSearch {
 
-	private final ThreadSafeInvertedIndex threadSafeIndex;
-	private final Map<String, List<Search>> results;
-	List<Set<String>> queries;
-	public final WorkQueue queue;
-	private int pending;
-	private volatile boolean exact;
+	private static ThreadSafeInvertedIndex index;
+	private static Map<String, List<Search>> results;
 
-	public MultithreadedSearch(ThreadSafeInvertedIndex threadSafeIndex, Map<String, List<Search>> results, 
-			int threads, List<Set<String>> queries, boolean exact) {
-		this.threadSafeIndex = threadSafeIndex;
-		this.results = results;
-		this.queries = queries;
-		this.queue = new WorkQueue(threads);
-		this.pending = 0;
-		this.exact = exact;
-		this.search();
-		this.queue.shutdown();
-	}
+	/**
+	 * Stems query file performing partial or exact search and stores the results accordingly
+	 * @param index inverted index that contains the words, their locations, and their positions
+	 * @param path path of the file
+	 * @param exact boolean variable that ensures that an exact search must be performed
+	 */
+	public static void multithreadQueryFile(Path path, boolean exact, int threads) {
+		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+			WorkQueue queue = new WorkQueue(threads);
+			String line = br.readLine();
 
-	private void search() {
-		for (Set<String> query : queries) {
-			String queryLine = String.join(" ", query);
-
-			if (!results.containsKey(queryLine) && !queryLine.isEmpty()) {
-				queue.execute(new QueryLineSearch(query, results, queryLine, exact));
+			while (line != null) {
+				queue.execute(new QueryLineSearch(line, exact));
+				line = br.readLine();
 			}
+		} catch (IOException | NullPointerException e) {
+			System.out.println("There was an issue finding the query file: " + path);
 		}
 	}
 
-	private class QueryLineSearch implements Runnable {
-		private Set<String> query;
+	private static class QueryLineSearch implements Runnable {
 		String line;
+		boolean exact;
 
-		// TODO Only pass in the line and exact. Everything else you can either access directly (like the results) or should be a local variable inside of run().
-
-		public QueryLineSearch(Set<String> query, Map<String, List<Search>> results, String line, boolean exact) {
-			this.query = query;
+		public QueryLineSearch(String line, boolean exact) {
 			this.line = line;
+			this.exact = exact;
 		}
 
 		@Override
 		public void run() {
-			List<Search> temp = new ArrayList<>();
+			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+			Set<String> queries = new TreeSet<>();
+			String[] words = TextFileStemmer.parse(line);
 
-			// TODO Move as much work here as possible, including all the query parsing.
-
-			if (exact) {
-				temp = threadSafeIndex.exactSearch(query);
-			} else {
-				temp = threadSafeIndex.partialSearch(query);
+			for (String word : words) {
+				word = stemmer.stem(word).toString();
+				queries.add(word);
 			}
 
-			synchronized (results) {
-				results.put(line, temp);
+			String queryLine = String.join(" ", queries);
+			if (!queries.isEmpty() && !results.containsKey(queryLine)) {
+				if (exact == true) {
+					results.put(queryLine, index.exactSearch(queries));
+				} else {
+					results.put(queryLine, index.partialSearch(queries));
+				}
 			}
 		}
 	}
