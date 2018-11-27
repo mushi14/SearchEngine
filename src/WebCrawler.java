@@ -53,25 +53,30 @@ public class WebCrawler {
 		}
 
 		while (count < total) {
-			url = Q.poll();
-			String html = HTMLFetcher.fetchHTML(url, redirects);
+			if (!Q.isEmpty()) {
+				url = Q.poll();
+				String html = HTMLFetcher.fetchHTML(url, redirects);
 
-			if (!LinkParser.listLinks(url, html).isEmpty()) {
-				for (URL ref : LinkParser.listLinks(url, html)) {
-					if (count < total) {
-						if (!seen.contains(ref)) {
-							String newHTML = HTMLFetcher.fetchHTML(ref, redirects);
-							count++;
-
-							if (newHTML != null) {
-								Q.add(ref);
-								seen.add(ref);
-								queue.execute(new Crawler(ref, newHTML));
+				if (!LinkParser.listLinks(url, html).isEmpty()) {
+					for (URL ref : LinkParser.listLinks(url, html)) {
+	
+						if (count < total) {
+							if (!seen.contains(ref)) {
+								String newHTML = HTMLFetcher.fetchHTML(ref, redirects);
+								count++;
+	
+								if (newHTML != null) {
+									Q.add(ref);
+									seen.add(ref);
+									queue.execute(new Crawler(ref, newHTML));
+								}
 							}
+						} else {
+							break;
 						}
-					} else {
-						break;
 					}
+				} else {
+					break;
 				}
 			} else {
 				break;
