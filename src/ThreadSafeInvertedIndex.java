@@ -10,8 +10,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 
 	private final ReadWriteLock lock;
 
-	// TODO static final
-	Logger logger = LogManager.getLogger(getClass());
+	static final Logger logger = LogManager.getLogger();
 
 	/**
 	 * TODO
@@ -43,10 +42,10 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param location path of the file
 	 */
 	@Override
-	public void addAll(String[] words, String location) {
+	public void addAll(InvertedIndex local) {
 		lock.lockReadWrite();
 		try {
-			super.addAll(words, location);
+			super.addAll(local);
 		} finally {
 			lock.unlockReadWrite();
 		}
@@ -235,7 +234,6 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public List<Search> exactSearch(Set<String> queries) {
-		// TODO Why did you lock for read and write? What is being written to? Is it shared or local?
 		lock.lockReadOnly();
 		try {
 			return super.exactSearch(queries);
@@ -252,7 +250,6 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public List<Search> partialSearch(Set<String> queries) {
-		// TODO Why did you lock for read and write? What is being written to? Is it shared or local?
 		lock.lockReadOnly();
 		try {
 			return super.partialSearch(queries);

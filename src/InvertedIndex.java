@@ -55,11 +55,24 @@ public class InvertedIndex {
 	 * @param words list of words to add
 	 * @param location path of the file
 	 */
-	public void addAll(String[] words, String location) {
-		int position = 0;
-		for (String word : words) {
-			position++;
-			this.add(word, location, position);
+	public void addAll(InvertedIndex local) {
+		for (String word : local.getWords()) {
+			if (index.containsKey(word)) {
+				for (String path : local.getPaths(word)) {
+					index.get(word).putIfAbsent(path, new TreeSet<Integer>());
+					for (Integer position : local.getPositions(word, path)) {
+						index.get(word).get(path).add(position);
+					}
+				}
+			} else {
+				index.put(word, new TreeMap<String, TreeSet<Integer>>());
+				for (String path : local.getPaths(word)) {
+					index.get(word).put(path, new TreeSet<Integer>());
+					for (Integer position : local.getPositions(word, path)) {
+						index.get(word).get(path).add(position);
+					}
+				}
+			}
 		}
 	}
 

@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 
 public class WorkQueue {
 
-	// TODO Make all loggers final static
 	final static Logger logger = LogManager.getLogger();
 
 	private final ThreadPool[] workers;
@@ -13,8 +12,10 @@ public class WorkQueue {
 	private int pending;
 	private volatile boolean shutdown;
 
-	// TODO Add Javadoc
-
+	/**
+	 * Constructor. Initializes the work queue and starts the worker threads
+	 * @param threads how many threads to run on
+	 */
 	public WorkQueue(int threads) {
 		workers = new ThreadPool[threads];
 		queue = new LinkedList<>();
@@ -26,6 +27,10 @@ public class WorkQueue {
 		}
 	}
 
+	/**
+	 * Executes the given task
+	 * @param r task assigned to the work queue
+	 */
 	public void execute(Runnable r) {
 		incrementPending();
 		synchronized (queue) {
@@ -35,10 +40,16 @@ public class WorkQueue {
 		finish();
 	}
 
+	/**
+	 * Increase the pending variable
+	 */
 	private synchronized void incrementPending() {
 		pending++;
 	}
 
+	/**
+	 * Decreases the pending variable
+	 */
 	private synchronized void decrementPending() {
 		pending--;
 
@@ -47,6 +58,9 @@ public class WorkQueue {
 		}
 	}
 
+	/**
+	 * Finishes the task
+	 */
 	private synchronized void finish() {
 		try {
 			while (pending > 0) {
@@ -58,6 +72,9 @@ public class WorkQueue {
 //		logger.debug("finished work");
 	}
 
+	/**
+	 * Tells the threads to shutdown when no more work is left to do
+	 */
 	public void shutdown() {
 		shutdown = true;
 		synchronized (queue) {
@@ -65,9 +82,17 @@ public class WorkQueue {
 		}
 	}
 
+	/**
+	 * Nested class used to run the tasks
+	 * @author mushahidhassan
+	 *
+	 */
 	private class ThreadPool extends Thread {
 		Runnable r;
 
+		/**
+		 * Runs the given task
+		 */
 		@Override
 		public void run() {
 			while (true) {
