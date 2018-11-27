@@ -34,6 +34,7 @@ public class Driver {
 						if (multithreaded) {
 							MultithreadedPathChecker workers = new MultithreadedPathChecker(path, threads, threadSafeIndex);
 							threadSafeIndex = workers.threadSafeIndex;
+//							System.out.println(threadSafeIndex);
 						} else {
 							PathChecker.filesInPath(path, index);
 						}

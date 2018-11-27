@@ -34,7 +34,6 @@ public class MultithreadedSearch {
 		this.pending = 0;
 		this.exact = exact;
 		this.search();
-		this.finish();
 		this.queue.shutdown();
 	}
 
@@ -48,28 +47,6 @@ public class MultithreadedSearch {
 		}
 	}
 
-	private synchronized void incrementPending() {
-		pending++;
-	}
-
-	private synchronized void decrementPending() {
-		pending--;
-
-		if (pending == 0) {
-			this.notifyAll();
-		}
-	}
-
-	private synchronized void finish() {
-		try {
-			while (pending > 0) {
-				this.wait();
-			}
-		} catch (InterruptedException e) {
-			System.out.println("Thread interrupted.");
-		}
-	}
-
 	private class QueryLineSearch implements Runnable {
 		private Set<String> query;
 		String line;
@@ -79,7 +56,6 @@ public class MultithreadedSearch {
 		public QueryLineSearch(Set<String> query, Map<String, List<Search>> results, String line, boolean exact) {
 			this.query = query;
 			this.line = line;
-			incrementPending();
 		}
 
 		@Override
@@ -97,8 +73,6 @@ public class MultithreadedSearch {
 			synchronized (results) {
 				results.put(line, temp);
 			}
-
-			decrementPending();
 		}
 	}
 }

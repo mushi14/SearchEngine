@@ -3,6 +3,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /*
  * TODO
  * Try to mimic the single-threaded version. So if it has a single public static 
@@ -13,22 +16,22 @@ public class MultithreadedPathChecker {
 
 	public final ThreadSafeInvertedIndex threadSafeIndex;
 	private final WorkQueue queue;
-	private int pending;
+	Logger logger = LogManager.getLogger(getClass());
 
 	public MultithreadedPathChecker(Path path, int threads, ThreadSafeInvertedIndex threadSafeIndex) {
 		this.threadSafeIndex = threadSafeIndex;
 		this.queue = new WorkQueue(threads);
-		this.pending = 0;
 		this.parse(path);
-		this.finish();
 		this.queue.shutdown();
 	}
 
 	private void parse(Path path) {
+//		logger.debug("running parse again on {}", path);
 		try {
 			if (Files.isRegularFile(path)) {
 				String name = path.toString();
 				if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
+//					logger.debug("only executing{}", path);
 					queue.execute(new FilesTask(path));
 				}
 			} else if (Files.isDirectory(path)) {
@@ -39,31 +42,10 @@ public class MultithreadedPathChecker {
 				}
 			}
 		} catch (IOException e) {
+//			logger.debug(e.getMessage(), e);
 		}
 	}
 
-	private synchronized void incrementPending() {
-		pending++;
-	}
-
-	private synchronized void decrementPending() {
-		pending--;
-
-		if (pending == 0) {
-			this.notifyAll();
-		}
-	}
-
-	private synchronized void finish() {
-		try {
-			while (pending > 0) {
-				this.wait();
-			}
-		} catch (InterruptedException e) {
-			System.out.println("Thread interrupted.");
-		}
-	}
-	
 	/* TODO Try this:
 	public static void filesInPath(Path path, ThreadSafeInvertedIndex index, int threads) throws IOException {
 		WorkQueue queue = ...
@@ -94,14 +76,15 @@ public class MultithreadedPathChecker {
 
 		public FilesTask(Path path) {
 			this.path = path;
-			incrementPending();
 		}
 
 		@Override
 		public void run() {
 			try {
+//				logger.debug("in here with {}", path);
 				TextFileStemmer.stemFile(path, threadSafeIndex);
-				
+//				logger.debug("Running: {}", path);
+//				logger.debug("this is index afterwards: {}", threadSafeIndex);
 				/*
 				 * TODO Several small blocking adds will always be slower than a
 				 * single large blocking add, because locking/unlocking is so
@@ -115,8 +98,6 @@ public class MultithreadedPathChecker {
 			} catch (IOException e) {
 				System.out.println("File not found.");
 			}
-
-			decrementPending();
 		}
 	}
 }
