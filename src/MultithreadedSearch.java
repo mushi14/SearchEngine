@@ -37,10 +37,11 @@ public class MultithreadedSearch {
 	 * @param path path of the file
 	 * @param exact boolean variable that ensures that an exact search must be performed
 	 */
-	public static void multithreadQueryFile(Path path, boolean exact, int threads) {
+	public static void multithreadQueryFile(Path path, boolean exact, int threads,
+			ThreadSafeInvertedIndex index) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			WorkQueue queue = new WorkQueue(threads);
-			index = new ThreadSafeInvertedIndex();
+			MultithreadedSearch.index = index;
 			results = new TreeMap<String, List<Search>>();
 			String line = br.readLine();
 
@@ -88,7 +89,6 @@ public class MultithreadedSearch {
 					synchronized (results) {
 						results.put(queryLine, new ArrayList<>());
 						results.put(queryLine, index.exactSearch(queries));
-						System.out.println(results);
 					}
 				} else {
 					synchronized (results) {

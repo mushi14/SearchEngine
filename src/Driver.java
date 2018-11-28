@@ -62,9 +62,9 @@ public class Driver {
 					if (argMap.flagPath("-search")) {
 
 						if (multithreaded) {
-							MultithreadedSearch.multithreadQueryFile(path, argMap.hasFlag("-exact"), threads);
+							MultithreadedSearch.multithreadQueryFile(path, argMap.hasFlag("-exact"), threads, threadSafeIndex);
 						} else {
-							QueryFileParser.stemQueryFile(path, argMap.hasFlag("-exact"));
+							QueryFileParser.stemQueryFile(path, argMap.hasFlag("-exact"), index);
 						}
 					}
 				} catch (NullPointerException e) {

@@ -23,9 +23,9 @@ public class QueryFileParser {
 	 * @param path path of the file
 	 * @param exact boolean variable that ensures that an exact search must be performed
 	 */
-	public static void stemQueryFile(Path path, boolean exact) {
+	public static void stemQueryFile(Path path, boolean exact, InvertedIndex index) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-			index = new InvertedIndex();
+			QueryFileParser.index = index;
 			results = new TreeMap<String, List<Search>>();
 			String line = br.readLine();
 			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);

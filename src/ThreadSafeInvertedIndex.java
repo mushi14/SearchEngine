@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +19,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	public ThreadSafeInvertedIndex() {
 		super();
 		lock = new ReadWriteLock();
+		System.out.println();
 	}
 
 	/**
@@ -228,7 +230,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	}
 
 	/**
-	 * performs exact search on a line from the query file. Stores the results to results map
+	 * Performs exact search on a line from the query file. Stores the results to results map
 	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
 	 */
@@ -243,7 +245,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	}
 
 	/**
-	 * performs partial search on a line from the query file. Stores the results to results map
+	 * Performs partial search on a line from the query file. Stores the results to results map
 	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
 	 * @return 
@@ -258,7 +260,17 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 		}
 	}
 
-	/** 
+	@Override
+	public void searchHelper(String word, Map<String, Search> locationsList, List<Search> resultsList) {
+		lock.lockReadOnly();
+		try {
+			super.searchHelper(word, locationsList, resultsList);
+		} finally {
+			lock.unlockReadOnly();
+		}
+	}
+
+	/**
 	 * Prints in the inverted index
 	 */
 	@Override
