@@ -273,6 +273,7 @@ public class InvertedIndex {
 				locationsList.get(loc).calculate(index.get(word).get(loc).size());
 			} else {
 				int totalMatches = index.get(word).get(loc).size();
+//				Program hangs here
 				int totalWords = this.locationsMap.get(loc);
 
 				Search newQuery = new Search(loc, totalMatches, totalWords);
