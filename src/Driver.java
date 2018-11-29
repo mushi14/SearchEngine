@@ -62,9 +62,11 @@ public class Driver {
 					if (argMap.flagPath("-search")) {
 
 						if (multithreaded) {
-							MultithreadedSearch.multithreadQueryFile(path, argMap.hasFlag("-exact"), threads, threadSafeIndex);
+							QueryFileParser search = new MultithreadedSearch();
+							search.stemQueryFile(path, argMap.hasFlag("-exact"), threads, threadSafeIndex);
 						} else {
-							QueryFileParser.stemQueryFile(path, argMap.hasFlag("-exact"), index);
+							QueryFileParser search = new QuerySearch();
+							search.stemQueryFile(path, argMap.hasFlag("-exact"), 0, index);
 						}
 					}
 				} catch (NullPointerException e) {
@@ -78,9 +80,10 @@ public class Driver {
 					Path path = argMap.getPath("-results", Paths.get("results.json"));
 
 					if (multithreaded) {
+						System.out.println(path);
 						MultithreadedSearch.writeJSON(path);
 					} else {
-						QueryFileParser.writeJSON(path);
+						QuerySearch.writeJSON(path);
 					}
 				} catch (IOException | NullPointerException e) {
 					System.out.println("File not found, search results cannot be printed in json format.");
