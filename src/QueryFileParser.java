@@ -14,7 +14,6 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class QueryFileParser {
 
-	private static InvertedIndex index;
 	private static Map<String, List<Search>> results;
 
 	/**
@@ -25,7 +24,6 @@ public class QueryFileParser {
 	 */
 	public static void stemQueryFile(Path path, boolean exact, InvertedIndex index) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-			QueryFileParser.index = index;
 			results = new TreeMap<String, List<Search>>();
 			String line = br.readLine();
 			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);

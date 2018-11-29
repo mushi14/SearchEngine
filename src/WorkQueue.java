@@ -69,7 +69,6 @@ public class WorkQueue {
 		} catch (InterruptedException e) {
 			System.out.println("Thread interrupted.");
 		}
-//		logger.debug("finished work");
 	}
 
 	/**
@@ -101,7 +100,7 @@ public class WorkQueue {
 						try {
 							queue.wait();
 						} catch (InterruptedException e) {
-//							logger.debug(e.getMessage(), e);
+							System.out.println("Thread Interrupted");
 						}
 					}
 
@@ -115,9 +114,8 @@ public class WorkQueue {
 				try {
 					r.run();
 					decrementPending();
-//					logger.debug("Pending: {}", pending);
 				} catch (RuntimeException e) {
-//					logger.debug(e.getMessage(), e);
+					System.out.println("Runtime exception");
 				}
 			}
 		}

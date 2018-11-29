@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +13,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	static final Logger logger = LogManager.getLogger();
 
 	/**
-	 * TODO
+	 * Initializes the index
 	 */
 	public ThreadSafeInvertedIndex() {
 		super();
@@ -257,25 +256,6 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			return super.partialSearch(queries);
 		} finally {
 			lock.lockReadOnly();
-		}
-	}
-
-	/**
-	 * Performs search and updates results for one given word that is in the query line and also
-	 * in the inverted index 
-	 * @param word the word in the query line that is found in the inverted index
-	 * @param locationsList a map containing list of locations mapped with their search results
-	 * @param resultsList a list of search results, used for adding all the results to a query line
-	 * @param totalMatches total number of matches
-	 * @param totalWords total number of words
-	 */
-	@Override
-	public void searchHelper(String word, Map<String, Search> locationsList, List<Search> resultsList) {
-		lock.lockReadOnly();
-		try {
-			super.searchHelper(word, locationsList, resultsList);
-		} finally {
-			lock.unlockReadOnly();
 		}
 	}
 

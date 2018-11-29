@@ -37,7 +37,6 @@ public class MultithreadedPathChecker {
 			if (Files.isRegularFile(path)) {
 				String name = path.toString();
 				if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
-//					logger.debug("only executing{}", path);
 					queue.execute(new FilesTask(path, index));
 				}
 			} else if (Files.isDirectory(path)) {
@@ -48,7 +47,7 @@ public class MultithreadedPathChecker {
 				}
 			}
 		} catch (IOException e) {
-//			logger.debug(e.getMessage(), e);
+			System.out.println("The was trouble reading the file.");
 		}
 	}
 

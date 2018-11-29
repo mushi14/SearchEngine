@@ -16,8 +16,8 @@ public class InvertedIndex {
 	/** 
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
-	public final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	public final Map<String, Integer> locationsMap;
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	private final Map<String, Integer> locationsMap;
 
 	/**
 	 *  Initializes the index.
@@ -56,9 +56,9 @@ public class InvertedIndex {
 	 * @param location path of the file
 	 */
 	public void addAll(InvertedIndex local) {
-		for (String word : local.getWords()) {
+		for (String word : local.index.keySet()) {
 			if (index.containsKey(word)) {
-				for (String path : local.getPaths(word)) {
+				for (String path : local.index.get(word).keySet()) {
 					index.get(word).putIfAbsent(path, new TreeSet<Integer>());
 					for (Integer position : local.getPositions(word, path)) {
 						index.get(word).get(path).add(position);
@@ -73,6 +73,10 @@ public class InvertedIndex {
 					}
 				}
 			}
+		}
+
+		for (String path : local.locationsMap.keySet()) {
+			locationsMap.put(path, local.locationsMap.get(path));
 		}
 	}
 
@@ -265,15 +269,12 @@ public class InvertedIndex {
 	 * @param totalMatches total number of matches
 	 * @param totalWords total number of words
 	 */
-	public void searchHelper(String word, Map<String, Search> locationsList, List<Search> resultsList) {
-//		System.out.println(index);
-//		System.out.println(locationsMap);
+	private void searchHelper(String word, Map<String, Search> locationsList, List<Search> resultsList) {
 		for (String loc : index.get(word).keySet()) {
 			if (locationsList.containsKey(loc)) {
 				locationsList.get(loc).calculate(index.get(word).get(loc).size());
 			} else {
 				int totalMatches = index.get(word).get(loc).size();
-//				Program hangs here
 				int totalWords = this.locationsMap.get(loc);
 
 				Search newQuery = new Search(loc, totalMatches, totalWords);
