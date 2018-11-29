@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,15 +62,28 @@ public class MultithreadedSearch {
 		TreeJSONWriter.asSearchResult(results, path);
 	}
 
+	/**
+	 * Searches each line of the query and stores results to results map
+	 * @author mushahidhassan
+	 *
+	 */
 	private static class QueryLineSearch implements Runnable {
 		String line;
 		boolean exact;
 
+		/**
+		 * Constructor for QueryLineSearch
+		 * @param line line of queries to search
+		 * @param exact where exact or partial search should be performed
+		 */
 		public QueryLineSearch(String line, boolean exact) {
 			this.line = line;
 			this.exact = exact;
 		}
 
+		/**
+		 * Stems and reads the queries in the query line and performs search on it
+		 */
 		@Override
 		public void run() {
 			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
@@ -87,12 +99,10 @@ public class MultithreadedSearch {
 			if (!queries.isEmpty() && !results.containsKey(queryLine)) {
 				if (exact) {
 					synchronized (results) {
-						results.put(queryLine, new ArrayList<>());
 						results.put(queryLine, index.exactSearch(queries));
 					}
 				} else {
 					synchronized (results) {
-						results.put(queryLine, new ArrayList<>());
 						results.put(queryLine, index.partialSearch(queries));
 					}
 				}
