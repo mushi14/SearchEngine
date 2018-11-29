@@ -25,22 +25,16 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
  * the same, except the task needs to synchronize access to results.
  */
 
-public class MultithreadedSearch {
+public class MultithreadedSearch implements QueryFileParser {
 
 	private static ThreadSafeInvertedIndex index;
 	private static Map<String, List<Search>> results;
 
-	/**
-	 * Stems query file performing partial or exact search and stores the results accordingly
-	 * @param index inverted index that contains the words, their locations, and their positions
-	 * @param path path of the file
-	 * @param exact boolean variable that ensures that an exact search must be performed
-	 */
-	public static void multithreadQueryFile(Path path, boolean exact, int threads,
-			ThreadSafeInvertedIndex index) {
+	@Override
+	public void stemQueryFile(Path path, boolean exact, InvertedIndex index) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-			WorkQueue queue = new WorkQueue(threads);
-			MultithreadedSearch.index = index;
+			WorkQueue queue = new WorkQueue(thraeads);
+			MultithreadedSearch.index = (ThreadSafeInvertedIndex) index;
 			results = new TreeMap<String, List<Search>>();
 			String line = br.readLine();
 
@@ -52,6 +46,29 @@ public class MultithreadedSearch {
 			System.out.println("There was an issue finding the query file: " + path);
 		}
 	}
+
+//	/**
+//	 * Stems query file performing partial or exact search and stores the results accordingly
+//	 * @param index inverted index that contains the words, their locations, and their positions
+//	 * @param path path of the file
+//	 * @param exact boolean variable that ensures that an exact search must be performed
+//	 */
+//	public static void multithreadQueryFile(Path path, boolean exact, int threads,
+//			ThreadSafeInvertedIndex index) {
+//		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+//			WorkQueue queue = new WorkQueue(threads);
+//			MultithreadedSearch.index = index;
+//			results = new TreeMap<String, List<Search>>();
+//			String line = br.readLine();
+//
+//			while (line != null) {
+//				queue.execute(new QueryLineSearch(line, exact));
+//				line = br.readLine();
+//			}
+//		} catch (IOException | NullPointerException e) {
+//			System.out.println("There was an issue finding the query file: " + path);
+//		}
+//	}
 
 	/**
 	 * Writes the search results to the file path in pretty json format
