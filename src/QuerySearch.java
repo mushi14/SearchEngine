@@ -15,6 +15,7 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 public class QuerySearch implements QueryFileParser {
 
 	static Map<String, List<Search>> results;
+	static InvertedIndex index;
 
 	/**
 	 * Stems query file performing partial or exact search and stores the results accordingly
@@ -26,31 +27,36 @@ public class QuerySearch implements QueryFileParser {
 	public void stemQueryFile(Path path, boolean exact, int threads, InvertedIndex index) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			results = new TreeMap<String, List<Search>>();
+			QuerySearch.index = index;
 			String line = br.readLine();
-			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 
 			while (line != null) {
-				Set<String> queries = new TreeSet<>();
-				String[] words = TextFileStemmer.parse(line);
-
-				for (String word : words) {
-					word = stemmer.stem(word).toString();
-					queries.add(word);
-				}
-
-				String queryLine = String.join(" ", queries);
-				if (!queries.isEmpty() && !results.containsKey(queryLine)) {
-					if (exact == true) {
-						results.put(queryLine, index.exactSearch(queries));
-					} else {
-						results.put(queryLine, index.partialSearch(queries));
-					}
-				}
-
+				searchLine(line, exact);
 				line = br.readLine();
 			}
 		} catch (IOException | NullPointerException e) {
 			System.out.println("There was an issue finding the query file: " + path);
+		}
+	}
+
+	@Override
+	public void searchLine(String line, boolean exact) {
+		Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+		String[] words = TextFileStemmer.parse(line);
+		Set<String> queries = new TreeSet<>();
+
+		for (String word : words) {
+			word = stemmer.stem(word).toString();
+			queries.add(word);
+		}
+
+		String queryLine = String.join(" ", queries);
+		if (!queries.isEmpty() && !results.containsKey(queryLine)) {
+			if (exact == true) {
+				results.put(queryLine, index.exactSearch(queries));
+			} else {
+				results.put(queryLine, index.partialSearch(queries));
+			}
 		}
 	}
 

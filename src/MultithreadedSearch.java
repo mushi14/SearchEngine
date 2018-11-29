@@ -53,6 +53,30 @@ public class MultithreadedSearch implements QueryFileParser {
 		}
 	}
 
+	public void searchLine(String line, boolean exact) {
+		Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+		Set<String> queries = new TreeSet<>();
+		String[] words = TextFileStemmer.parse(line);
+
+		for (String word : words) {
+			word = stemmer.stem(word).toString();
+			queries.add(word);
+		}
+
+		String queryLine = String.join(" ", queries);
+		if (!queries.isEmpty() && !results.containsKey(queryLine)) {
+			if (exact) {
+				synchronized (results) {
+					results.put(queryLine, index.exactSearch(queries));
+				}
+			} else {
+				synchronized (results) {
+					results.put(queryLine, index.partialSearch(queries));
+				}
+			}
+		}
+	}
+
 	/**
 	 * Writes the search results to the file path in pretty json format
 	 * @param path path to the file to write to
@@ -86,27 +110,8 @@ public class MultithreadedSearch implements QueryFileParser {
 		 */
 		@Override
 		public void run() {
-			Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-			Set<String> queries = new TreeSet<>();
-			String[] words = TextFileStemmer.parse(line);
-
-			for (String word : words) {
-				word = stemmer.stem(word).toString();
-				queries.add(word);
-			}
-
-			String queryLine = String.join(" ", queries);
-			if (!queries.isEmpty() && !results.containsKey(queryLine)) {
-				if (exact) {
-					synchronized (results) {
-						results.put(queryLine, index.exactSearch(queries));
-					}
-				} else {
-					synchronized (results) {
-						results.put(queryLine, index.partialSearch(queries));
-					}
-				}
-			}
+			QueryFileParser search = new MultithreadedSearch();
+			search.searchLine(line, exact);
 		}
 	}
 }
