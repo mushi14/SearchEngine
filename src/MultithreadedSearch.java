@@ -12,19 +12,6 @@ import java.util.TreeSet;
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
-/*
- * TODO There is similar methods and functionality between the multithreaded and
- * singled threaded version of this class. To make that formal, create an interface
- * with the common methods and the implement that interface in both classes. This
- * will enable some clever upcasting in Driver later too.
- * 
- * This class should not need the queries list...
- * 
- * To multithread this class, everything that used to be inside the while loop for
- * going through the query file should now be in a task. It should almost be exactly
- * the same, except the task needs to synchronize access to results.
- */
-
 public class MultithreadedSearch implements QueryFileParser {
 
 	private static ThreadSafeInvertedIndex index;
@@ -65,13 +52,16 @@ public class MultithreadedSearch implements QueryFileParser {
 
 		String queryLine = String.join(" ", queries);
 		if (!queries.isEmpty() && !results.containsKey(queryLine)) {
+			Map<String, List<Search>> temp = new TreeMap<String, List<Search>>();
 			if (exact) {
+				temp.put(queryLine, index.exactSearch(queries));
 				synchronized (results) {
-					results.put(queryLine, index.exactSearch(queries));
+					results.putAll(temp);
 				}
 			} else {
+				temp.put(queryLine, index.partialSearch(queries));
 				synchronized (results) {
-					results.put(queryLine, index.partialSearch(queries));
+					results.putAll(temp);
 				}
 			}
 		}
@@ -106,7 +96,7 @@ public class MultithreadedSearch implements QueryFileParser {
 		}
 
 		/**
-		 * Stems and reads the queries in the query line and performs search on it
+		 * Calls searchLine which searches the index for the qeuries in the line
 		 */
 		@Override
 		public void run() {
