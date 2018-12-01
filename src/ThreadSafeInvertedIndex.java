@@ -8,12 +8,17 @@ import org.apache.logging.log4j.Logger;
 
 public class ThreadSafeInvertedIndex extends InvertedIndex {
 
-	private ReadWriteLock lock;
-	Logger logger = LogManager.getLogger(getClass());
+	private final ReadWriteLock lock;
 
+	static final Logger logger = LogManager.getLogger();
+
+	/**
+	 * Initializes the index
+	 */
 	public ThreadSafeInvertedIndex() {
 		super();
 		lock = new ReadWriteLock();
+		System.out.println();
 	}
 
 	/**
@@ -200,11 +205,11 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public void writeIndexJSON(Path path) throws IOException {
-		lock.lockReadWrite();;
+		lock.lockReadWrite();
 		try {
 			super.writeIndexJSON(path);
 		} finally {
-			lock.unlockReadWrite();;
+			lock.unlockReadWrite();
 		}
 	}
 
@@ -224,37 +229,37 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	}
 
 	/**
-	 * performs exact search on a line from the query file. Stores the results to results map
+	 * Performs exact search on a line from the query file. Stores the results to results map
 	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
 	 */
 	@Override
 	public List<Search> exactSearch(Set<String> queries) {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.exactSearch(queries);
 		} finally {
-			lock.unlockReadWrite();
+			lock.unlockReadOnly();
 		}
 	}
 
 	/**
-	 * performs partial search on a line from the query file. Stores the results to results map
+	 * Performs partial search on a line from the query file. Stores the results to results map
 	 * @param results map containing key-line and value-Search to refer from
 	 * @param queries line of queries to compare
 	 * @return 
 	 */
 	@Override
 	public List<Search> partialSearch(Set<String> queries) {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.partialSearch(queries);
 		} finally {
-			lock.unlockReadWrite();
+			lock.lockReadOnly();
 		}
 	}
 
-	/** 
+	/**
 	 * Prints in the inverted index
 	 */
 	@Override
