@@ -1,87 +1,120 @@
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
-public class MultithreadedSearch {
+import opennlp.tools.stemmer.Stemmer;
+import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
-	private final ThreadSafeInvertedIndex threadSafeIndex;
-	private final Map<String, List<Search>> results;
-	List<Set<String>> queries;
-	public final WorkQueue queue;
-	private int pending;
-	private volatile boolean exact;
+public class MultithreadedSearch implements QueryFileParser {
 
-	public MultithreadedSearch(ThreadSafeInvertedIndex threadSafeIndex, Map<String, List<Search>> results, 
-			int threads, List<Set<String>> queries, boolean exact) {
-		this.threadSafeIndex = threadSafeIndex;
-		this.results = results;
-		this.queries = queries;
-		this.queue = new WorkQueue(threads);
-		this.pending = 0;
-		this.exact = exact;
-		this.search();
-		this.finish();
-		this.queue.shutdown();
+	private final ThreadSafeInvertedIndex index;
+	public final Map<String, List<Search>> results;
+
+	/**
+	 * Constructor for searching the index for queries via multithreading
+	 * @param index inverted index to search from
+	 */
+	public MultithreadedSearch(ThreadSafeInvertedIndex index) {
+		this.index = index;
+		this.results = new TreeMap<String, List<Search>>();
 	}
 
-	private void search() {
-		for (Set<String> query : queries) {
-			String queryLine = String.join(" ", query);
+	/**
+	 * Stems query file performing partial or exact search and stores the results accordingly
+	 * @param index inverted index that contains the words, their locations, and their positions
+	 * @param path path of the file
+	 * @param exact boolean variable that ensures that an exact search must be performed
+	 */
+	@Override
+	public void stemQueryFile(Path path, boolean exact, int threads) {
+		WorkQueue queue = new WorkQueue(threads);
+		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+			String line = br.readLine();
 
-			if (!results.containsKey(queryLine) && !queryLine.isEmpty()) {
-				queue.execute(new QueryLineSearch(query, results, queryLine, exact));
+			while (line != null) {
+				queue.execute(new QueryLineSearch(line, exact));
+				line = br.readLine();
+			}
+		} catch (IOException | NullPointerException e) {
+			System.out.println("There was an issue finding the query file: " + path);
+		} finally {
+			queue.finish();
+			queue.shutdown();
+		}
+	}
+
+	/**
+	 * Interface method for searching each specific line of queries separately
+	 */
+	@Override
+	public void searchLine(String line, boolean exact) {
+		Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+		Set<String> queries = new TreeSet<>();
+		String[] words = TextFileStemmer.parse(line);
+
+		for (String word : words) {
+			word = stemmer.stem(word).toString();
+			queries.add(word);
+		}
+
+		String queryLine = String.join(" ", queries);
+		if (!queries.isEmpty() && !results.containsKey(queryLine)) {
+			Map<String, List<Search>> temp = new TreeMap<String, List<Search>>();
+			if (exact) {
+				temp.put(queryLine, index.exactSearch(queries));
+				synchronized (results) {
+					results.putAll(temp);
+				}
+			} else {
+				temp.put(queryLine, index.partialSearch(queries));
+				synchronized (results) {
+					results.putAll(temp);
+				}
 			}
 		}
 	}
 
-	private synchronized void incrementPending() {
-		pending++;
+	/**
+	 * Writes the search results to the file path in pretty json format
+	 * @param path path to the file to write to
+	 * @throws IOException in case there's any problem finding the file
+	 */
+	public void writeJSON(Path path) throws IOException {
+		TreeJSONWriter.asSearchResult(results, path);
 	}
 
-	private synchronized void decrementPending() {
-		pending--;
-
-		if (pending == 0) {
-			this.notifyAll();
-		}
-	}
-
-	private synchronized void finish() {
-		try {
-			while (pending > 0) {
-				this.wait();
-			}
-		} catch (InterruptedException e) {
-			System.out.println("Thread interrupted.");
-		}
-	}
-
+	/**
+	 * Searches each line of the query and stores results to results map
+	 * @author mushahidhassan
+	 *
+	 */
 	private class QueryLineSearch implements Runnable {
-		private Set<String> query;
 		String line;
+		boolean exact;
 
-		public QueryLineSearch(Set<String> query, Map<String, List<Search>> results, String line, boolean exact) {
-			this.query = query;
+		/**
+		 * Constructor for QueryLineSearch
+		 * @param line line of queries to search
+		 * @param exact where exact or partial search should be performed
+		 */
+		public QueryLineSearch(String line, boolean exact) {
 			this.line = line;
-			incrementPending();
+			this.exact = exact;
 		}
 
+		/**
+		 * Calls searchLine which searches the index for the qeuries in the line
+		 */
 		@Override
 		public void run() {
-			List<Search> temp = new ArrayList<>();
-
-			if (exact) {
-				temp = threadSafeIndex.exactSearch(query);
-			} else {
-				temp = threadSafeIndex.partialSearch(query);
-			}
-
-			synchronized (results) {
-				results.put(line, temp);
-			}
-
-			decrementPending();
+			searchLine(line, exact);
 		}
 	}
 }
