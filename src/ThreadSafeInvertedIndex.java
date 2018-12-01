@@ -38,10 +38,10 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 * @param location path of the file
 	 */
 	@Override
-	public void addAll(String[] words, String location) {
+	public void addAll(InvertedIndex local) {
 		lock.lockReadWrite();
 		try {
-			super.addAll(words, location);
+			super.addAll(local);
 		} finally {
 			lock.unlockReadWrite();
 		}
