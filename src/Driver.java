@@ -18,8 +18,9 @@ public class Driver {
 		InvertedIndex index = new InvertedIndex();
 		ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
-		QueryFileParser search = new QueryFileParser(index, threadSafeIndex);
-
+		QuerySearch search = new QuerySearch(index);
+		MultithreadedSearch multiSearch = new MultithreadedSearch(threadSafeIndex);
+		
 		boolean multithreaded = argMap.hasFlag("-threads");
 		int threads = argMap.getThreads("-threads", 5);
 
@@ -52,8 +53,7 @@ public class Driver {
 					if (argMap.flagPath("-path")) {
 
 						if (multithreaded) {
-							MultithreadedPathChecker workers = new MultithreadedPathChecker(path, threads, threadSafeIndex);
-							threadSafeIndex = workers.threadSafeIndex;
+							MultithreadedPathChecker.filesInPath(path, threads, threadSafeIndex);
 						} else {
 							PathChecker.filesInPath(path, index);
 						}
@@ -84,9 +84,9 @@ public class Driver {
 					if (argMap.flagPath("-search")) {
 
 						if (multithreaded) {
-							search.multithreadQueryFile(path, argMap.hasFlag("-exact"), threads);
+							multiSearch.stemQueryFile(path, argMap.hasFlag("-exact"), threads);
 						} else {
-							search.stemQueryFile(path, argMap.hasFlag("-exact"));
+							search.stemQueryFile(path, argMap.hasFlag("-exact"), 0);
 						}
 					}
 				} catch (NullPointerException e) {
@@ -98,7 +98,12 @@ public class Driver {
 			if (argMap.hasFlag("-results")) {
 				try {
 					Path path = argMap.getPath("-results", Paths.get("results.json"));
-					search.writeJSON(path);
+
+					if (multithreaded) {
+						multiSearch.writeJSON(path);
+					} else {
+						search.writeJSON(path);
+					}
 				} catch (IOException | NullPointerException e) {
 					System.out.println("File not found, search results cannot be printed in json format.");
 				}
@@ -107,11 +112,7 @@ public class Driver {
 			if (argMap.hasFlag("-locations")) {
 				try {
 					Path path = argMap.getPath("-locations", Paths.get("locations.json"));
-					if (multithreaded) {
-						TreeJSONWriter.asLocations(threadSafeIndex.locationsMap, path);
-					} else {
-						index.writeLocJSON(path);
-					}
+					index.writeLocJSON(path);
 				} catch (IOException | NullPointerException e) {
 						System.out.println("File not found, locations cannot be printed in json format.");
 				}
