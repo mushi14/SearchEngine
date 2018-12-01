@@ -15,6 +15,8 @@ public class Driver {
 		InvertedIndex index = new InvertedIndex();
 		ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
+		QuerySearch search = new QuerySearch(index);
+		MultithreadedSearch multiSearch = new MultithreadedSearch(threadSafeIndex);
 
 		boolean multithreaded = false;
 		int threads = argMap.getThreads("-threads", 5);
@@ -62,11 +64,9 @@ public class Driver {
 					if (argMap.flagPath("-search")) {
 
 						if (multithreaded) {
-							QueryFileParser search = new MultithreadedSearch();
-							search.stemQueryFile(path, argMap.hasFlag("-exact"), threads, threadSafeIndex);
+							multiSearch.stemQueryFile(path, argMap.hasFlag("-exact"), threads);
 						} else {
-							QueryFileParser search = new QuerySearch();
-							search.stemQueryFile(path, argMap.hasFlag("-exact"), 0, index);
+							search.stemQueryFile(path, argMap.hasFlag("-exact"), 0);
 						}
 					}
 				} catch (NullPointerException e) {
@@ -80,10 +80,9 @@ public class Driver {
 					Path path = argMap.getPath("-results", Paths.get("results.json"));
 
 					if (multithreaded) {
-						System.out.println(path);
-						MultithreadedSearch.writeJSON(path);
+						multiSearch.writeJSON(path);
 					} else {
-						QuerySearch.writeJSON(path);
+						search.writeJSON(path);
 					}
 				} catch (IOException | NullPointerException e) {
 					System.out.println("File not found, search results cannot be printed in json format.");

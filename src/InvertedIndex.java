@@ -51,9 +51,9 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Adds a list of words to the index given they all have the same path
-	 * @param words list of words to add
-	 * @param location path of the file
+	 * Adds a list of words to the index mapped to their locations and positions.
+	 * 
+	 * @param local an inverted index data structure to add to the index
 	 */
 	public void addAll(InvertedIndex local) {
 		for (String word : local.index.keySet()) {
@@ -82,7 +82,7 @@ public class InvertedIndex {
 
 	/**
 	 * Shows all the words in the map
-	 *
+	 * 
 	 * @return Returns a set view of all the paths
 	 */
 	public Set<String> getWords() {

@@ -14,8 +14,17 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class MultithreadedSearch implements QueryFileParser {
 
-	private static ThreadSafeInvertedIndex index;
-	private static Map<String, List<Search>> results;
+	private final ThreadSafeInvertedIndex index;
+	public final Map<String, List<Search>> results;
+
+	/**
+	 * Constructor for searching the index for queries via multithreading
+	 * @param index inverted index to search from
+	 */
+	public MultithreadedSearch(ThreadSafeInvertedIndex index) {
+		this.index = index;
+		this.results = new TreeMap<String, List<Search>>();
+	}
 
 	/**
 	 * Stems query file performing partial or exact search and stores the results accordingly
@@ -24,11 +33,9 @@ public class MultithreadedSearch implements QueryFileParser {
 	 * @param exact boolean variable that ensures that an exact search must be performed
 	 */
 	@Override
-	public void stemQueryFile(Path path, boolean exact, int threads, InvertedIndex index) {
+	public void stemQueryFile(Path path, boolean exact, int threads) {
+		WorkQueue queue = new WorkQueue(threads);
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-			WorkQueue queue = new WorkQueue(threads);
-			MultithreadedSearch.index = (ThreadSafeInvertedIndex) index;
-			results = new TreeMap<String, List<Search>>();
 			String line = br.readLine();
 
 			while (line != null) {
@@ -37,9 +44,16 @@ public class MultithreadedSearch implements QueryFileParser {
 			}
 		} catch (IOException | NullPointerException e) {
 			System.out.println("There was an issue finding the query file: " + path);
+		} finally {
+			queue.finish();
+			queue.shutdown();
 		}
 	}
 
+	/**
+	 * Interface method for searching each specific line of queries separately
+	 */
+	@Override
 	public void searchLine(String line, boolean exact) {
 		Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		Set<String> queries = new TreeSet<>();
@@ -72,7 +86,7 @@ public class MultithreadedSearch implements QueryFileParser {
 	 * @param path path to the file to write to
 	 * @throws IOException in case there's any problem finding the file
 	 */
-	public static void writeJSON(Path path) throws IOException {
+	public void writeJSON(Path path) throws IOException {
 		TreeJSONWriter.asSearchResult(results, path);
 	}
 
@@ -81,7 +95,7 @@ public class MultithreadedSearch implements QueryFileParser {
 	 * @author mushahidhassan
 	 *
 	 */
-	private static class QueryLineSearch implements Runnable {
+	private class QueryLineSearch implements Runnable {
 		String line;
 		boolean exact;
 
@@ -100,8 +114,7 @@ public class MultithreadedSearch implements QueryFileParser {
 		 */
 		@Override
 		public void run() {
-			QueryFileParser search = new MultithreadedSearch();
-			search.searchLine(line, exact);
+			searchLine(line, exact);
 		}
 	}
 }

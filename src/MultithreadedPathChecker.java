@@ -20,6 +20,7 @@ public class MultithreadedPathChecker {
 	public static void filesInPath(Path path, int threads, ThreadSafeInvertedIndex index) throws IOException {
 		WorkQueue queue = new WorkQueue(threads);
 		filesInPathHelper(path, threads, index, queue);
+		queue.finish();
 		queue.shutdown();
 	}
 

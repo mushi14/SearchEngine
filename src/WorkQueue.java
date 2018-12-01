@@ -37,7 +37,6 @@ public class WorkQueue {
 			queue.addLast(r);
 			queue.notifyAll();
 		}
-		finish();
 	}
 
 	/**
@@ -61,7 +60,7 @@ public class WorkQueue {
 	/**
 	 * Finishes the task
 	 */
-	private synchronized void finish() {
+	public synchronized void finish() {
 		try {
 			while (pending > 0) {
 				this.wait();

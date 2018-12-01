@@ -14,8 +14,17 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class QuerySearch implements QueryFileParser {
 
-	static Map<String, List<Search>> results;
-	static InvertedIndex index;
+	private final Map<String, List<Search>> results;
+	private final InvertedIndex index;
+
+	/**
+	 * Constructor, initializes the inverted index
+	 * @param index inverted index to search from
+	 */
+	public QuerySearch(InvertedIndex index) {
+		this.index = index;
+		this.results = new TreeMap<String, List<Search>>();
+	}
 
 	/**
 	 * Stems query file performing partial or exact search and stores the results accordingly
@@ -24,10 +33,8 @@ public class QuerySearch implements QueryFileParser {
 	 * @param exact boolean variable that ensures that an exact search must be performed
 	 */
 	@Override
-	public void stemQueryFile(Path path, boolean exact, int threads, InvertedIndex index) {
+	public void stemQueryFile(Path path, boolean exact, int threads) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-			results = new TreeMap<String, List<Search>>();
-			QuerySearch.index = index;
 			String line = br.readLine();
 
 			while (line != null) {
@@ -39,6 +46,9 @@ public class QuerySearch implements QueryFileParser {
 		}
 	}
 
+	/**
+	 * Interface method for searching each specific line of queries separately
+	 */
 	@Override
 	public void searchLine(String line, boolean exact) {
 		Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
@@ -65,7 +75,7 @@ public class QuerySearch implements QueryFileParser {
 	 * @param path path to the file to write to
 	 * @throws IOException in case there's any problem finding the file
 	 */
-	public static void writeJSON(Path path) throws IOException {
+	public void writeJSON(Path path) throws IOException {
 		TreeJSONWriter.asSearchResult(results, path);
 	}
 }
