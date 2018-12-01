@@ -137,22 +137,7 @@ public class HTMLFetcher {
 	/**
 	 * @see #fetchHTML(URL, int)
 	 */
-	public static String fetchHTML(String url) throws IOException {
-		return fetchHTML(new URL(url), 0);
-	}
-
-	/**
-	 * @see #fetchHTML(URL, int)
-	 */
 	public static String fetchHTML(String url, int redirects) throws IOException {
 		return fetchHTML(new URL(url), redirects);
 	}
-
-	/**
-	 * @see #fetchHTML(URL, int)
-	 */
-	public static String fetchHTML(URL url) throws IOException {
-		return fetchHTML(url, 0);
-	}
-
 }

@@ -20,9 +20,9 @@ public class Driver {
 		ArgumentMap argMap = new ArgumentMap(args);
 		QuerySearch search = new QuerySearch(index);
 		MultithreadedSearch multiSearch = new MultithreadedSearch(threadSafeIndex);
-		
-		boolean multithreaded = argMap.hasFlag("-threads");
-		int threads = argMap.getThreads("-threads", 5);
+		WebCrawler crawl = new WebCrawler(threadSafeIndex, argMap.getThreads("-threads", 5));
+
+		boolean multithread = argMap.hasFlag("-threads");
 
 		if (!argMap.isEmpty()) {
 
@@ -30,15 +30,13 @@ public class Driver {
 				try {
 
 					if (argMap.flagPath("-url")) {
-						multithreaded = true;
+						multithread = true;
 						URL url = argMap.getURL("-url");
-						int limit = argMap.getLimit("-limit", 50);
-						Map<String, List<String>> headers = HttpsFetcher.fetchURL(url);
 						String html = HTMLFetcher.fetchHTML(url, 3);
+						Map<String, List<String>> headers = HttpsFetcher.fetchURL(url);
 
 						if (HTMLFetcher.getStatusCode(headers) == 200) {
-							WebCrawler crawl = new WebCrawler(url, html, limit, 3, threads, threadSafeIndex);
-							threadSafeIndex = crawl.threadSafeIndex;
+							crawl.start(url, html, argMap.getLimit("-limit", 50), 3);
 						}
 					}
 				} catch (IOException e) {
@@ -52,8 +50,8 @@ public class Driver {
 
 					if (argMap.flagPath("-path")) {
 
-						if (multithreaded) {
-							MultithreadedPathChecker.filesInPath(path, threads, threadSafeIndex);
+						if (multithread) {
+							MultithreadedPathChecker.filesInPath(path, argMap.getThreads("-threads", 5), threadSafeIndex);
 						} else {
 							PathChecker.filesInPath(path, index);
 						}
@@ -68,7 +66,7 @@ public class Driver {
 			if (argMap.hasFlag("-index")) {
 				try {
 					Path path = argMap.getPath("-index", Paths.get("index.json"));
-					if (multithreaded) {
+					if (multithread) {
 						threadSafeIndex.writeIndexJSON(path);
 					} else {
 						index.writeIndexJSON(path);
@@ -83,8 +81,8 @@ public class Driver {
 					Path path = argMap.getPath("-search");
 					if (argMap.flagPath("-search")) {
 
-						if (multithreaded) {
-							multiSearch.stemQueryFile(path, argMap.hasFlag("-exact"), threads);
+						if (multithread) {
+							multiSearch.stemQueryFile(path, argMap.hasFlag("-exact"), argMap.getThreads("-threads", 5));
 						} else {
 							search.stemQueryFile(path, argMap.hasFlag("-exact"), 0);
 						}
@@ -99,7 +97,7 @@ public class Driver {
 				try {
 					Path path = argMap.getPath("-results", Paths.get("results.json"));
 
-					if (multithreaded) {
+					if (multithread) {
 						multiSearch.writeJSON(path);
 					} else {
 						search.writeJSON(path);
@@ -112,7 +110,11 @@ public class Driver {
 			if (argMap.hasFlag("-locations")) {
 				try {
 					Path path = argMap.getPath("-locations", Paths.get("locations.json"));
-					index.writeLocJSON(path);
+					if (multithread) {
+						threadSafeIndex.writeLocJSON(path);
+					} else {
+						index.writeLocJSON(path);
+					}
 				} catch (IOException | NullPointerException e) {
 						System.out.println("File not found, locations cannot be printed in json format.");
 				}

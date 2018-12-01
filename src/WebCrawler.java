@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,32 +16,36 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 public class WebCrawler {
 
 	private final Logger logger = LogManager.getLogger();
-	public static final Pattern SPLIT_REGEX = Pattern.compile("(?U)\\p{Space}+");
-	public static final Pattern CLEAN_REGEX = Pattern.compile("(?U)[^\\p{Alpha}\\p{Space}]+");
+	private final Pattern SPLIT_REGEX = Pattern.compile("(?U)\\p{Space}+");
+	private  final Pattern CLEAN_REGEX = Pattern.compile("(?U)[^\\p{Alpha}\\p{Space}]+");
 
-	public final ThreadSafeInvertedIndex threadSafeIndex;
-	private URL url;
-	private String html;
-	private final WorkQueue queue;
+	private final ThreadSafeInvertedIndex index;
+	private int threads;
 	private Queue<URL> Q;
 	private List<URL> seen;
-	private int pending;
 
-	public WebCrawler(URL url, String html, int total, int redirects, int threads, 
-			ThreadSafeInvertedIndex threadSafeIndex) throws IOException {
-		this.threadSafeIndex = threadSafeIndex;
-		this.url = url;
-		this.html = html;
-		this.queue = new WorkQueue(threads);
+	/**
+	 * Constructor, initializes the index and threads
+	 * @param index thread safe index to store url contents in
+	 * @param threads how many threads to run on
+	 */
+	public WebCrawler(ThreadSafeInvertedIndex index, int threads) {
+		this.index = index;
+		this.threads = threads;
 		this.Q = new LinkedList<>();
 		this.seen = new ArrayList<>();
-		this.pending = 0;
-		this.start(total, redirects);
-		this.finish();
-		this.queue.shutdown();
 	}
 
-	private void start(int total, int redirects) throws IOException {
+	/**
+	 * Starts the process of web crawling using breadth first approach
+	 * @param url first url process
+	 * @param html first url's html content
+	 * @param total the limit of the crawls
+	 * @param redirects how many redirects a url can have
+	 * @throws IOException if the url is invalid
+	 */
+	public void start(URL url, String html, int total, int redirects) throws IOException {
+		WorkQueue queue = new WorkQueue(threads);
 		int count = 0;
 
 		if (html != null) {
@@ -55,7 +58,7 @@ public class WebCrawler {
 		while (count < total) {
 			if (!Q.isEmpty()) {
 				url = Q.poll();
-				String html = HTMLFetcher.fetchHTML(url, redirects);
+				html = HTMLFetcher.fetchHTML(url, redirects);
 
 				if (!LinkParser.listLinks(url, html).isEmpty()) {
 					for (URL ref : LinkParser.listLinks(url, html)) {
@@ -82,49 +85,62 @@ public class WebCrawler {
 				break;
 			}
 		}
+
+		queue.finish();
+		queue.shutdown();
 	}
 
-	private synchronized void incrementPending() {
-		pending++;
-	}
-
-	private synchronized void decrementPending() {
-		pending--;
-
-		if (pending == 0) {
-			this.notifyAll();
-		}
-	}
-
-	private synchronized void finish() {
-		try {
-			while (pending > 0) {
-				this.wait();
-			}
-		} catch (InterruptedException e) {
-			System.out.println("Thread interrupted.");
-		}
-	}
-
-	public static String clean(CharSequence text) {
+	/**
+	 * Cleans the text by removing any non-alphabetic characters (e.g. non-letters
+	 * like digits, punctuation, symbols, and diacritical marks like the umlaut)
+	 * and converting the remaining characters to lowercase.
+	 *
+	 * @param text the text to clean
+	 * @return cleaned text
+	 */
+	public String clean(CharSequence text) {
 		String cleaned = Normalizer.normalize(text, Normalizer.Form.NFD);
 		cleaned = CLEAN_REGEX.matcher(cleaned).replaceAll("");
 		return cleaned.toLowerCase();
 	}
 
-	public static String[] split(String text) {
+	/**
+	 * Splits the supplied text by whitespace. Does not perform any cleaning.
+	 *
+	 * @param text the text to split
+	 * @return an array of {@link String} objects
+	 *
+	 * @see #clean(CharSequence)
+	 * @see #parse(String)
+	 */
+	public String[] split(String text) {
 		text = text.trim();
 		return text.isEmpty() ? new String[0] : SPLIT_REGEX.split(text);
 	}
 
-	public static String[] parse(String text) {
+	/**
+	 * Cleans the text and then splits it by whitespace.
+	 *
+	 * @param text the text to clean and split
+	 * @return an array of {@link String} objects
+	 *
+	 * @see #clean(CharSequence)
+	 * @see #parse(String)
+	 */
+	public String[] parse(String text) {
 		return split(clean(text));
 	}
 
+	/**
+	 * Stems each word from the html content of the URL and stores it into the index
+	 * @param url url to process
+	 * @param html html content of the url
+	 */
 	private synchronized void stemHTML(URL url, String html) {
 		int position = 1;
 		Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		String[] words = html.split(" ");
+		ThreadSafeInvertedIndex local = new ThreadSafeInvertedIndex();
 
 		for (String word : words) {
 			String[] wordArr = parse(word);
@@ -133,35 +149,45 @@ public class WebCrawler {
 					parsedW = parsedW.toLowerCase();
 					parsedW = stemmer.stem(parsedW).toString();
 					if (!parsedW.isEmpty()) {
-						synchronized (threadSafeIndex) {
-							threadSafeIndex.add(parsedW, url.toString(), position);
-							position++;
-						}
+						local.add(parsedW, url.toString(), position);
+						position++;
 					}
 				}
 			}
 		}
+
+		synchronized (index) {
+			index.addAll(local);
+		}
 	}
 
-	public void writeLocJSON(Path path) {
-		TreeJSONWriter.asLocations(threadSafeIndex.locationsMap, path); 
-	}
-
+	/**
+	 * Crawls each URL separately cleaning, stemming the html content and storing the parsed content
+	 * it in index
+	 * @author mushahidhassan
+	 *
+	 */
 	private class Crawler implements Runnable {
 		private URL url;
 		private String html;
 
+		/**
+		 * Constructor for inner class
+		 * @param url url to process
+		 * @param html html content of the url
+		 */
 		private Crawler(URL url, String html) {
 			this.url = url;
 			this.html = html;
-			incrementPending();
 		}
 
+		/**
+		 * Cleans and stems the html and then stores it into the index
+		 */
 		@Override
 		public void run() {
 			html = HTMLCleaner.stripHTML(html);
 			stemHTML(url, html);
-			decrementPending();
 		}
 	}
 }

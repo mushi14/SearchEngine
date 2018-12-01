@@ -12,8 +12,6 @@
  */
 public class HTMLCleaner {
 
-	// THE FOLLOWING REPLACE WITH THE EMPTY STRING
-
 	/**
 	 * Replaces all HTML entities with an empty string. For example,
 	 * "2010&ndash;2012" will become "20102012".
@@ -41,8 +39,6 @@ public class HTMLCleaner {
 
 		return str;
 	}
-
-	// THE FOLLOWING REPLACE WITH A SINGLE SPACE
 
 	/**
 	 * Replaces all HTML comments with a single space. For example, "A<!-- B -->C"
@@ -88,8 +84,6 @@ public class HTMLCleaner {
 	 * @return text without any HTML, CSS, or JavaScript
 	 */
 	public static String stripHTML(String html) {
-		// THIS METHOD IS PROVIDED FOR YOU -- DO NOT MODIFY!
-
 		html = stripComments(html);
 		html = stripElement(html, "head");
 		html = stripElement(html, "style");

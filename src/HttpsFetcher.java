@@ -25,49 +25,38 @@ public class HttpsFetcher {
 	 * @throws IOException if unable to fetch headers and content
 	 */
 	public static Map<String, List<String>> fetchURL(URL url) throws IOException {
-		// used to store all headers and content
-		// use the same data structure as URLConnection.getHeaderFields()
 		Map<String, List<String>> results = new HashMap<>();
 
 		String protocol = url.getProtocol();
 		String host = url.getHost();
 		String resource = url.getFile().isEmpty() ? "/" : url.getFile();
 
-		// set default port based on protocol
 		boolean https = (protocol != null) && protocol.equalsIgnoreCase("https");
 		int defaultPort = https ? 443 : 80;
 		int port = url.getPort() < 0 ? defaultPort : url.getPort();
 
 		try (
-				// open up a network socket to the webserver
 				Socket socket = https ?
 						SSLSocketFactory.getDefault().createSocket(host, port) :
 						SocketFactory.getDefault().createSocket(host, port);
 
-				// create a writer for the request
 				PrintWriter request = new PrintWriter(socket.getOutputStream());
 
-				// create a reader for the response
 				InputStreamReader input = new InputStreamReader(socket.getInputStream());
 				BufferedReader response = new BufferedReader(input);
 		) {
 
-			// write request to socket
 			request.printf("GET %s HTTP/1.1\r\n", resource);
 			request.printf("Host: %s\r\n", host);
 			request.printf("Connection: close\r\n");
 			request.printf("\r\n");
 			request.flush();
 
-			// fetch status line from server
 			String line = response.readLine();
 
-			// add status line in same way as URLConnection.getHeaderFields()
 			results.put(null, Arrays.asList(line));
 
-			// process remaining headers
 			while ((line = response.readLine()) != null) {
-				// detect empty line between headers and content
 				if (line.trim().isEmpty()) {
 					break;
 				}
@@ -75,12 +64,10 @@ public class HttpsFetcher {
 				String[] split = line.split(":\\s+", 2);
 				assert split.length == 2;
 
-				// handle cases where header appears more than once
 				results.putIfAbsent(split[0], new ArrayList<>());
 				results.get(split[0]).add(split[1]);
 			}
 
-			// process remaining content
 			List<String> lines = new ArrayList<>();
 			while ((line = response.readLine()) != null) {
 				lines.add(line);
