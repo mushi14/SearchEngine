@@ -59,12 +59,21 @@ public class InvertedIndex {
 		for (String word : local.index.keySet()) {
 			if (index.containsKey(word)) {
 				for (String path : local.index.get(word).keySet()) {
+					/* TODO
+					if the path exists
+						addAll
+					else
+						put
+					*/
+					
 					index.get(word).putIfAbsent(path, new TreeSet<Integer>());
 					for (Integer position : local.getPositions(word, path)) {
 						index.get(word).get(path).add(position);
 					}
 				}
 			} else {
+				// TODO index.put(word, local.index.get(word));
+				
 				index.put(word, new TreeMap<String, TreeSet<Integer>>());
 				for (String path : local.getPaths(word)) {
 					index.get(word).put(path, new TreeSet<Integer>());
@@ -77,6 +86,10 @@ public class InvertedIndex {
 
 		for (String path : local.locationsMap.keySet()) {
 			locationsMap.put(path, local.locationsMap.get(path));
+
+			//TODO
+//			locationsMap.putIfAbsent(path, 0);
+//			locationsMap.put(path, locationsMap.get(oath) + local.locationsMap.get(path));
 		}
 	}
 
