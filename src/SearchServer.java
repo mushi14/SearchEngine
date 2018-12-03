@@ -1,23 +1,29 @@
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 public class SearchServer {
 
-	private int PORT = 8080;
+	private static final int PORT = 8080;
 
-	public SearchServer(int port) {
-		this.PORT = port;
-	}
-
-	public void newServ() {
+	public static void newServ() throws Exception {
 		Server server = new Server(PORT);
 
-		ServletHandler handler = new ServletHandler();
-		handler.addServletMapping(new ServletHolder(new SearchServlet()), "/test");
+		ServerConnector connector = new ServerConnector(server);
+		connector.setHost("localhost");
+		connector.setPort(PORT);
 
+		ServletHandler handler = new ServletHandler();
+		handler.addServletWithMapping(new ServletHolder(new SearchServlet()), "/test");
+
+		server.addConnector(connector);
 		server.setHandler(handler);
 		server.start();
 		server.join();
+	}
+
+	public static void main(String[] args) throws Exception {
+		SearchServer.newServ();
 	}
 }
