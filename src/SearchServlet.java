@@ -7,5 +7,4 @@ public class SearchServlet extends HttpServlet {
 
 	private static final String TITLE = "Search";
 	private static Logger logger = Log.getRootLogger();
-	
 }
