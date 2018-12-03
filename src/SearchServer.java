@@ -15,7 +15,7 @@ public class SearchServer {
 		connector.setPort(PORT);
 
 		ServletHandler handler = new ServletHandler();
-		handler.addServletWithMapping(new ServletHolder(new SearchServlet()), "/test");
+		handler.addServletWithMapping(new ServletHolder(new SearchServlet()), "/");
 
 		server.addConnector(connector);
 		server.setHandler(handler);
