@@ -25,6 +25,8 @@ public class WorkQueue {
 			workers[i] = new ThreadPool();
 			workers[i].start();
 		}
+		
+		// TODO log.info the number of threads used by your work queue
 	}
 
 	/**
@@ -112,6 +114,7 @@ public class WorkQueue {
 
 				try {
 					r.run();
+					// TODO Move into a finally block
 					decrementPending();
 				} catch (RuntimeException e) {
 					System.out.println("Runtime exception");
