@@ -9,7 +9,7 @@ public interface QueryFileParser {
 	 * @param exact whether exact or partial search should be performed
 	 * @param threads how many threads to run on
 	 */
-	public void stemQueryFile(Path path, boolean exact, int threads);
+	public void stemQueryFile(Path path, boolean exact);
 	
 	/**
 	 * TODO

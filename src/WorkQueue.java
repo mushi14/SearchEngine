@@ -114,10 +114,10 @@ public class WorkQueue {
 
 				try {
 					r.run();
-					// TODO Move into a finally block
-					decrementPending();
 				} catch (RuntimeException e) {
 					System.out.println("Runtime exception");
+				} finally {
+					decrementPending();
 				}
 			}
 			

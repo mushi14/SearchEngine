@@ -19,11 +19,14 @@ public class MultithreadedPathChecker {
 	 */
 	public static void filesInPath(Path path, int threads, ThreadSafeInvertedIndex index) throws IOException {
 		WorkQueue queue = new WorkQueue(threads);
-		// TODO try
-		filesInPathHelper(path, threads, index, queue);
-		// TODO finally
-		queue.finish();
-		queue.shutdown();
+		try {
+			filesInPathHelper(path, threads, index, queue);
+		} catch (IOException e) {
+			System.out.println("There was an issue finding the path to read from.");
+		} finally {
+			queue.finish();
+			queue.shutdown();
+		}
 	}
 
 	/**
@@ -45,8 +48,7 @@ public class MultithreadedPathChecker {
 			} else if (Files.isDirectory(path)) {
 				try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
 					for (Path file: filePathStream) {
-						filesInPath(file, threads, index);
-						// TODO filesInPathHelper(file, threads, index);
+						filesInPathHelper(file, threads, index, queue);
 					}
 				}
 			}
@@ -82,9 +84,7 @@ public class MultithreadedPathChecker {
 			try {
 				InvertedIndex local = new InvertedIndex();
 				TextFileStemmer.stemFile(path, local);
-				synchronized (index) { // TODO Remove
-					index.addAll(local);
-				}
+				index.addAll(local);
 			} catch (IOException e) {
 				System.out.println("File not found.");
 			}

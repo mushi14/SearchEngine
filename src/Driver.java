@@ -107,7 +107,7 @@ public class Driver {
 		ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
 		QuerySearch search = new QuerySearch(index);
-		MultithreadedSearch multiSearch = new MultithreadedSearch(threadSafeIndex);
+		MultithreadedSearch multiSearch = new MultithreadedSearch(threadSafeIndex, argMap.getThreads("-threads", 5));
 
 		boolean multithreaded = false;
 		int threads = argMap.getThreads("-threads", 5);
@@ -156,9 +156,9 @@ public class Driver {
 					if (argMap.flagPath("-search")) {
 
 						if (multithreaded) {
-							multiSearch.stemQueryFile(path, argMap.hasFlag("-exact"), threads);
+							multiSearch.stemQueryFile(path, argMap.hasFlag("-exact"));
 						} else {
-							search.stemQueryFile(path, argMap.hasFlag("-exact"), 0);
+							search.stemQueryFile(path, argMap.hasFlag("-exact"));
 						}
 					}
 				} catch (NullPointerException e) {
