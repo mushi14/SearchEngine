@@ -26,7 +26,7 @@ public class SearchServlet extends HttpServlet {
 		super();
 		message = "";
 		this.index = index;
-		this.search = new MultithreadedSearch(this.index);
+//		this.search = new MultithreadedSearch(this.index);
 	}
 
 	@Override

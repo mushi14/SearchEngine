@@ -33,7 +33,7 @@ public class QuerySearch implements QueryFileParser {
 	 * @param exact boolean variable that ensures that an exact search must be performed
 	 */
 	@Override
-	public void stemQueryFile(Path path, boolean exact, int threads) {
+	public void stemQueryFile(Path path, boolean exact) {
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			String line = br.readLine();
 

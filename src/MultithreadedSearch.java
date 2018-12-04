@@ -16,14 +16,16 @@ public class MultithreadedSearch implements QueryFileParser {
 
 	private final ThreadSafeInvertedIndex index;
 	public final Map<String, List<Search>> results;
+	private final int threads;
 
 	/**
 	 * Constructor for searching the index for queries via multithreading
 	 * @param index inverted index to search from
 	 */
-	public MultithreadedSearch(ThreadSafeInvertedIndex index) {
+	public MultithreadedSearch(ThreadSafeInvertedIndex index, int threads) {
 		this.index = index;
 		this.results = new TreeMap<String, List<Search>>();
+		this.threads = threads;
 	}
 
 	/**
@@ -33,7 +35,7 @@ public class MultithreadedSearch implements QueryFileParser {
 	 * @param exact boolean variable that ensures that an exact search must be performed
 	 */
 	@Override
-	public void stemQueryFile(Path path, boolean exact, int threads) {
+	public void stemQueryFile(Path path, boolean exact) {
 		WorkQueue queue = new WorkQueue(threads);
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			String line = br.readLine();
@@ -58,6 +60,7 @@ public class MultithreadedSearch implements QueryFileParser {
 		Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 		Set<String> queries = new TreeSet<>();
 		String[] words = TextFileStemmer.parse(line);
+		Map<String, List<Search>> local = new TreeMap<String, List<Search>>();
 
 		for (String word : words) {
 			word = stemmer.stem(word).toString();
@@ -65,17 +68,23 @@ public class MultithreadedSearch implements QueryFileParser {
 		}
 
 		String queryLine = String.join(" ", queries);
-		if (!queries.isEmpty() && !results.containsKey(queryLine)) {
-			Map<String, List<Search>> temp = new TreeMap<String, List<Search>>();
+		if (!queries.isEmpty()) {
+			synchronized (results) {
+				if (results.containsKey(queryLine)) {
+					return;
+				}
+			}
+
+			List<Search> temp;
 			if (exact) {
-				temp.put(queryLine, index.exactSearch(queries));
+				temp =  index.exactSearch(queries);
 				synchronized (results) {
-					results.putAll(temp);
+					results.put(queryLine, temp);
 				}
 			} else {
-				temp.put(queryLine, index.partialSearch(queries));
+				local.put(queryLine, index.partialSearch(queries));
 				synchronized (results) {
-					results.putAll(temp);
+					results.putAll(local);
 				}
 			}
 		}
@@ -87,7 +96,9 @@ public class MultithreadedSearch implements QueryFileParser {
 	 * @throws IOException in case there's any problem finding the file
 	 */
 	public void writeJSON(Path path) throws IOException {
-		TreeJSONWriter.asSearchResult(results, path);
+		synchronized (results) {
+			TreeJSONWriter.asSearchResult(results, path);
+		}
 	}
 
 	/**

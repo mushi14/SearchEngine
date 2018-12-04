@@ -112,9 +112,10 @@ public class WorkQueue {
 
 				try {
 					r.run();
-					decrementPending();
 				} catch (RuntimeException e) {
 					System.out.println("Runtime exception");
+				} finally {
+					decrementPending();
 				}
 			}
 		}

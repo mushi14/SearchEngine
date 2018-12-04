@@ -19,7 +19,7 @@ public class Driver {
 		ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
 		QuerySearch search = new QuerySearch(index);
-		MultithreadedSearch multiSearch = new MultithreadedSearch(threadSafeIndex);
+		MultithreadedSearch multiSearch = new MultithreadedSearch(threadSafeIndex, argMap.getThreads("-threads", 5));
 		WebCrawler crawl = new WebCrawler(threadSafeIndex, argMap.getThreads("-threads", 5));
 
 		boolean multithread = argMap.hasFlag("-threads");
@@ -82,9 +82,9 @@ public class Driver {
 					if (argMap.flagPath("-search")) {
 
 						if (multithread) {
-							multiSearch.stemQueryFile(path, argMap.hasFlag("-exact"), argMap.getThreads("-threads", 5));
+							multiSearch.stemQueryFile(path, argMap.hasFlag("-exact"));
 						} else {
-							search.stemQueryFile(path, argMap.hasFlag("-exact"), 0);
+							search.stemQueryFile(path, argMap.hasFlag("-exact"));
 						}
 					}
 				} catch (NullPointerException e) {
@@ -120,12 +120,12 @@ public class Driver {
 				}
 			}
 
-			try {
-				SearchServer server = new SearchServer(threadSafeIndex);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				SearchServer server = new SearchServer(threadSafeIndex);
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 	}
 }
