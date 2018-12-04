@@ -205,7 +205,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public void writeIndexJSON(Path path) throws IOException {
-		lock.lockReadWrite();
+		lock.lockReadWrite(); // TODO read only
 		try {
 			super.writeIndexJSON(path);
 		} finally {
@@ -220,11 +220,11 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	 */
 	@Override
 	public void writeLocJSON(Path path) throws IOException {
-		lock.lockReadWrite();;
+		lock.lockReadWrite(); // TODO read only
 		try {
 			super.writeLocJSON(path);
 		} finally {
-			lock.unlockReadWrite();;
+			lock.unlockReadWrite();
 		}
 	}
 

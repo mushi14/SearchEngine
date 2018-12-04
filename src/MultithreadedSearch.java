@@ -15,13 +15,14 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 public class MultithreadedSearch implements QueryFileParser {
 
 	private final ThreadSafeInvertedIndex index;
-	public final Map<String, List<Search>> results;
+	public final Map<String, List<Search>> results; // TODO private
+	// TODO private final int threads
 
 	/**
 	 * Constructor for searching the index for queries via multithreading
 	 * @param index inverted index to search from
 	 */
-	public MultithreadedSearch(ThreadSafeInvertedIndex index) {
+	public MultithreadedSearch(ThreadSafeInvertedIndex index) { // TODO pass threads to constructor
 		this.index = index;
 		this.results = new TreeMap<String, List<Search>>();
 	}
@@ -79,6 +80,30 @@ public class MultithreadedSearch implements QueryFileParser {
 				}
 			}
 		}
+		
+		/* TODO
+		if (!queries.isEmpty()) {
+			
+			synchronized (results) {
+				if (results.containsKey(queryLine)) {
+					return;
+				}
+			}
+			
+			List<Search> temp;
+			if (exact) {
+				temp =  index.exactSearch(queries);
+				synchronized (results) {
+					results.put(queryLine, temp);
+				}
+			} else {
+				temp.put(queryLine, index.partialSearch(queries));
+				synchronized (results) {
+					results.putAll(temp);
+				}
+			}
+		}
+		*/
 	}
 
 	/**
@@ -87,6 +112,7 @@ public class MultithreadedSearch implements QueryFileParser {
 	 * @throws IOException in case there's any problem finding the file
 	 */
 	public void writeJSON(Path path) throws IOException {
+		// TODO synchronized (results) {
 		TreeJSONWriter.asSearchResult(results, path);
 	}
 

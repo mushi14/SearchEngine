@@ -19,7 +19,9 @@ public class MultithreadedPathChecker {
 	 */
 	public static void filesInPath(Path path, int threads, ThreadSafeInvertedIndex index) throws IOException {
 		WorkQueue queue = new WorkQueue(threads);
+		// TODO try
 		filesInPathHelper(path, threads, index, queue);
+		// TODO finally
 		queue.finish();
 		queue.shutdown();
 	}
@@ -44,6 +46,7 @@ public class MultithreadedPathChecker {
 				try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
 					for (Path file: filePathStream) {
 						filesInPath(file, threads, index);
+						// TODO filesInPathHelper(file, threads, index);
 					}
 				}
 			}
@@ -79,7 +82,7 @@ public class MultithreadedPathChecker {
 			try {
 				InvertedIndex local = new InvertedIndex();
 				TextFileStemmer.stemFile(path, local);
-				synchronized (index) {
+				synchronized (index) { // TODO Remove
 					index.addAll(local);
 				}
 			} catch (IOException e) {
