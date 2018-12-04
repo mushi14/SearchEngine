@@ -1,7 +1,10 @@
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,11 +20,13 @@ public class SearchServlet extends HttpServlet {
 	private static Logger logger = Log.getRootLogger();
 	private String message;
 	private ThreadSafeInvertedIndex index;
+	private MultithreadedSearch search;
 
-	public SearchServlet() {
+	public SearchServlet(ThreadSafeInvertedIndex index) {
 		super();
 		message = "";
-//		this.index = index;
+		this.index = index;
+		this.search = new MultithreadedSearch(this.index);
 	}
 
 	@Override
@@ -41,6 +46,17 @@ public class SearchServlet extends HttpServlet {
 
 		if (!message.isEmpty()) {
 			out.printf("<p>%s</p>%n%n", message);
+			out.printf("Results: \n");
+			List<URL> locations = new ArrayList<>();
+			for (String word : search.results.keySet()) {
+				for (Search s : search.results.get(word)) {
+					locations.add(new URL (s.getLocation()));
+				}
+			}
+
+			for (URL loc : locations) {
+				out.printf("%s\n", loc);
+			}
 		}
 
 		printForm(request, response);
@@ -65,24 +81,23 @@ public class SearchServlet extends HttpServlet {
 		String timeStamp = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
 
 		String queries = request.getParameter("query");
-		queries = queries == null ? "anonymous" : queries;
+		queries = queries == null ? "" : queries;
 
 //		// Avoid XSS attacks using Apache Commons Text
 //		// Comment out if you don't have this library installed
 //		username = StringEscapeUtils.escapeHtml4(username);
 //		message = StringEscapeUtils.escapeHtml4(message);
 
-		String formatted = String.format("<br><font size=\"-2\">displaying results for '%s' at %s</font>",
+		String formatted = String.format("<br><center><font size=\"1\">Displaying results for '%s' at %s</font></center>.",
 				queries, timeStamp.toString());
 
-		// Keep in mind multiple threads may access at once
-		message = formatted;
+		synchronized (message) {
+			message = formatted;
+		}
 
-		// Only keep the latest 5 messages
-//		if (messages.size() > 5) {
-//			String first = messages.poll();
-//			logger.info("Removing message: " + first);
-//		}
+		if (!queries.isEmpty()) {
+			search.searchLine(queries, false);
+		}
 
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.sendRedirect(request.getServletPath());

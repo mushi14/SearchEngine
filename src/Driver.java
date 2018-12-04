@@ -119,6 +119,13 @@ public class Driver {
 						System.out.println("File not found, locations cannot be printed in json format.");
 				}
 			}
+
+			try {
+				SearchServer server = new SearchServer(threadSafeIndex);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

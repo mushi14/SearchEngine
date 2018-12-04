@@ -6,8 +6,14 @@ import org.eclipse.jetty.servlet.ServletHolder;
 public class SearchServer {
 
 	private static final int PORT = 8080;
+	private ThreadSafeInvertedIndex index;
 
-	public static void newServ() throws Exception {
+	public SearchServer(ThreadSafeInvertedIndex index) throws Exception {
+		this.index = index;
+		this.newServ();
+	}
+
+	public void newServ() throws Exception {
 		Server server = new Server(PORT);
 
 		ServerConnector connector = new ServerConnector(server);
@@ -15,15 +21,11 @@ public class SearchServer {
 		connector.setPort(PORT);
 
 		ServletHandler handler = new ServletHandler();
-		handler.addServletWithMapping(new ServletHolder(new SearchServlet()), "/");
+		handler.addServletWithMapping(new ServletHolder(new SearchServlet(index)), "/");
 
 		server.addConnector(connector);
 		server.setHandler(handler);
 		server.start();
 		server.join();
-	}
-
-	public static void main(String[] args) throws Exception {
-		SearchServer.newServ();
 	}
 }
