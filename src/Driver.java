@@ -15,117 +15,100 @@ public class Driver {
 	 * @return 0 if everything went well
 	 */
 	public static void main(String[] args) {
-		InvertedIndex index = new InvertedIndex();
-		ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 		ArgumentMap argMap = new ArgumentMap(args);
-		QuerySearch search = new QuerySearch(index);
-		MultithreadedSearch multiSearch = new MultithreadedSearch(threadSafeIndex, argMap.getThreads("-threads", 5));
-		WebCrawler crawl = new WebCrawler(threadSafeIndex, argMap.getThreads("-threads", 5));
+		InvertedIndex index;
+		ThreadSafeInvertedIndex threadSafeIndex;
+		QueryFileParser search;
+		WebCrawler crawl;
 
-		boolean multithread = argMap.hasFlag("-threads");
-
-		if (!argMap.isEmpty()) {
-
-			if (argMap.hasFlag("-url")) {
-				try {
-
-					if (argMap.flagPath("-url")) {
-						multithread = true;
-						URL url = argMap.getURL("-url");
-						String html = HTMLFetcher.fetchHTML(url, 3);
-						Map<String, List<String>> headers = HttpsFetcher.fetchURL(url);
-
-						if (HTMLFetcher.getStatusCode(headers) == 200) {
-							crawl.start(url, html, argMap.getLimit("-limit", 50), 3);
-						}
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (argMap.hasFlag("-path")) {
-				try {
-					Path path = argMap.getPath("-path");
-
-					if (argMap.flagPath("-path")) {
-
-						if (multithread) {
-							MultithreadedPathChecker.filesInPath(path, argMap.getThreads("-threads", 5), threadSafeIndex);
-						} else {
-							PathChecker.filesInPath(path, index);
-						}
-					} else {
-						System.out.println("There is no path provided. A valid path is needed to build the index.");
-					}
-				} catch (IOException | NullPointerException e) {
-					System.out.println("There was an issue finding the path. A valid path is needed to build the index.");
-				}
-			}
-
-			if (argMap.hasFlag("-index")) {
-				try {
-					Path path = argMap.getPath("-index", Paths.get("index.json"));
-					if (multithread) {
-						threadSafeIndex.writeIndexJSON(path);
-					} else {
-						index.writeIndexJSON(path);
-					}
-				} catch (IOException | NullPointerException e) {
-						System.out.println("File not found, index cannot be printed in json format.");
-				}
-			}
-
-			if (argMap.hasFlag("-search")) {
-				try {
-					Path path = argMap.getPath("-search");
-					if (argMap.flagPath("-search")) {
-
-						if (multithread) {
-							multiSearch.stemQueryFile(path, argMap.hasFlag("-exact"));
-						} else {
-							search.stemQueryFile(path, argMap.hasFlag("-exact"));
-						}
-					}
-				} catch (NullPointerException e) {
-					System.out.println("Unable to open the query file or directory provided. A valid query file or "
-							+ "directory is needed to search.");
-				}
-			}
-
-			if (argMap.hasFlag("-results")) {
-				try {
-					Path path = argMap.getPath("-results", Paths.get("results.json"));
-
-					if (multithread) {
-						multiSearch.writeJSON(path);
-					} else {
-						search.writeJSON(path);
-					}
-				} catch (IOException | NullPointerException e) {
-					System.out.println("File not found, search results cannot be printed in json format.");
-				}
-			}
-
-			if (argMap.hasFlag("-locations")) {
-				try {
-					Path path = argMap.getPath("-locations", Paths.get("locations.json"));
-					if (multithread) {
-						threadSafeIndex.writeLocJSON(path);
-					} else {
-						index.writeLocJSON(path);
-					}
-				} catch (IOException | NullPointerException e) {
-						System.out.println("File not found, locations cannot be printed in json format.");
-				}
-			}
-
-			try {
-				SearchServer server = new SearchServer(threadSafeIndex, argMap.getThreads("-threads", 5));
-			} catch (Exception e) {
-				System.out.println("No good URL");
-			}
-
+		if (argMap.hasFlag("-threads") || argMap.hasFlag("-url")) {
+			threadSafeIndex = new ThreadSafeInvertedIndex();
+			search = new MultithreadedSearch(threadSafeIndex, argMap.getThreads("-threads", 5));
+			index = threadSafeIndex;
+		} else {
+			index = new InvertedIndex();
+			search = new QuerySearch(index);
+			threadSafeIndex = null;
 		}
+
+		if (argMap.hasFlag("-url")) {
+			try {
+				if (argMap.flagPath("-url")) {
+					crawl = new WebCrawler(threadSafeIndex, argMap.getThreads("-threads", 5));
+					URL url = argMap.getURL("-url");
+					String html = HTMLFetcher.fetchHTML(url, 3);
+					Map<String, List<String>> headers = HttpsFetcher.fetchURL(url);
+
+					if (HTMLFetcher.getStatusCode(headers) == 200) {
+						crawl.start(url, html, argMap.getLimit("-limit", 50), 3);
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (argMap.hasFlag("-path")) {
+			try {
+				Path path = argMap.getPath("-path");
+				if (argMap.flagPath("-path")) {
+
+					if (threadSafeIndex != null) {
+						MultithreadedPathChecker.filesInPath(path, argMap.getThreads("-threads", 5), threadSafeIndex);
+					} else {
+						PathChecker.filesInPath(path, index);
+					}
+				} else {
+					System.out.println("There is no path provided. A valid path is needed to build the index.");
+				}
+			} catch (IOException | NullPointerException e) {
+				System.out.println("There was an issue finding the path. A valid path is needed to build the index.");
+			}
+		}
+
+		if (argMap.hasFlag("-index")) {
+			try {
+				Path path = argMap.getPath("-index", Paths.get("index.json"));
+				index.writeIndexJSON(path);
+			} catch (IOException | NullPointerException e) {
+					System.out.println("File not found, index cannot be printed in json format.");
+			}
+		}
+
+		if (argMap.hasFlag("-search")) {
+			try {
+				Path path = argMap.getPath("-search");
+				if (argMap.flagPath("-search")) {
+					search.stemQueryFile(path, argMap.hasFlag("-exact"));
+				}
+			} catch (NullPointerException e) {
+				System.out.println("Unable to open the query file or directory provided. A valid query file or "
+						+ "directory is needed to search.");
+			}
+		}
+
+		if (argMap.hasFlag("-results")) {
+			try {
+				Path path = argMap.getPath("-results", Paths.get("results.json"));
+				search.writeJSON(path);
+			} catch (NullPointerException e) {
+				System.out.println("File not found, search results cannot be printed in json format.");
+			}
+		}
+
+		if (argMap.hasFlag("-locations")) {
+			try {
+				Path path = argMap.getPath("-locations", Paths.get("locations.json"));
+				index.writeLocJSON(path);
+			} catch (IOException | NullPointerException e) {
+					System.out.println("File not found, locations cannot be printed in json format.");
+			}
+		}
+
+//		try {
+//			SearchServer server = new SearchServer(threadSafeIndex, argMap.getThreads("-threads", 5));
+//		} catch (Exception e) {
+//			System.out.println("No good URL");
+//		}
 	}
 }

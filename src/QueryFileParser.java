@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.nio.file.Path;
 
 public interface QueryFileParser {
@@ -17,4 +18,10 @@ public interface QueryFileParser {
 	 */
 	public void searchLine(String line, boolean exact);
 
+	/**
+	 * Writes the search results to the file path in pretty json format
+	 * @param path path to the file to write to
+	 * @throws IOException in case there's any problem finding the file
+	 */
+	public void writeJSON(Path path);
 }
