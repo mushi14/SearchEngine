@@ -24,7 +24,7 @@ public class SearchServlet extends HttpServlet {
 
 	public SearchServlet(ThreadSafeInvertedIndex index, int threads) {
 		super();
-		message = "";
+		this.message = "";
 		this.index = index;
 		this.search = new MultithreadedSearch(this.index, threads);
 	}
@@ -44,8 +44,7 @@ public class SearchServlet extends HttpServlet {
 
 		out.printf("<h1>Welcome to my Search Engine. You type, we search!</h1>%n%n");
 
-		if (!message.isEmpty()) {
-			out.printf("<p>%s</p>%n%n<br />", message);
+		if (!search.results.isEmpty()) {
 			List<String> locations = new ArrayList<>();
 			for (String word : search.results.keySet()) {
 				for (Search s : search.results.get(word)) {
@@ -53,12 +52,17 @@ public class SearchServlet extends HttpServlet {
 				}
 			}
 
+			if (locations.isEmpty()) {
+				message = "No results found.";
+			}
+			out.printf("<p>%s</p>%n%n<br />", message);
+
 			for (String loc : locations) {
 				out.printf("<a href='%s' >%s</a><br />", loc, loc);
 			}
-
-			search.results.clear();
 		}
+
+		search.results.clear();
 
 		printForm(request, response);
 
@@ -79,25 +83,23 @@ public class SearchServlet extends HttpServlet {
 
 		logger.info("MessageServlet ID " + this.hashCode() + " handling POST request.");
 
-		String timeStamp = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
 
 		String queries = request.getParameter("query");
 		queries = queries == null ? "" : queries;
+
+		String timeStamp = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
 
 //		// Avoid XSS attacks using Apache Commons Text
 //		// Comment out if you don't have this library installed
 //		username = StringEscapeUtils.escapeHtml4(username);
 //		message = StringEscapeUtils.escapeHtml4(message);
 
-		String formatted = String.format("<br>Displaying results for '%s' at %s</font>",
-				queries, timeStamp.toString());
-
-		synchronized (message) {
-			message = formatted;
-		}
-
 		if (!queries.isEmpty()) {
 			search.searchLine(queries, false);
+			synchronized (message) {
+				message = String.format("<br>Displaying results for '%s' at %s</font>",
+						queries, timeStamp.toString());	
+			}
 		}
 
 		response.setStatus(HttpServletResponse.SC_OK);

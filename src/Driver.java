@@ -105,10 +105,10 @@ public class Driver {
 			}
 		}
 
-//		try {
-//			SearchServer server = new SearchServer(threadSafeIndex, argMap.getThreads("-threads", 5));
-//		} catch (Exception e) {
-//			System.out.println("No good URL");
-//		}
+		try {
+			SearchServer server = new SearchServer(threadSafeIndex, argMap.getThreads("-threads", 5));
+		} catch (Exception e) {
+			System.out.println("No good URL");
+		}
 	}
 }
