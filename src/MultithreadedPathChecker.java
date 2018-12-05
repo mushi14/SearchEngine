@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 public class MultithreadedPathChecker {
 
 	final static Logger logger = LogManager.getLogger();
-
 	/**
 	 * Gets the starting path of the file and initializes the Work Queue
 	 * @param path path of the file

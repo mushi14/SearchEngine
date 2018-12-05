@@ -25,8 +25,6 @@ public class WorkQueue {
 			workers[i] = new ThreadPool();
 			workers[i].start();
 		}
-		
-		// TODO log.info the number of threads used by your work queue
 	}
 
 	/**
@@ -114,6 +112,7 @@ public class WorkQueue {
 
 				try {
 					r.run();
+//					logger.debug("New task received. Running task {}", r.toString());
 				} catch (RuntimeException e) {
 					System.out.println("Runtime exception");
 				} finally {

@@ -1,7 +1,0 @@
-[12:06:836 debug] main: running parse again on /Users/mushahidhassan/Desktop/CS212/ProjectTests/project-tests/text/simple/hello.txt
-[12:06:846 debug] main: only executing/Users/mushahidhassan/Desktop/CS212/ProjectTests/project-tests/text/simple/hello.txt
-[12:06:847 debug] Thread-0: in here with /Users/mushahidhassan/Desktop/CS212/ProjectTests/project-tests/text/simple/hello.txt
-[12:06:895 debug] Thread-0: Running: /Users/mushahidhassan/Desktop/CS212/ProjectTests/project-tests/text/simple/hello.txt
-[12:06:895 debug] Thread-0: this is index afterwards: {hello={/Users/mushahidhassan/Desktop/CS212/ProjectTests/project-tests/text/simple/hello.txt=[1, 3, 5]}, world={/Users/mushahidhassan/Desktop/CS212/ProjectTests/project-tests/text/simple/hello.txt=[2, 4, 6]}}
-[12:06:895 debug] Thread-0: Pending: 0
-[12:06:896 debug] main: finished work

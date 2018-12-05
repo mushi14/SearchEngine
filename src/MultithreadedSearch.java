@@ -9,10 +9,15 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class MultithreadedSearch implements QueryFileParser {
+
+	final static Logger logger = LogManager.getLogger();
 
 	private final ThreadSafeInvertedIndex index;
 	private final Map<String, List<Search>> results;
@@ -26,6 +31,7 @@ public class MultithreadedSearch implements QueryFileParser {
 		this.index = index;
 		this.results = new TreeMap<String, List<Search>>();
 		this.threads = threads;
+//		logger.debug("THIS IS HOW MANY THREADS YOU SHOULD RUN ON: {}", threads);
 	}
 
 	/**
@@ -41,6 +47,7 @@ public class MultithreadedSearch implements QueryFileParser {
 			String line = br.readLine();
 
 			while (line != null) {
+//				logger.debug("new task", line);
 				queue.execute(new QueryLineSearch(line, exact));
 				line = br.readLine();
 			}
