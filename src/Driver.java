@@ -120,12 +120,12 @@ public class Driver {
 				}
 			}
 
-//			try {
-//				SearchServer server = new SearchServer(threadSafeIndex);
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			try {
+				SearchServer server = new SearchServer(threadSafeIndex, argMap.getThreads("-threads", 5));
+			} catch (Exception e) {
+				System.out.println("No good URL");
+			}
+
 		}
 	}
 }

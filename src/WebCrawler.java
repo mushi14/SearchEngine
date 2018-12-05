@@ -67,7 +67,7 @@ public class WebCrawler {
 							if (!seen.contains(ref)) {
 								String newHTML = HTMLFetcher.fetchHTML(ref, redirects);
 								count++;
-	
+
 								if (newHTML != null) {
 									Q.add(ref);
 									seen.add(ref);

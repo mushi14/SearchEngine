@@ -7,9 +7,11 @@ public class SearchServer {
 
 	private static final int PORT = 8080;
 	private ThreadSafeInvertedIndex index;
+	private int threads;
 
-	public SearchServer(ThreadSafeInvertedIndex index) throws Exception {
+	public SearchServer(ThreadSafeInvertedIndex index, int threads) throws Exception {
 		this.index = index;
+		this.threads = threads;
 		this.newServ();
 	}
 
@@ -21,7 +23,7 @@ public class SearchServer {
 		connector.setPort(PORT);
 
 		ServletHandler handler = new ServletHandler();
-		handler.addServletWithMapping(new ServletHolder(new SearchServlet(index)), "/");
+		handler.addServletWithMapping(new ServletHolder(new SearchServlet(index, threads)), "/");
 
 		server.addConnector(connector);
 		server.setHandler(handler);

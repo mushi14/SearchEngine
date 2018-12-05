@@ -18,7 +18,6 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 	public ThreadSafeInvertedIndex() {
 		super();
 		lock = new ReadWriteLock();
-		System.out.println();
 	}
 
 	/**

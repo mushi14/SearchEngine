@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,12 +20,13 @@ public class SearchServlet extends HttpServlet {
 	private String message;
 	private ThreadSafeInvertedIndex index;
 	private MultithreadedSearch search;
+	private int threads;
 
-	public SearchServlet(ThreadSafeInvertedIndex index) {
+	public SearchServlet(ThreadSafeInvertedIndex index, int threads) {
 		super();
 		message = "";
 		this.index = index;
-//		this.search = new MultithreadedSearch(this.index);
+		this.search = new MultithreadedSearch(this.index, threads);
 	}
 
 	@Override
@@ -45,18 +45,19 @@ public class SearchServlet extends HttpServlet {
 		out.printf("<h1>Welcome to my Search Engine. You type, we search!</h1>%n%n");
 
 		if (!message.isEmpty()) {
-			out.printf("<p>%s</p>%n%n", message);
-			out.printf("Results: \n");
-			List<URL> locations = new ArrayList<>();
+			out.printf("<p>%s</p>%n%n<br />", message);
+			List<String> locations = new ArrayList<>();
 			for (String word : search.results.keySet()) {
 				for (Search s : search.results.get(word)) {
-					locations.add(new URL (s.getLocation()));
+					locations.add(s.getLocation());
 				}
 			}
 
-			for (URL loc : locations) {
-				out.printf("%s\n", loc);
+			for (String loc : locations) {
+				out.printf("<a href='%s' >%s</a><br />", loc, loc);
 			}
+
+			search.results.clear();
 		}
 
 		printForm(request, response);
@@ -88,7 +89,7 @@ public class SearchServlet extends HttpServlet {
 //		username = StringEscapeUtils.escapeHtml4(username);
 //		message = StringEscapeUtils.escapeHtml4(message);
 
-		String formatted = String.format("<br><center><font size=\"1\">Displaying results for '%s' at %s</font></center>.",
+		String formatted = String.format("<br>Displaying results for '%s' at %s</font>",
 				queries, timeStamp.toString());
 
 		synchronized (message) {
@@ -107,16 +108,25 @@ public class SearchServlet extends HttpServlet {
 
 		PrintWriter out = response.getWriter();
 		out.printf("<form method=\"post\" action=\"%s\">%n", request.getServletPath());
-		out.printf("<center>");
-		out.printf("<table cellspacing=\"-2\" cellpadding=\"2\"%n");
-		out.printf("<tr>%n");
-		out.printf("\t<td nowrap></td>%n");
-		out.printf("\t<td>%n");
-		out.printf("\t\t<input type=\"text\" name=\"query\" maxlength=\"300\" size=\"80\">%n");
-		out.printf("\t</td>%n");
-		out.printf("</tr>%n");
-		out.printf("</table>%n");
-		out.printf("<p><center><input type=\"submit\" value=\"Search\"></center></p>\n%n");
-		out.printf("</center></form>\n%n");
+		out.printf("<div class='topnav' id='header'>");
+		out.printf("<center><input <font size='60' style='font-family:verdana;' type='text' "
+				+ "name='query' placeholder='Search..'></font></center>");
+		out.printf("</div>");
+		out.printf("<form action='action_page.php'>");
+		out.printf("<center><p><input type='submit' value='Search'></p></center>");
+		out.printf("</form>");
+		out.printf("</form>\n%n");
+
+//		out.printf("<center>");
+//		out.printf("<table cellspacing=\"-2\" cellpadding=\"2\"%n");
+//		out.printf("<tr>%n");
+//		out.printf("\t<td nowrap></td>%n");
+//		out.printf("\t<td>%n");
+//		out.printf("\t\t<input type=\"text\" name=\"query\" maxlength=\"300\" size=\"80\">%n");
+//		out.printf("\t</td>%n");
+//		out.printf("</tr>%n");
+//		out.printf("</table>%n");
+//		out.printf("<p><center><input type=\"submit\" value=\"Search\"></center></p>\n%n");
+//		out.printf("</center></form>\n%n");
 	}
 }
