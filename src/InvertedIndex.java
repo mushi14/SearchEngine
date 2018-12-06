@@ -51,13 +51,19 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Adds a list of words to the index mapped to their locations and positions.
+	 * Adds a list of words to the index mapped to their locations and positions. 
 	 * @param local an inverted index data structure to add to the index
 	 */
 	public void addAll(InvertedIndex local) {
 		for (String word : local.index.keySet()) {
 			if (index.containsKey(word)) {
-				index.get(word).putAll(local.index.get(word));
+				for (String loc : local.index.get(word).keySet()) {
+					if (index.get(word).containsKey(loc)) {
+						index.get(word).get(loc).addAll(local.index.get(word).get(loc));
+					} else {
+						index.get(word).putAll(local.index.get(word));
+					}
+				}
 			} else {
 				index.put(word, local.index.get(word));
 			}
