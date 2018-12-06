@@ -89,6 +89,7 @@ public class MultithreadedSearch implements QueryFileParser {
 					results.put(queryLine, temp);
 				}
 			} else {
+				// TODO Use above approach, don't need the putall.
 				local.put(queryLine, index.partialSearch(queries));
 				synchronized (results) {
 					results.putAll(local);

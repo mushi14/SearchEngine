@@ -58,6 +58,9 @@ public class InvertedIndex {
 	public void addAll(InvertedIndex local) {
 		for (String word : local.index.keySet()) {
 			if (index.containsKey(word)) {
+				// TODO Still an issue: https://github.com/usf-cs212-fall2018/project-mushi14/blob/99f9bc609f79942b76f27923e1c7cc8e75893762/src/InvertedIndex.java#L62-L67
+				// putAll will replace what is already there, potentially causing you to lose information
+				// use an if/else block like you already have while looping through locations to safely combine
 				index.get(word).putAll(local.index.get(word));
 			} else {
 				index.put(word, local.index.get(word));

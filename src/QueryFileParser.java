@@ -17,5 +17,9 @@ public interface QueryFileParser {
 	 */
 	public void searchLine(String line, boolean exact);
 
+	/**
+	 * TODO 
+	 * @param path
+	 */
 	public void writeJSON(Path path);
 }
