@@ -118,17 +118,5 @@ public class SearchServlet extends HttpServlet {
 		out.printf("<center><p><input type='submit' value='Search'></p></center>");
 		out.printf("</form>");
 		out.printf("</form>\n%n");
-
-//		out.printf("<center>");
-//		out.printf("<table cellspacing=\"-2\" cellpadding=\"2\"%n");
-//		out.printf("<tr>%n");
-//		out.printf("\t<td nowrap></td>%n");
-//		out.printf("\t<td>%n");
-//		out.printf("\t\t<input type=\"text\" name=\"query\" maxlength=\"300\" size=\"80\">%n");
-//		out.printf("\t</td>%n");
-//		out.printf("</tr>%n");
-//		out.printf("</table>%n");
-//		out.printf("<p><center><input type=\"submit\" value=\"Search\"></center></p>\n%n");
-//		out.printf("</center></form>\n%n");
 	}
 }

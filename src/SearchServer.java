@@ -23,7 +23,8 @@ public class SearchServer {
 		connector.setPort(PORT);
 
 		ServletHandler handler = new ServletHandler();
-		handler.addServletWithMapping(new ServletHolder(new SearchServlet(index, threads)), "/");
+//		handler.addServletWithMapping(new ServletHolder(new SearchServlet(index, threads)), "/");
+		handler.addServletWithMapping(new ServletHolder(new BulmaTest()), "/");
 
 		server.addConnector(connector);
 		server.setHandler(handler);
