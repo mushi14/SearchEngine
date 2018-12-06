@@ -75,7 +75,10 @@ public class QuerySearch implements QueryFileParser {
 	 * @param path path to the file to write to
 	 * @throws IOException in case there's any problem finding the file
 	 */
+	@Override
 	public void writeJSON(Path path) {
-		TreeJSONWriter.asSearchResult(results, path);
+		synchronized (results) {
+			TreeJSONWriter.asSearchResult(results, path);
+		}
 	}
 }

@@ -9,13 +9,18 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 public class MultithreadedSearch implements QueryFileParser {
 
+	final static Logger logger = LogManager.getLogger();
+
 	private final ThreadSafeInvertedIndex index;
-	public final Map<String, List<Search>> results;
+	private final Map<String, List<Search>> results;
 	private final int threads;
 
 	/**
@@ -26,6 +31,8 @@ public class MultithreadedSearch implements QueryFileParser {
 		this.index = index;
 		this.results = new TreeMap<String, List<Search>>();
 		this.threads = threads;
+//	logger.debug("THIS IS HOW MANY THREADS YOU SHOULD RUN ON: {}", threads);
+
 	}
 
 	/**
@@ -41,6 +48,7 @@ public class MultithreadedSearch implements QueryFileParser {
 			String line = br.readLine();
 
 			while (line != null) {
+//			logger.debug("new task", line);
 				queue.execute(new QueryLineSearch(line, exact));
 				line = br.readLine();
 			}
@@ -82,9 +90,9 @@ public class MultithreadedSearch implements QueryFileParser {
 					results.put(queryLine, temp);
 				}
 			} else {
-				local.put(queryLine, index.partialSearch(queries));
+				temp =  index.partialSearch(queries);
 				synchronized (results) {
-					results.putAll(local);
+					results.put(queryLine, temp);
 				}
 			}
 		}
@@ -93,7 +101,6 @@ public class MultithreadedSearch implements QueryFileParser {
 	/**
 	 * Writes the search results to the file path in pretty json format
 	 * @param path path to the file to write to
-	 * @throws IOException in case there's any problem finding the file
 	 */
 	@Override
 	public void writeJSON(Path path) {

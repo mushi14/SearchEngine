@@ -21,7 +21,6 @@ public interface QueryFileParser {
 	/**
 	 * Writes the search results to the file path in pretty json format
 	 * @param path path to the file to write to
-	 * @throws IOException in case there's any problem finding the file
 	 */
 	public void writeJSON(Path path);
 }

@@ -16,8 +16,8 @@ public class InvertedIndex {
 	/** 
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
-	public final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	public final Map<String, Integer> locationsMap;
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	private final Map<String, Integer> locationsMap;
 
 	/**
 	 *  Initializes the index.
@@ -244,7 +244,7 @@ public class InvertedIndex {
 				locationsList.get(loc).calculate(index.get(word).get(loc).size());
 			} else {
 				int totalMatches = index.get(word).get(loc).size();
-				int totalWords = locationsMap.get(loc);
+				int totalWords = this.locationsMap.get(loc);
 
 				Search newQuery = new Search(loc, totalMatches, totalWords);
 				locationsList.put(loc, newQuery);

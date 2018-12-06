@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 public class MultithreadedPathChecker {
 
 	final static Logger logger = LogManager.getLogger();
-
+  
 	/**
 	 * Gets the starting path of the file and initializes the Work Queue
 	 * @param path path of the file
@@ -84,9 +84,7 @@ public class MultithreadedPathChecker {
 			try {
 				InvertedIndex local = new InvertedIndex();
 				TextFileStemmer.stemFile(path, local);
-				synchronized (index) {
-					index.addAll(local);
-				}
+				index.addAll(local);
 			} catch (IOException e) {
 				System.out.println("File not found.");
 			}

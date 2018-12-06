@@ -112,12 +112,14 @@ public class WorkQueue {
 
 				try {
 					r.run();
+//					logger.debug("New task received. Running task {}", r.toString());
 				} catch (RuntimeException e) {
 					System.out.println("Runtime exception");
 				} finally {
 					decrementPending();
 				}
 			}
+			
 		}
 	}
 }
