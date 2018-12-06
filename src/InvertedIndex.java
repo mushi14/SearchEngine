@@ -188,24 +188,6 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Writes the index to the file path in pretty json format
-	 * @param path path to the file to write to
-	 * @throws IOException in case there's any problem finding the file
-	 */
-	public void writeIndexJSON(Path path) throws IOException {
-		TreeJSONWriter.asTripleNested(this.index, path);
-	}
-
-	/**
-	 * Writes the locations to the file path in pretty json format
-	 * @param path path to the file to write to
-	 * @throws IOException in case there's any problem finding the file
-	 */
-	public void writeLocJSON(Path path) throws IOException {
-		TreeJSONWriter.asLocations(locationsMap, path);
-	}
-
-	/**
 	 * Performs exact search on a line from the query file. Stores the results to results map
 	 * @param queries line of queries to compare
 	 * @return list of search results sorted
@@ -270,6 +252,24 @@ public class InvertedIndex {
 				resultsList.add(newQuery);
 			}
 		}
+	}
+
+	/**
+	 * Writes the index to the file path in pretty json format
+	 * @param path path to the file to write to
+	 * @throws IOException in case there's any problem finding the file
+	 */
+	public void writeIndexJSON(Path path) throws IOException {
+		TreeJSONWriter.asTripleNested(this.index, path);
+	}
+
+	/**
+	 * Writes the locations to the file path in pretty json format
+	 * @param path path to the file to write to
+	 * @throws IOException in case there's any problem finding the file
+	 */
+	public void writeLocJSON(Path path) throws IOException {
+		TreeJSONWriter.asLocations(locationsMap, path);
 	}
 
 	/** 

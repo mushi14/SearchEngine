@@ -31,7 +31,8 @@ public class MultithreadedSearch implements QueryFileParser {
 		this.index = index;
 		this.results = new TreeMap<String, List<Search>>();
 		this.threads = threads;
-//		logger.debug("THIS IS HOW MANY THREADS YOU SHOULD RUN ON: {}", threads);
+//	logger.debug("THIS IS HOW MANY THREADS YOU SHOULD RUN ON: {}", threads);
+
 	}
 
 	/**
@@ -47,7 +48,7 @@ public class MultithreadedSearch implements QueryFileParser {
 			String line = br.readLine();
 
 			while (line != null) {
-//				logger.debug("new task", line);
+//			logger.debug("new task", line);
 				queue.execute(new QueryLineSearch(line, exact));
 				line = br.readLine();
 			}

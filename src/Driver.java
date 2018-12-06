@@ -1,6 +1,9 @@
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
 public class Driver {
 	/**
@@ -15,8 +18,9 @@ public class Driver {
 		InvertedIndex index;
 		ThreadSafeInvertedIndex threadSafeIndex;
 		QueryFileParser search;
+		WebCrawler crawl;
 
-		if (argMap.hasFlag("-threads")) {
+		if (argMap.hasFlag("-threads") || argMap.hasFlag("-url")) {
 			threadSafeIndex = new ThreadSafeInvertedIndex();
 			search = new MultithreadedSearch(threadSafeIndex, argMap.getThreads("-threads", 5));
 			index = threadSafeIndex;
@@ -24,6 +28,23 @@ public class Driver {
 			index = new InvertedIndex();
 			search = new QuerySearch(index);
 			threadSafeIndex = null;
+		}
+
+		if (argMap.hasFlag("-url")) {
+			try {
+				if (argMap.flagPath("-url")) {
+					crawl = new WebCrawler(threadSafeIndex, argMap.getThreads("-threads", 5));
+					URL url = argMap.getURL("-url");
+					String html = HTMLFetcher.fetchHTML(url, 3);
+					Map<String, List<String>> headers = HttpsFetcher.fetchURL(url);
+
+					if (HTMLFetcher.getStatusCode(headers) == 200) {
+						crawl.start(url, html, argMap.getLimit("-limit", 50), 3);
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if (argMap.hasFlag("-path")) {
@@ -81,6 +102,12 @@ public class Driver {
 			} catch (IOException | NullPointerException e) {
 					System.out.println("File not found, locations cannot be printed in json format.");
 			}
+		}
+
+		try {
+			SearchServer server = new SearchServer(threadSafeIndex, argMap.getThreads("-threads", 5));
+		} catch (Exception e) {
+			System.out.println("No good URL");
 		}
 	}
 }

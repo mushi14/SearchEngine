@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 public class MultithreadedPathChecker {
 
 	final static Logger logger = LogManager.getLogger();
+  
 	/**
 	 * Gets the starting path of the file and initializes the Work Queue
 	 * @param path path of the file
@@ -19,13 +20,13 @@ public class MultithreadedPathChecker {
 	public static void filesInPath(Path path, int threads, ThreadSafeInvertedIndex index) throws IOException {
 		WorkQueue queue = new WorkQueue(threads);
 		try {
-			filesInPathHelper(path, threads, index, queue);
-		} catch (IOException e) {
-			System.out.println("There was an issue finding the path to read from.");
-		} finally {
-			queue.finish();
-			queue.shutdown();
-		}
+ 			filesInPathHelper(path, threads, index, queue);
+ 		} catch (IOException e) {
+ 			System.out.println("There was an issue finding the path to read from.");
+ 		} finally {
+ 			queue.finish();
+ 			queue.shutdown();
+ 		}
 	}
 
 	/**
