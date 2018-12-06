@@ -1,3 +1,5 @@
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -37,8 +39,10 @@ public class ArgumentMap {
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args[i])) {
 				if ((i + 1) < args.length && !isFlag(args[i + 1])) {
-					argMap.put(args[i], args[i + 1]);
-					i++;
+					if (!args[i + 1].contains("null")) {
+						argMap.put(args[i], args[i + 1]);
+						i++;
+					}
 				} else {
 					argMap.put(args[i], null);
 				}
@@ -98,8 +102,8 @@ public class ArgumentMap {
 	 * {@link String}, or null if there is no mapping for the flag.
 	 *
 	 * @param flag the flag whose associated value is to be returned
-	 * @return the value to which the specified flag is mapped, or {@code null} if
-	 *         there is no mapping for the flag
+	 * @return the value to which the specified flag is mapped, or {@code null} if 
+	 * there is no mapping for the flag
 	 */
 	public Path getPath(String flag) {
 		Path path;
@@ -110,7 +114,7 @@ public class ArgumentMap {
 			path = null;
 		}
 
-    return path;
+		return path;
 	}
 
 	/**
@@ -121,11 +125,10 @@ public class ArgumentMap {
 	 *
 	 * This method should not throw any exceptions!
 	 *
-	 * @param flag         the flag whose associated value is to be returned
-	 * @param defaultValue the default value to return if there is no mapping for
-	 *                     the flag
+	 * @param flag the flag whose associated value is to be returned
+	 * @param defaultValue the default value to return if there is no mapping for the flag
 	 * @return the value to which the specified flag is mapped as a {@link Path},
-	 *         or the default value if there is no mapping for the flag
+	 * or the default value if there is no mapping for the flag
 	 */
 	public Path getPath(String flag, Path defaultValue) {
 		Path path;
@@ -137,6 +140,24 @@ public class ArgumentMap {
 		}
 
 		return path;
+	}
+
+	/**
+	 * Gets the URL that is associated with the flag
+	 * @param flag the flag to look for
+	 * @return the URL of the flag
+	 * @throws MalformedURLException
+	 */
+	public URL getURL(String flag) throws MalformedURLException {
+		URL url;
+
+		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
+			url = new URL(argMap.get(flag));
+		} else {
+			url = null;
+		}
+
+		return url;
 	}
 
 	/**
@@ -153,10 +174,45 @@ public class ArgumentMap {
 	}
 
 	/**
+	 * Gets the total number of URLs to crawl when building the index. If no limit provided, defaults to 50
+	 * @param flag the flag associated with the limit to be returned
+	 * @param defaultValue number of URLs to crawl, default is 50
+	 * @return
+	 */
+	public int getLimit(String flag, int defaultValue) {
+		if (argMap.containsKey(flag) && argMap.get(flag) != null) {
+			String value = argMap.get(flag);
+
+			if (isNumeric(value) && Integer.parseInt(value) >= 1) {
+				return Integer.valueOf(argMap.get(flag));
+			} else {
+				return defaultValue;
+			}
+		} else {
+			return defaultValue;
+		}
+	}
+
+	public static boolean isNumeric(String strNum) {
+		try {
+			double d = Double.parseDouble(strNum);
+		} catch (NumberFormatException | NullPointerException nfe) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Checks to see if the arguments map is empty
 	 * @return returns true if empty, false if not
 	 */
 	public boolean isEmpty() {
 		return argMap.isEmpty();
+	}
+
+	public void print() {
+		for (String key : argMap.keySet()) {
+			System.out.println(key + " " + argMap.get(key));
+		}
 	}
 }

@@ -16,7 +16,7 @@ public class InvertedIndex {
 	/** 
 	 * Stores a mapping of files to the positions the words were found in the file.
 	 */
-	public final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 	private final Map<String, Integer> locationsMap;
 
 	/**
@@ -51,21 +51,32 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Adds a list of words to the index given they all have the same path
-	 * @param words list of words to add
-	 * @param location path of the file
+	 * Adds a list of words to the index mapped to their locations and positions. 
+	 * @param local an inverted index data structure to add to the index
 	 */
-	public void addAll(String[] words, String location) {
-		int position = 0;
-		for (String word : words) {
-			position++;
-			this.add(word, location, position);
+	public void addAll(InvertedIndex local) {
+		for (String word : local.index.keySet()) {
+			if (index.containsKey(word)) {
+				for (String loc : local.index.get(word).keySet()) {
+					if (index.get(word).containsKey(loc)) {
+						index.get(word).get(loc).addAll(local.index.get(word).get(loc));
+					} else {
+						index.get(word).putAll(local.index.get(word));
+					}
+				}
+			} else {
+				index.put(word, local.index.get(word));
+			}
+		}
+
+		for (String path : local.locationsMap.keySet()) {
+			locationsMap.putIfAbsent(path, 0);
+			locationsMap.put(path, locationsMap.get(path) + local.locationsMap.get(path));
 		}
 	}
 
 	/**
 	 * Shows all the words in the map
-	 *
 	 * @return Returns a set view of all the paths
 	 */
 	public Set<String> getWords() {
@@ -74,7 +85,6 @@ public class InvertedIndex {
 
 	/**
 	 * Shows all the paths associated with the word in the map
-	 *
 	 * @param word word inside of the file
 	 * @return Returns a set view of all the paths
 	 */
@@ -88,7 +98,6 @@ public class InvertedIndex {
 
 	/**
 	 * Shows all the positions associated with a path in the map
-	 *
 	 * @param word word inside of the file
 	 * @param path path of the file
 	 * @return Returns a set view of all the positions associated with the path
@@ -107,7 +116,6 @@ public class InvertedIndex {
 
 	/** 
 	 * Number of words in the the map
-	 * 
 	 * @return integer size of the number of words in the map
 	 */
 	public int words() {
@@ -116,7 +124,6 @@ public class InvertedIndex {
 
 	/** 
 	 * Number of paths associated with the word in the the map
-	 * 
 	 * @param word word inside of the file
 	 * @return integer size of the number of paths associated with word in the map
 	 */
@@ -130,7 +137,6 @@ public class InvertedIndex {
 
 	/**
 	 *  Number of positions associated with the path in the the map
-	 * 
 	 * @param word word inside of the file
 	 * @param path path of the file
 	 * @return integer size of the number of paths associated with word in the map
@@ -145,7 +151,6 @@ public class InvertedIndex {
 
 	/** 
 	 * Checks to see if the map contains the word
-	 * 
 	 * @param word word inside the file
 	 * @return true if map contains the word
 	 */
@@ -155,7 +160,6 @@ public class InvertedIndex {
 
 	/** 
 	 * Checks to see if the word contains the path
-	 * 
 	 * @param word word inside the file
 	 * @param path path of the file
 	 * @return true if word contains the path
@@ -181,24 +185,6 @@ public class InvertedIndex {
 		} else {
 			return false;
 		}
-	}
-
-	/**
-	 * Writes the index to the file path in pretty json format
-	 * @param path path to the file to write to
-	 * @throws IOException in case there's any problem finding the file
-	 */
-	public void writeIndexJSON(Path path) throws IOException {
-		TreeJSONWriter.asTripleNested(this.index, path);
-	}
-
-	/**
-	 * Writes the locations to the file path in pretty json format
-	 * @param path path to the file to write to
-	 * @throws IOException in case there's any problem finding the file
-	 */
-	public void writeLocJSON(Path path) throws IOException {
-		TreeJSONWriter.asLocations(locationsMap, path);
 	}
 
 	/**
@@ -258,7 +244,7 @@ public class InvertedIndex {
 				locationsList.get(loc).calculate(index.get(word).get(loc).size());
 			} else {
 				int totalMatches = index.get(word).get(loc).size();
-				int totalWords = locationsMap.get(loc);
+				int totalWords = this.locationsMap.get(loc);
 
 				Search newQuery = new Search(loc, totalMatches, totalWords);
 				locationsList.put(loc, newQuery);
@@ -266,6 +252,24 @@ public class InvertedIndex {
 				resultsList.add(newQuery);
 			}
 		}
+	}
+
+	/**
+	 * Writes the index to the file path in pretty json format
+	 * @param path path to the file to write to
+	 * @throws IOException in case there's any problem finding the file
+	 */
+	public void writeIndexJSON(Path path) throws IOException {
+		TreeJSONWriter.asTripleNested(this.index, path);
+	}
+
+	/**
+	 * Writes the locations to the file path in pretty json format
+	 * @param path path to the file to write to
+	 * @throws IOException in case there's any problem finding the file
+	 */
+	public void writeLocJSON(Path path) throws IOException {
+		TreeJSONWriter.asLocations(locationsMap, path);
 	}
 
 	/** 

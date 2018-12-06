@@ -3,120 +3,91 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/*
- * TODO
- * Try to mimic the single-threaded version. So if it has a single public static 
- * method, try to make a multi-threaded version with a single public static method.
- */
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MultithreadedPathChecker {
 
-	public final ThreadSafeInvertedIndex threadSafeIndex;
-	private final WorkQueue queue;
-	private int pending;
-
-	public MultithreadedPathChecker(Path path, int threads, ThreadSafeInvertedIndex threadSafeIndex) {
-		this.threadSafeIndex = threadSafeIndex;
-		this.queue = new WorkQueue(threads);
-		this.pending = 0;
-		this.parse(path);
-		this.finish();
-		this.queue.shutdown();
+	final static Logger logger = LogManager.getLogger();
+  
+	/**
+	 * Gets the starting path of the file and initializes the Work Queue
+	 * @param path path of the file
+	 * @param threads how many threads to run on
+	 * @param index thread safe inverted index to populate
+	 * @throws IOException if the path of the file isn't readable
+	 */
+	public static void filesInPath(Path path, int threads, ThreadSafeInvertedIndex index) throws IOException {
+		WorkQueue queue = new WorkQueue(threads);
+		try {
+ 			filesInPathHelper(path, threads, index, queue);
+ 		} catch (IOException e) {
+ 			System.out.println("There was an issue finding the path to read from.");
+ 		} finally {
+ 			queue.finish();
+ 			queue.shutdown();
+ 		}
 	}
 
-	private void parse(Path path) {
+	/**
+	 * Helper method, traverses through directories to find valid text files to read
+	 * @param path path of the file
+	 * @param threads how many threads to run on
+	 * @param index thread safe index to populate
+	 * @param queue work queue to use
+	 * @throws IOException if the path of the file isn't readable
+	 */
+	private static void filesInPathHelper(Path path, int threads, ThreadSafeInvertedIndex index, 
+			WorkQueue queue) throws IOException {
 		try {
 			if (Files.isRegularFile(path)) {
 				String name = path.toString();
 				if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
-					queue.execute(new FilesTask(path));
+					queue.execute(new FilesTask(path, index));
 				}
 			} else if (Files.isDirectory(path)) {
 				try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
 					for (Path file: filePathStream) {
-						parse(file);
+						filesInPathHelper(file, threads, index, queue);
 					}
 				}
 			}
 		} catch (IOException e) {
+			System.out.println("The was trouble reading the file.");
 		}
 	}
 
-	private synchronized void incrementPending() {
-		pending++;
-	}
-
-	private synchronized void decrementPending() {
-		pending--;
-
-		if (pending == 0) {
-			this.notifyAll();
-		}
-	}
-
-	private synchronized void finish() {
-		try {
-			while (pending > 0) {
-				this.wait();
-			}
-		} catch (InterruptedException e) {
-			System.out.println("Thread interrupted.");
-		}
-	}
-	
-	/* TODO Try this:
-	public static void filesInPath(Path path, ThreadSafeInvertedIndex index, int threads) throws IOException {
-		WorkQueue queue = ...
-		filesInPathHelper(path, index, queue);
-		queue.finish();
-		queue.shutdown();
-	}
-	
-	private static void filesInPathHelper(Path path, ThreadSafeInvertedIndex index, WorkQueue queue) throws IOException {
-		if (Files.isDirectory(path)) {
-			try (DirectoryStream<Path> filePathStream = Files.newDirectoryStream(path)) {
-				for (Path file: filePathStream) {
-					filesInPath(file, index);
-				}
-			}
-		} else if (Files.isRegularFile(path)) {
-			String name = path.toString();
-			if (name.toLowerCase().endsWith(".txt") || name.toLowerCase().endsWith(".text")) {
-				** add task to queue here
-			}
-		}
-	}
-	*/
-
-	// TODO Will need to make this a static nested class if you make the static methods above
-	private class FilesTask implements Runnable {
+	/**
+	 * Static nested class for assigning tasks to threads 
+	 * @author mushahidhassan
+	 *
+	 */
+	private static class FilesTask implements Runnable {
 		private Path path;
+		private ThreadSafeInvertedIndex index;
 
-		public FilesTask(Path path) {
+		/**
+		 * Constructor for static nested class
+		 * @param path path of the file
+		 * @param index thread safe index to populate
+		 */
+		public FilesTask(Path path, ThreadSafeInvertedIndex index) {
 			this.path = path;
-			incrementPending();
+			this.index = index;
 		}
 
+		/**
+		 * Populates the thread safe index
+		 */
 		@Override
 		public void run() {
 			try {
-				TextFileStemmer.stemFile(path, threadSafeIndex);
-				
-				/*
-				 * TODO Several small blocking adds will always be slower than a
-				 * single large blocking add, because locking/unlocking is so
-				 * expensive. Just like lecture code used "local data" to speed
-				 * it up, you should use a "local index" here. For example:
-				 * 
-				 * InvertedIndex local = new InvertedIndex();
-				 * TextFileStemmer.stemFile(path, local); <- does no blocking because uses local data
-				 * index.addAll(local); <- you have to create this method, blocks once and efficiently adds everything
-				 */
+				InvertedIndex local = new InvertedIndex();
+				TextFileStemmer.stemFile(path, local);
+				index.addAll(local);
 			} catch (IOException e) {
 				System.out.println("File not found.");
 			}
-
-			decrementPending();
 		}
 	}
 }

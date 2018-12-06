@@ -9,30 +9,21 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
-public class MultithreadedSearch implements QueryFileParser {
+public class QuerySearch implements QueryFileParser {
 
-	final static Logger logger = LogManager.getLogger();
-
-	private final ThreadSafeInvertedIndex index;
 	private final Map<String, List<Search>> results;
-	private final int threads;
+	private final InvertedIndex index;
 
 	/**
-	 * Constructor for searching the index for queries via multithreading
+	 * Constructor, initializes the inverted index
 	 * @param index inverted index to search from
 	 */
-	public MultithreadedSearch(ThreadSafeInvertedIndex index, int threads) {
+	public QuerySearch(InvertedIndex index) {
 		this.index = index;
 		this.results = new TreeMap<String, List<Search>>();
-		this.threads = threads;
-//	logger.debug("THIS IS HOW MANY THREADS YOU SHOULD RUN ON: {}", threads);
-
 	}
 
 	/**
@@ -43,20 +34,15 @@ public class MultithreadedSearch implements QueryFileParser {
 	 */
 	@Override
 	public void stemQueryFile(Path path, boolean exact) {
-		WorkQueue queue = new WorkQueue(threads);
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 			String line = br.readLine();
 
 			while (line != null) {
-//			logger.debug("new task", line);
-				queue.execute(new QueryLineSearch(line, exact));
+				searchLine(line, exact);
 				line = br.readLine();
 			}
 		} catch (IOException | NullPointerException e) {
 			System.out.println("There was an issue finding the query file: " + path);
-		} finally {
-			queue.finish();
-			queue.shutdown();
 		}
 	}
 
@@ -66,9 +52,8 @@ public class MultithreadedSearch implements QueryFileParser {
 	@Override
 	public void searchLine(String line, boolean exact) {
 		Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
-		Set<String> queries = new TreeSet<>();
 		String[] words = TextFileStemmer.parse(line);
-		Map<String, List<Search>> local = new TreeMap<String, List<Search>>();
+		Set<String> queries = new TreeSet<>();
 
 		for (String word : words) {
 			word = stemmer.stem(word).toString();
@@ -76,24 +61,11 @@ public class MultithreadedSearch implements QueryFileParser {
 		}
 
 		String queryLine = String.join(" ", queries);
-		if (!queries.isEmpty()) {
-			synchronized (results) {
-				if (results.containsKey(queryLine)) {
-					return;
-				}
-			}
-
-			List<Search> temp;
-			if (exact) {
-				temp =  index.exactSearch(queries);
-				synchronized (results) {
-					results.put(queryLine, temp);
-				}
+		if (!queries.isEmpty() && !results.containsKey(queryLine)) {
+			if (exact == true) {
+				results.put(queryLine, index.exactSearch(queries));
 			} else {
-				temp =  index.partialSearch(queries);
-				synchronized (results) {
-					results.put(queryLine, temp);
-				}
+				results.put(queryLine, index.partialSearch(queries));
 			}
 		}
 	}
@@ -101,39 +73,12 @@ public class MultithreadedSearch implements QueryFileParser {
 	/**
 	 * Writes the search results to the file path in pretty json format
 	 * @param path path to the file to write to
+	 * @throws IOException in case there's any problem finding the file
 	 */
 	@Override
 	public void writeJSON(Path path) {
 		synchronized (results) {
 			TreeJSONWriter.asSearchResult(results, path);
-		}
-	}
-
-	/**
-	 * Searches each line of the query and stores results to results map
-	 * @author mushahidhassan
-	 *
-	 */
-	private class QueryLineSearch implements Runnable {
-		String line;
-		boolean exact;
-
-		/**
-		 * Constructor for QueryLineSearch
-		 * @param line line of queries to search
-		 * @param exact where exact or partial search should be performed
-		 */
-		public QueryLineSearch(String line, boolean exact) {
-			this.line = line;
-			this.exact = exact;
-		}
-
-		/**
-		 * Calls searchLine which searches the index for the qeuries in the line
-		 */
-		@Override
-		public void run() {
-			searchLine(line, exact);
 		}
 	}
 }

@@ -5,19 +5,21 @@ import org.apache.logging.log4j.Logger;
 
 public class WorkQueue {
 
-	// TODO Make all loggers final static
-	Logger logger = LogManager.getLogger();
+	final static Logger logger = LogManager.getLogger();
 
 	private final ThreadPool[] workers;
 	private final LinkedList<Runnable> queue;
+	private int pending;
 	private volatile boolean shutdown;
 
-	// TODO Add Javadoc
-	// TODO Move the pending variable into WorkQueue, just like the homework required.
-	
+	/**
+	 * Constructor. Initializes the work queue and starts the worker threads
+	 * @param threads how many threads to run on
+	 */
 	public WorkQueue(int threads) {
 		workers = new ThreadPool[threads];
 		queue = new LinkedList<>();
+		pending = 0;
 
 		for (int i = 0; i < threads; i++) {
 			workers[i] = new ThreadPool();
@@ -25,13 +27,52 @@ public class WorkQueue {
 		}
 	}
 
+	/**
+	 * Executes the given task
+	 * @param r task assigned to the work queue
+	 */
 	public void execute(Runnable r) {
+		incrementPending();
 		synchronized (queue) {
 			queue.addLast(r);
 			queue.notifyAll();
 		}
 	}
 
+	/**
+	 * Increase the pending variable
+	 */
+	private synchronized void incrementPending() {
+		pending++;
+	}
+
+	/**
+	 * Decreases the pending variable
+	 */
+	private synchronized void decrementPending() {
+		pending--;
+
+		if (pending == 0) {
+			this.notifyAll();
+		}
+	}
+
+	/**
+	 * Finishes the task
+	 */
+	public synchronized void finish() {
+		try {
+			while (pending > 0) {
+				this.wait();
+			}
+		} catch (InterruptedException e) {
+			System.out.println("Thread interrupted.");
+		}
+	}
+
+	/**
+	 * Tells the threads to shutdown when no more work is left to do
+	 */
 	public void shutdown() {
 		shutdown = true;
 		synchronized (queue) {
@@ -39,9 +80,17 @@ public class WorkQueue {
 		}
 	}
 
+	/**
+	 * Nested class used to run the tasks
+	 * @author mushahidhassan
+	 *
+	 */
 	private class ThreadPool extends Thread {
 		Runnable r;
 
+		/**
+		 * Runs the given task
+		 */
 		@Override
 		public void run() {
 			while (true) {
@@ -50,7 +99,7 @@ public class WorkQueue {
 						try {
 							queue.wait();
 						} catch (InterruptedException e) {
-							logger.debug(e.getMessage(), e);
+							System.out.println("Thread Interrupted");
 						}
 					}
 
@@ -63,10 +112,14 @@ public class WorkQueue {
 
 				try {
 					r.run();
+//					logger.debug("New task received. Running task {}", r.toString());
 				} catch (RuntimeException e) {
-					logger.debug(e.getMessage(), e);
+					System.out.println("Runtime exception");
+				} finally {
+					decrementPending();
 				}
 			}
+			
 		}
 	}
 }
