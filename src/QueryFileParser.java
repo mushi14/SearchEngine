@@ -18,8 +18,8 @@ public interface QueryFileParser {
 	public void searchLine(String line, boolean exact);
 
 	/**
-	 * TODO 
-	 * @param path
+	 * Writes the search results to the file path in pretty json format
+	 * @param path path to the file to write to
 	 */
 	public void writeJSON(Path path);
 }

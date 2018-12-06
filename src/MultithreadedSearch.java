@@ -81,7 +81,7 @@ public class MultithreadedSearch implements QueryFileParser {
 					return;
 				}
 			}
-			
+
 			List<Search> temp;
 			if (exact) {
 				temp =  index.exactSearch(queries);
@@ -89,10 +89,9 @@ public class MultithreadedSearch implements QueryFileParser {
 					results.put(queryLine, temp);
 				}
 			} else {
-				// TODO Use above approach, don't need the putall.
-				local.put(queryLine, index.partialSearch(queries));
+				temp =  index.partialSearch(queries);
 				synchronized (results) {
-					results.putAll(local);
+					results.put(queryLine, temp);
 				}
 			}
 		}
@@ -101,7 +100,6 @@ public class MultithreadedSearch implements QueryFileParser {
 	/**
 	 * Writes the search results to the file path in pretty json format
 	 * @param path path to the file to write to
-	 * @throws IOException in case there's any problem finding the file
 	 */
 	@Override
 	public void writeJSON(Path path) {

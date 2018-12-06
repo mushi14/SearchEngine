@@ -51,17 +51,19 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Adds a list of words to the index mapped to their locations and positions.
-	 * 
+	 * Adds a list of words to the index mapped to their locations and positions. 
 	 * @param local an inverted index data structure to add to the index
 	 */
 	public void addAll(InvertedIndex local) {
 		for (String word : local.index.keySet()) {
 			if (index.containsKey(word)) {
-				// TODO Still an issue: https://github.com/usf-cs212-fall2018/project-mushi14/blob/99f9bc609f79942b76f27923e1c7cc8e75893762/src/InvertedIndex.java#L62-L67
-				// putAll will replace what is already there, potentially causing you to lose information
-				// use an if/else block like you already have while looping through locations to safely combine
-				index.get(word).putAll(local.index.get(word));
+				for (String loc : local.index.get(word).keySet()) {
+					if (index.get(word).containsKey(loc)) {
+						index.get(word).get(loc).addAll(local.index.get(word).get(loc));
+					} else {
+						index.get(word).putAll(local.index.get(word));
+					}
+				}
 			} else {
 				index.put(word, local.index.get(word));
 			}
@@ -75,7 +77,6 @@ public class InvertedIndex {
 
 	/**
 	 * Shows all the words in the map
-	 * 
 	 * @return Returns a set view of all the paths
 	 */
 	public Set<String> getWords() {
@@ -84,7 +85,6 @@ public class InvertedIndex {
 
 	/**
 	 * Shows all the paths associated with the word in the map
-	 *
 	 * @param word word inside of the file
 	 * @return Returns a set view of all the paths
 	 */
@@ -98,7 +98,6 @@ public class InvertedIndex {
 
 	/**
 	 * Shows all the positions associated with a path in the map
-	 *
 	 * @param word word inside of the file
 	 * @param path path of the file
 	 * @return Returns a set view of all the positions associated with the path
@@ -117,7 +116,6 @@ public class InvertedIndex {
 
 	/** 
 	 * Number of words in the the map
-	 * 
 	 * @return integer size of the number of words in the map
 	 */
 	public int words() {
@@ -126,7 +124,6 @@ public class InvertedIndex {
 
 	/** 
 	 * Number of paths associated with the word in the the map
-	 * 
 	 * @param word word inside of the file
 	 * @return integer size of the number of paths associated with word in the map
 	 */
@@ -140,7 +137,6 @@ public class InvertedIndex {
 
 	/**
 	 *  Number of positions associated with the path in the the map
-	 * 
 	 * @param word word inside of the file
 	 * @param path path of the file
 	 * @return integer size of the number of paths associated with word in the map
@@ -155,7 +151,6 @@ public class InvertedIndex {
 
 	/** 
 	 * Checks to see if the map contains the word
-	 * 
 	 * @param word word inside the file
 	 * @return true if map contains the word
 	 */
@@ -165,7 +160,6 @@ public class InvertedIndex {
 
 	/** 
 	 * Checks to see if the word contains the path
-	 * 
 	 * @param word word inside the file
 	 * @param path path of the file
 	 * @return true if word contains the path
